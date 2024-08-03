@@ -1,0 +1,7 @@
+.hero {
+  display: flex-box;
+  justify-content: space-between;
+}
+.nav-link:hover {
+  background-color: none;
+}

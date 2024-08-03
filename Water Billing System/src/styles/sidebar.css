@@ -1,0 +1,15 @@
+.active-link {
+  background-color: #508d4e !important;
+}
+.sidebar-nav-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.sidebar-nav-link:hover {
+  background-color: #c5e1c5;
+}
+
+.active-link {
+  color: #508d4e !important;
+}
