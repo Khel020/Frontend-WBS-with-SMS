@@ -38,12 +38,7 @@ const Table = () => {
               <th scope="col" className="text-center  text-secondary">
                 Type
               </th>
-              <th scope="col" className="text-center  text-secondary">
-                Email
-              </th>
-              <th scope="col" className="text-center  text-secondary">
-                Birthday
-              </th>
+
               <th scope="col" className="text-center  text-secondary">
                 Action
               </th>
@@ -53,11 +48,17 @@ const Table = () => {
             {client.map((eachClient, index) => {
               return (
                 <tr key={index}>
-                  <th>{eachClient.acc_num}</th>
-                  <td>{eachClient.accountName}</td>
-                  <td>{eachClient.contact}</td>
-                  <td>{eachClient.meter_number}</td>
-                  <td>{eachClient.status}</td>
+                  {/* Account num */}
+                  <th className="text-center">{eachClient.acc_num}</th>
+                  {/* Account name */}
+                  <td className="text-center">{eachClient.accountName}</td>
+                  {/* Meter no*/}
+                  <td className="text-center">{eachClient.meter_num}</td>
+                  {/* Account Status */}
+                  <td className="text-center">{eachClient.status}</td>
+                  {/* Account type */}
+                  <td className="text-center">{eachClient.client_type}</td>
+                  {/* Account type */}
                   <td className="text-center">
                     <button type="button" className="btn btn-success btn-sm">
                       <i className="bi bi-eye-fill"></i>

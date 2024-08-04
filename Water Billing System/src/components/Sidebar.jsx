@@ -21,7 +21,7 @@ const Sidebar = () => {
       }}
     >
       <Link
-        to="/"
+        to=""
         className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
       >
         <svg className="bi pe-none me-2" width="40" height="32">
@@ -81,7 +81,7 @@ const Sidebar = () => {
         </li>
         <li>
           <Link
-            to="/records"
+            to=""
             className={`sidebar-nav-link nav-link ${
               activeLink === "Record" ? "active-link" : ""
             } link-body-emphasis mb-4`}
@@ -111,7 +111,7 @@ const Sidebar = () => {
         </li>
         <li>
           <Link
-            to="/settings"
+            to=""
             className={`sidebar-nav-link nav-link ${
               activeLink === "Settings" ? "active-link" : ""
             } link-body-emphasis mb-4`}
