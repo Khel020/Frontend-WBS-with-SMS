@@ -11,6 +11,7 @@ import CLIENT from "./pages/ListClient.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import App from "./App.jsx";
 import "bootstrap/dist/css/bootstrap.css";
+import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

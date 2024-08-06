@@ -10,7 +10,14 @@ function Userlist() {
         height: "100vh",
       }}
     >
-      <div className="userlist d-flex flex-column flex-md-row ">
+      <div
+        className="userlist d-flex flex-column flex-md-row"
+        style={{
+          backgroundColor: "#D6EFD8",
+          height: "100vh",
+          maxHeight: "100vh",
+        }}
+      >
         <Sidebar />
         <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
@@ -26,9 +33,6 @@ function Userlist() {
                 Search
               </button>
             </form>
-          </div>
-          <div className="row">
-            <div className="col-12 col-md-6 col-lg-4"></div>
           </div>
           <USERCARD />
           <Content />

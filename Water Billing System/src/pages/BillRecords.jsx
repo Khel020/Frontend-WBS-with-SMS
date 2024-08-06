@@ -1,6 +1,7 @@
 import React from "react";
 import BILLTABLE from "../components/BillTable";
 import Sidebar from "../components/Sidebar.jsx";
+import { Link } from "react-router-dom";
 
 const BillRecords = () => {
   return (
@@ -33,9 +34,9 @@ const BillRecords = () => {
               </div>
             </div>
             <div className="col text-end">
-              <button type="button" class="btn btn-info">
-                Payment History
-              </button>
+              <Link to="/bills">
+                <button className="btn btn-primary">Payment History</button>
+              </Link>
             </div>
           </div>
           <BILLTABLE />
