@@ -5,7 +5,7 @@ const Paybill = () => {
     <>
       <div style={{ maxHeight: "100vh" }}>
         <div className="userlist d-flex flex-column flex-md-row p-1">
-          <Sidebar />
+          <Sidebar role="Billing Manager" />
           <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-3">
               <h1 className="h2">Paybill</h1>

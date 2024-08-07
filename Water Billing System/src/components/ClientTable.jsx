@@ -11,7 +11,7 @@ const tableStyle = {
 const Table = () => {
   // State for holding clients data
   const [clients, setClients] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showEditModal, setEditModal] = useState(false);
 
   // Fetch clients data
   useEffect(() => {
@@ -41,12 +41,12 @@ const Table = () => {
         ? new Date(client.birthday).toISOString().substring(0, 10)
         : "",
     });
-    setShowModal(true);
+    setEditModal(true);
   };
 
   // Set values to empty when modal close
-  const handleModalClose = () => {
-    setShowModal(false);
+  const closeEditModal = () => {
+    setEditModal(false);
     setSelectedClient({
       acc_num: "",
       accountName: "",
@@ -57,20 +57,19 @@ const Table = () => {
       email: "",
       birthday: "",
     });
-    window.location.reload();
   };
-  const closeModal = () => {
-    setShowModal(false);
+  const closeMOdal = () => {
+    setEditModal(false);
   };
 
   // Function to handle form input change
-  const handleFormChange = (e) => {
+  const handleEditValues = (e) => {
     const { name, value } = e.target;
     setSelectedClient({ ...selectedClient, [name]: value });
   };
 
   // Function to handle form submission from edit modal
-  const handleFormSubmit = (e) => {
+  const handleEditSubmittion = (e) => {
     e.preventDefault();
 
     // Make a PUT request to update the client data
@@ -83,7 +82,7 @@ const Table = () => {
             client.acc_num === selectedClient.acc_num ? response.data : client
           )
         );
-        handleModalClose(); // Close the modal after updating
+        window.location.reload();
       })
       .catch((error) => console.error("Error updating client:", error));
   };
@@ -156,10 +155,10 @@ const Table = () => {
                     </button>
                   </Link>
                   <button type="button" className="btn btn-primary btn-sm ms-1">
-                    <i className="bi bi-printer"></i>
+                    <i class="bi bi-key-fill"></i>
                   </button>
-                  <button type="button" className="btn btn-info btn-sm ms-1">
-                    <i className="bi bi-chat-left-text-fill"></i>
+                  <button type="button" className="btn btn-danger btn-sm ms-1">
+                    <i class="bi bi-archive-fill"></i>
                   </button>
                   <button
                     type="button"
@@ -174,7 +173,7 @@ const Table = () => {
           </tbody>
         </table>
         {/* Modal for edit client */}
-        <Modal show={showModal} onHide={handleModalClose}>
+        <Modal show={showEditModal} onHide={closeEditModal}>
           <Modal.Header closeButton>
             <Modal.Title>Edit Client</Modal.Title>
           </Modal.Header>
@@ -182,7 +181,7 @@ const Table = () => {
             <div className="px-3">
               <form
                 className="row g-3 was-validated"
-                onSubmit={handleFormSubmit}
+                onSubmit={handleEditSubmittion}
               >
                 <div className="col-md-6">
                   <label
@@ -200,7 +199,7 @@ const Table = () => {
                       aria-describedby="inputGroupPrepend3 validationServerUsernameFeedback"
                       required
                       value={selectedClient.accountName}
-                      onChange={handleFormChange}
+                      onChange={handleEditValues}
                     />
                   </div>
                 </div>
@@ -221,7 +220,7 @@ const Table = () => {
                       aria-describedby="inputGroupPrepend3 validationServerUsernameFeedback"
                       required
                       value={selectedClient.acc_num}
-                      onChange={handleFormChange}
+                      onChange={handleEditValues}
                     />
                   </div>
                 </div>
@@ -236,7 +235,7 @@ const Table = () => {
                     id="validationServer03"
                     aria-describedby="validationServer03Feedback"
                     value={selectedClient.meter_num}
-                    onChange={handleFormChange}
+                    onChange={handleEditValues}
                     required
                   />
                 </div>
@@ -252,7 +251,7 @@ const Table = () => {
                     aria-describedby="validationServer05Feedback"
                     required
                     value={selectedClient.contact}
-                    onChange={handleFormChange}
+                    onChange={handleEditValues}
                   />
                 </div>
                 <div className="col-md-6">
@@ -264,7 +263,7 @@ const Table = () => {
                     className="form-select"
                     aria-label="Default select example"
                     value={selectedClient.status}
-                    onChange={handleFormChange}
+                    onChange={handleEditValues}
                   >
                     <option value="Active">Active</option>
                     <option value="Inactive">Inactive</option>
@@ -279,7 +278,7 @@ const Table = () => {
                     className="form-select"
                     aria-label="Default select example"
                     value={selectedClient.client_type}
-                    onChange={handleFormChange}
+                    onChange={handleEditValues}
                   >
                     <option value="Residential">Residential</option>
                     <option value="Commercial">Commercial</option>
@@ -298,7 +297,7 @@ const Table = () => {
                     aria-describedby="validationServer05Feedback"
                     required
                     value={selectedClient.email}
-                    onChange={handleFormChange}
+                    onChange={handleEditValues}
                   />
                 </div>
                 <div className="col-md-6">
@@ -313,18 +312,18 @@ const Table = () => {
                     aria-describedby="validationServer05Feedback"
                     required
                     value={selectedClient.birthday}
-                    onChange={handleFormChange}
+                    onChange={handleEditValues}
                   />
                 </div>
                 <div className="col-12">
                   <Modal.Footer>
-                    <Button variant="secondary" onClick={handleModalClose}>
+                    <Button variant="secondary" onClick={closeEditModal}>
                       Close
                     </Button>
                     <button
                       className="btn btn-primary"
                       type="submit"
-                      onClick={closeModal}
+                      onClick={closeMOdal}
                     >
                       Update
                     </button>

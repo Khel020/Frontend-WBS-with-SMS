@@ -28,7 +28,7 @@ const UserTable = () => {
   return (
     <div>
       <div
-        class="table-responsive"
+        className="table-responsive"
         style={{ maxHeight: "60vh", overflow: "auto" }}
       >
         <table className="table table-hover table-bordered">
@@ -105,92 +105,98 @@ const UserTable = () => {
         </Modal.Header>
         <Modal.Body>
           <div className="px-3">
-            <form class="row g-3">
-              <div class="col-md-4">
-                <label for="validationServer01" class="form-label">
-                  First name
+            <form className="row g-3">
+              <div className="col-md-6">
+                <label for="validationServer01" className="form-label">
+                  Account Name
                 </label>
                 <input
                   type="text"
-                  class="form-control is-valid"
+                  className="form-control is-valid"
                   id="validationServer01"
                   value="Mark"
                   required
                 />
-                <div class="valid-feedback">Looks good!</div>
+                <div className="valid-feedback">Looks good!</div>
               </div>
-              <div class="col-md-4">
-                <label for="validationServer02" class="form-label">
+              <div className="col-md-4">
+                <label for="validationServer02" className="form-label">
                   Last name
                 </label>
                 <input
                   type="text"
-                  class="form-control is-valid"
+                  className="form-control is-valid"
                   id="validationServer02"
                   value="Otto"
                   required
                 />
-                <div class="valid-feedback">Looks good!</div>
+                <div className="valid-feedback">Looks good!</div>
               </div>
-              <div class="col-md-4">
-                <label for="validationServerUsername" class="form-label">
+              <div className="col-md-6">
+                <label for="validationServerUsername" className="form-label">
                   Account Number
                 </label>
-                <div class="input-group has-validation">
+                <div className="input-group has-validation">
                   <input
                     type="text"
-                    class="form-control is-invalid"
+                    className="form-control is-invalid"
                     id="validationServerUsername"
                     aria-describedby="inputGroupPrepend3 validationServerUsernameFeedback"
                     required
                   />
                   <div
                     id="validationServerUsernameFeedback"
-                    class="invalid-feedback"
+                    className="invalid-feedback"
                   >
                     Please choose a username.
                   </div>
                 </div>
               </div>
-              <div class="col-md-4">
-                <label for="validationServer03" class="form-label">
+              <div className="col-md-4">
+                <label for="validationServer03" className="form-label">
                   Baranggay
                 </label>
                 <input
                   type="text"
-                  class="form-control is-invalid"
+                  className="form-control is-invalid"
                   id="validationServer03"
                   aria-describedby="validationServer03Feedback"
                   required
                 />
-                <div id="validationServer03Feedback" class="invalid-feedback">
+                <div
+                  id="validationServer03Feedback"
+                  className="invalid-feedback"
+                >
                   Please provide a valid city.
                 </div>
               </div>
-              <div class="col-md-4">
-                <label for="validationServer04" class="form-label">
+              <div className="col-md-4">
+                <label for="validationServer04" className="form-label">
                   House Number
                 </label>
                 <input
                   type="number"
-                  class="form-control is-invalid"
+                  className="form-control is-invalid"
                   id="validationServer05"
                   aria-describedby="validationServer05Feedback"
                   required
                   min={1}
                   placeholder="000"
                 />
-                <div id="validationServer04Feedback" class="invalid-feedback">
+                <div
+                  id="validationServer04Feedback"
+                  className="invalid-feedback"
+                >
                   Please select a valid state.
                 </div>
               </div>
-              <div class="col-md-4">
-                <label for="validationServer05" class="form-label">
+              <div className="col-md-4">
+                <label for="validationServer05" className="form-label">
                   Purok
                 </label>
                 <input
                   type="number"
-                  class="form-control is-invalid"
+                  className="form-control is-invalid"
                   id="validationServer05"
                   aria-describedby="validationServer05Feedback"
                   required
@@ -198,17 +204,20 @@ const UserTable = () => {
                   min={1}
                   max={5}
                 />
-                <div id="validationServer05Feedback" class="invalid-feedback">
+                <div
+                  id="validationServer05Feedback"
+                  className="invalid-feedback"
+                >
                   Please provide a valid zip.
                 </div>
               </div>
-              <div class="col-md-7">
-                <label for="validationServer05" class="form-label">
+              <div className="col-md-7">
+                <label for="validationServer05" className="form-label">
                   Contact
                 </label>
                 <input
                   type="number"
-                  class="form-control is-invalid"
+                  className="form-control is-invalid"
                   id="validationServer05"
                   aria-describedby="validationServer05Feedback"
                   required
@@ -216,17 +225,20 @@ const UserTable = () => {
                   min={1}
                   max={5}
                 />
-                <div id="validationServer05Feedback" class="invalid-feedback">
+                <div
+                  id="validationServer05Feedback"
+                  className="invalid-feedback"
+                >
                   Please provide a valid zip.
                 </div>
               </div>
-              <div class="col-md-5">
-                <label for="validationServer05" class="form-label">
+              <div className="col-md-5">
+                <label for="validationServer05" className="form-label">
                   Meter Number
                 </label>
                 <input
                   type="number"
-                  class="form-control is-invalid"
+                  className="form-control is-invalid"
                   id="validationServer05"
                   aria-describedby="validationServer05Feedback"
                   required
@@ -234,58 +246,75 @@ const UserTable = () => {
                   min={1}
                   max={5}
                 />
-                <div id="validationServer05Feedback" class="invalid-feedback">
+                <div
+                  id="validationServer05Feedback"
+                  className="invalid-feedback"
+                >
                   Please provide a valid zip.
                 </div>
               </div>
-              <div class="col-md-6">
-                <label for="validationCustom04" class="form-label">
+              <div className="col-md-6">
+                <label for="validationCustom04" className="form-label">
                   Status
                 </label>
-                <select class="form-select" id="validationCustom04" required>
+                <select
+                  className="form-select"
+                  id="validationCustom04"
+                  required
+                >
                   <option selected disabled value="">
                     Choose...
                   </option>
                   <option>...</option>
                 </select>
-                <div id="validationServer05Feedback" class="invalid-feedback">
+                <div
+                  id="validationServer05Feedback"
+                  className="invalid-feedback"
+                >
                   Please provide a valid zip.
                 </div>
               </div>
-              <div class="col-md-6">
-                <label for="validationCustom04" class="form-label">
+              <div className="col-md-6">
+                <label for="validationCustom04" className="form-label">
                   Client Type
                 </label>
-                <select class="form-select" id="validationCustom04" required>
+                <select
+                  className="form-select"
+                  id="validationCustom04"
+                  required
+                >
                   <option selected disabled value="">
                     Choose...
                   </option>
                   <option>...</option>
                 </select>
-                <div id="validationServer05Feedback" class="invalid-feedback">
+                <div
+                  id="validationServer05Feedback"
+                  className="invalid-feedback"
+                >
                   Please provide a valid zip.
                 </div>
               </div>
-              <div class="col-12">
-                <div class="form-check">
+              <div className="col-12">
+                <div className="form-check">
                   <input
-                    class="form-check-input is-invalid"
+                    className="form-check-input is-invalid"
                     type="checkbox"
                     value=""
                     id="invalidCheck3"
                     aria-describedby="invalidCheck3Feedback"
                     required
                   />
-                  <label class="form-check-label" for="invalidCheck3">
+                  <label className="form-check-label" for="invalidCheck3">
                     Agree to terms and conditions
                   </label>
-                  <div id="invalidCheck3Feedback" class="invalid-feedback">
+                  <div id="invalidCheck3Feedback" className="invalid-feedback">
                     You must agree before submitting.
                   </div>
                 </div>
               </div>
-              <div class="col-12">
-                <button class="btn btn-primary" type="submit">
+              <div className="col-12">
+                <button className="btn btn-primary" type="submit">
                   Submit form
                 </button>
               </div>

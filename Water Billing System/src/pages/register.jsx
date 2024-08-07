@@ -1,10 +1,16 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
 import image from "../assets/bg.jpg";
-import { useState } from "react";
-import axios from "axios";
 
+import axios from "axios";
+import "../styles/loginreg.css";
+import { useState, useEffect } from "react";
 function ListExample() {
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(true);
+  }, []);
   const [acc_name, setAccName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -45,52 +51,17 @@ function ListExample() {
         margin: "0",
       }}
     >
-      <header className="p-3" style={{ backgroundColor: "#0F3A3F" }}>
-        <div className="container-fluid">
-          <div className="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-            <h4 className="text-white">CWD Online Portal</h4>
-            <ul className="nav col-12 col-lg-auto mb-2 justify-content-center mb-md-0 mx-auto gap-5">
-              <li>
-                <a href="#" className="nav-link px-2 text-secondary">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="#" className="nav-link px-2 text-white">
-                  Features
-                </a>
-              </li>
-              <li>
-                <a href="#" className="nav-link px-2 text-white">
-                  Pricing
-                </a>
-              </li>
-              <li>
-                <a href="#" className="nav-link px-2 text-white">
-                  FAQs
-                </a>
-              </li>
-              <li>
-                <a href="#" className="nav-link px-2 text-white">
-                  About
-                </a>
-              </li>
-            </ul>
-            <div className="text-end">
-              <button type="button" className="btn btn-warning">
-                Login Now
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
       <div
         className="d-flex  justify-content-center mx-auto"
-        style={{ alignItems: "center", marginTop: "50px" }}
+        style={{ alignItems: "center" }}
       >
         <div
-          className="hero text-white"
-          style={{ maxWidth: "500px", marginRight: "350px" }}
+          className={`hero text-white ${show ? "show" : ""}`}
+          style={{
+            maxWidth: "500px",
+            marginRight: "350px",
+            marginTop: "40px",
+          }}
         >
           <h1>Casiguran Water District</h1>
           <p className="motto">"Serbisyong Bulahos Para sa Gabos"</p>
@@ -101,13 +72,14 @@ function ListExample() {
           </p>
         </div>
 
-        <div className="login-form">
+        <div className="register-form">
           <Card
             style={{
               width: "30rem",
               backgroundColor: "#78A7FF",
               padding: "5px",
               fontSize: "1px",
+              marginTop: "40px",
             }}
           >
             <Card.Body style={{ alignItems: "center" }}>
@@ -214,7 +186,7 @@ function ListExample() {
                     className="invalid-feedback"
                   ></div>
                 </div>
-                <div className="col-12">
+                <div className="col-6">
                   <label htmlFor="validationServer03" className="form-label">
                     Email
                   </label>
@@ -232,10 +204,17 @@ function ListExample() {
                   ></div>
                 </div>
 
-                <div className="col-12">
-                  <button className="btn btn-primary" type="submit">
+                <div className="col-12 mb-2 mt-3">
+                  <hr />
+                  <button className="btn btn-primary w-100 py-2" type="submit">
                     Sign up
                   </button>
+                </div>
+
+                <div className="col-12 mb-3 text-center">
+                  <p>
+                    Already have an account? <a href="/login">Sign in</a>
+                  </p>
                 </div>
               </form>
             </Card.Body>

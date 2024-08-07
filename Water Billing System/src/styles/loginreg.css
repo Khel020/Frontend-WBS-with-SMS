@@ -1,7 +1,10 @@
 .hero {
-  display: flex-box;
-  justify-content: space-between;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
 }
-.nav-link:hover {
-  background-color: none;
+
+.hero.show {
+  opacity: 1;
+  transform: translateY(0);
 }

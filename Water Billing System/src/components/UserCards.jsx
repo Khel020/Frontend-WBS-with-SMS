@@ -15,7 +15,10 @@ const UserCards = () => {
           >
             <div className="card-body d-flex justify-content-between align-items-end">
               <h5>
-                <i class="bi bi-people-fill" style={{ fontSize: "20px" }}></i>
+                <i
+                  className="bi bi-people-fill"
+                  style={{ fontSize: "20px" }}
+                ></i>
                 Total Users
               </h5>
               <span
@@ -43,7 +46,7 @@ const UserCards = () => {
             <div className="card-body d-flex justify-content-between align-items-end">
               <h5>
                 <i
-                  class="bi bi-person-fill-gear"
+                  className="bi bi-person-fill-gear"
                   style={{ fontSize: "20px" }}
                 ></i>{" "}
                 Total Admin
@@ -72,7 +75,10 @@ const UserCards = () => {
           >
             <div className="card-body d-flex justify-content-between align-items-end">
               <h5>
-                <i class="bi bi-person-fill" style={{ fontSize: "20px" }}></i>{" "}
+                <i
+                  className="bi bi-person-fill"
+                  style={{ fontSize: "20px" }}
+                ></i>{" "}
                 Total Client
               </h5>
               <span

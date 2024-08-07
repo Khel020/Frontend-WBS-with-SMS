@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/sidebar.css"; // Ensure this path is correct
 
-const Sidebar = () => {
+const Sidebar = ({ role }) => {
   const [activeLink, setActiveLink] = useState("Dashboard");
 
   const handleLinkClick = (link) => {
@@ -31,99 +31,165 @@ const Sidebar = () => {
       </Link>
       <hr />
       <ul className="nav nav-pills flex-column mb-auto">
-        <li>
-          <Link
-            to="/dashboard"
-            className={`sidebar-nav-link nav-link ${
-              activeLink === "Dashboard" ? "active-link" : ""
-            } link-body-emphasis mb-4`}
-            onClick={() => handleLinkClick("Dashboard")}
-          >
-            <i
-              className="bi bi-house"
-              style={{
-                fontSize: "20px",
-                marginRight: "10px",
-              }}
-            ></i>
-            Dashboard
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/listClient"
-            className={`sidebar-nav-link nav-link ${
-              activeLink === "List Client" ? "active-link" : ""
-            } link-body-emphasis mb-4`}
-            onClick={() => handleLinkClick("List Client")}
-          >
-            <i
-              className="bi bi-person-lines-fill"
-              style={{ fontSize: "20px", marginRight: "10px" }}
-            ></i>
-            List Client
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/bills"
-            className={`sidebar-nav-link nav-link ${
-              activeLink === "Billing" ? "active-link" : ""
-            } link-body-emphasis mb-4`}
-            onClick={() => handleLinkClick("Billing")}
-          >
-            <i
-              className="bi bi-file-earmark-text"
-              style={{ fontSize: "20px", marginRight: "10px" }}
-            ></i>
-            Billing
-          </Link>
-        </li>
-        <li>
-          <Link
-            to=""
-            className={`sidebar-nav-link nav-link ${
-              activeLink === "Record" ? "active-link" : ""
-            } link-body-emphasis mb-4`}
-            onClick={() => handleLinkClick("Record")}
-          >
-            <i
-              className="bi bi-collection"
-              style={{ fontSize: "20px", marginRight: "10px" }}
-            ></i>
-            Record
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/userList"
-            className={`sidebar-nav-link nav-link ${
-              activeLink === "User List" ? "active-link" : ""
-            } link-body-emphasis mb-4`}
-            onClick={() => handleLinkClick("User List")}
-          >
-            <i
-              className="bi bi-people-fill"
-              style={{ fontSize: "20px", marginRight: "10px" }}
-            ></i>
-            User List
-          </Link>
-        </li>
-        <li>
-          <Link
-            to=""
-            className={`sidebar-nav-link nav-link ${
-              activeLink === "Settings" ? "active-link" : ""
-            } link-body-emphasis mb-4`}
-            onClick={() => handleLinkClick("Settings")}
-          >
-            <i
-              className="bi bi-gear"
-              style={{ fontSize: "20px", marginRight: "10px" }}
-            ></i>
-            Settings
-          </Link>
-        </li>
+        {role === "Billing Manager" && (
+          <>
+            <li>
+              <Link
+                to="/listClient"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "List Client" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
+                onClick={() => handleLinkClick("List Client")}
+              >
+                <i
+                  className="bi bi-person-lines-fill"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                List Client
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/bills"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "Billing" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
+                onClick={() => handleLinkClick("Billing")}
+              >
+                <i
+                  className="bi bi-file-earmark-text"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                Billing
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/paymentHistory"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "Payment History" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
+                onClick={() => handleLinkClick("Payment History")}
+              >
+                <i
+                  className="bi bi-clock-history"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                Payment History
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/smsNotifications"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "SMS Notifications" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
+                onClick={() => handleLinkClick("SMS Notifications")}
+              >
+                <i
+                  className="bi bi-envelope"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                Send SMS
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/generateReports"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "Generate Reports" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
+                onClick={() => handleLinkClick("Generate Reports")}
+              >
+                <i
+                  className="bi bi-bar-chart"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                Reports
+              </Link>
+            </li>
+          </>
+        )}
+
+        {role === "Admin" && (
+          <>
+            <li>
+              <Link
+                to="/users"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "User Management" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
+                onClick={() => handleLinkClick("User Management")}
+              >
+                <i
+                  className="bi bi-people-fill"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                Manage User
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/reports"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "Reports" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
+                onClick={() => handleLinkClick("Reports")}
+              >
+                <i
+                  className="bi bi-file-earmark-bar-graph"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                Reports
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/logs"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "Logs" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
+                onClick={() => handleLinkClick("Logs")}
+              >
+                <i
+                  className="bi bi-journal-text"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                Logs
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/customerProfiles"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "Customer Profiles" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
+                onClick={() => handleLinkClick("Customer Profiles")}
+              >
+                <i
+                  className="bi bi-person-circle"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                Clients
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/manageSMS"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "Manage SMS" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
+                onClick={() => handleLinkClick("Manage SMS")}
+              >
+                <i
+                  className="bi bi-envelope-fill"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                Manage SMS
+              </Link>
+            </li>
+          </>
+        )}
       </ul>
       <hr />
       <div className="dropdown">
