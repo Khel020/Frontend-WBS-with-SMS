@@ -1,6 +1,6 @@
 import React from "react";
-import BILLTABLE from "../components/BillTable";
-import Sidebar from "../components/Sidebar.jsx";
+import BILLTABLE from "../../components/BillTable.jsx";
+import Sidebar from "../../components/Sidebar.jsx";
 import { Link } from "react-router-dom";
 
 const BillRecords = () => {

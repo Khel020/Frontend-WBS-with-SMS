@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Sidebar from "../components/Sidebar.jsx";
-import Content from "../components/Usercontent.jsx";
-import USERCARD from "../components/UserCards.jsx";
+import Sidebar from "../../components/Sidebar.jsx";
+import Content from "../../components/Usercontent.jsx";
+import USERCARD from "../../components/UserCards.jsx";
 function Userlist() {
   return (
     <div

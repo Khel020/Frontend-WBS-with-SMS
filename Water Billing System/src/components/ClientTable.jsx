@@ -134,15 +134,18 @@ const Table = () => {
                 <th className="text-center">{eachClient.acc_num}</th>
                 <td className="text-center">{eachClient.accountName}</td>
                 <td className="text-center">{eachClient.meter_num}</td>
-                <td
-                  className={`text-center ${
-                    eachClient.status === "Active"
-                      ? "text-success fw-bold"
-                      : "text-danger fw-bold"
-                  }`}
-                >
-                  {eachClient.status}
+                <td className="text-center">
+                  {eachClient.status === "Active" ? (
+                    <span class="badge bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill">
+                      Active
+                    </span>
+                  ) : (
+                    <span class="badge bg-danger-subtle border border-danger-subtle text-danger-emphasis rounded-pill">
+                      Inactive
+                    </span>
+                  )}
                 </td>
+
                 <td className="text-center">{eachClient.client_type}</td>
                 <td className="text-center">{eachClient.email}</td>
                 <td className="text-center">

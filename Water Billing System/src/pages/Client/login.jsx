@@ -1,29 +1,48 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
-import image from "../assets/bg.jpg";
-import "../styles/loginreg.css";
-import axios from "axios";
+import image from "../../assets/bg.jpg";
+import "../../styles/loginreg.css";
+import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 function login() {
   const [show, setShow] = useState(false);
   const [acc_name, setAccName] = useState("");
   const [password, setPassword] = useState("");
-
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     const Login = {
       acc_name,
       password,
     };
+
     try {
-      const response = await axios.post(
-        "http://localhost:1020/login/newLogin",
-        Login
-      );
-      console.log(response.data);
-    } catch (err) {
-      console.error(err);
+      const response = await fetch("http://localhost:1020/login/newLogin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(Login),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const token = data.token;
+        const acc_name = data.accountName;
+        const type = data.type;
+        const exp = data.expTKN;
+
+        // Store the token in local storage
+        localStorage.setItem("tkn", token);
+        localStorage.setItem("type", type);
+        localStorage.setItem("exp", exp);
+        localStorage.setItem("name", acc_name);
+
+        navigate("/clientdash");
+      } else {
+        console.log("Login failed: ");
+      }
+    } catch (error) {
+      console.error("Error occurred during login:", error);
     }
   };
 

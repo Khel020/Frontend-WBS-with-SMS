@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+
 const Header = () => {
   return (
     <div>
@@ -9,29 +10,24 @@ const Header = () => {
             <h4 className="text-white">CWD Online Portal</h4>
             <ul className="nav col-12 col-lg-auto mb-2 justify-content-center mb-md-0 mx-auto gap-5">
               <li>
-                <a href="/home" className="nav-link px-2 text-white">
+                <Link to="/home" className="nav-link px-2 text-white">
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/about-us" className="nav-link px-2 text-white">
+                <Link to="/about-us" className="nav-link px-2 text-white">
                   About us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/contact-us" className="nav-link px-2 text-white">
+                <Link to="/contact-us" className="nav-link px-2 text-white">
                   Contact Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="/FAQs" className="nav-link px-2 text-white">
-                  FAQs
-                </a>
-              </li>
-              <li>
-                <a href="/announcement" className="nav-link px-2 text-white">
-                  Announcements
-                </a>
+                <Link to="/services" className="nav-link px-2 text-white">
+                  Services
+                </Link>
               </li>
             </ul>
             <div className="text-end">

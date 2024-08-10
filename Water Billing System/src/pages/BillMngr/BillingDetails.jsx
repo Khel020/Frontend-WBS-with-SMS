@@ -1,6 +1,6 @@
 import React from "react";
-import DETAILS from "../components/BCDetails";
-import Sidebar from "../components/Sidebar.jsx";
+import DETAILS from "../../components/BCDetails.jsx";
+import Sidebar from "../../components/Sidebar.jsx";
 
 const BillingDetails = () => {
   return (

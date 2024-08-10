@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { useState } from "react";
 import axios from "axios";
-import ClientTable from "../components/ClientTable.jsx";
-import Sidebar from "../components/Sidebar.jsx";
+import ClientTable from "../../components/ClientTable.jsx";
+import Sidebar from "../../components/Sidebar.jsx";
 
 const Lit = () => {
   //TODO: modals
@@ -46,6 +46,7 @@ const Lit = () => {
       console.error(err);
     }
   };
+
   return (
     <>
       <div

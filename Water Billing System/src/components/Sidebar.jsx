@@ -65,36 +65,6 @@ const Sidebar = ({ role }) => {
             </li>
             <li>
               <Link
-                to="/paymentHistory"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "Payment History" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
-                onClick={() => handleLinkClick("Payment History")}
-              >
-                <i
-                  className="bi bi-clock-history"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
-                ></i>
-                Payment History
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/smsNotifications"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "SMS Notifications" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
-                onClick={() => handleLinkClick("SMS Notifications")}
-              >
-                <i
-                  className="bi bi-envelope"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
-                ></i>
-                Send SMS
-              </Link>
-            </li>
-            <li>
-              <Link
                 to="/generateReports"
                 className={`sidebar-nav-link nav-link ${
                   activeLink === "Generate Reports" ? "active-link" : ""
