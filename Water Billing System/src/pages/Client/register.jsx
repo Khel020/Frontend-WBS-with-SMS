@@ -5,6 +5,7 @@ import image from "../../assets/bg.jpg";
 import "../../styles/loginreg.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Link } from "react-router-dom";
 
 function ListExample() {
   const [show, setShow] = useState(false);
@@ -60,8 +61,8 @@ function ListExample() {
         break;
 
       case "contact":
-        if (!value.trim()) {
-          validationError = "Contact number is required.";
+        if (!/^(\+?63|0)?9\d{9}$/.test(value)) {
+          validationError = "Please enter a valid CP Number.";
         }
         break;
 
@@ -323,7 +324,10 @@ function ListExample() {
 
                 <div className="col-12 mb-3 text-center">
                   <p>
-                    Already have an account? <a href="/login">Sign in</a>
+                    Already have an account?{" "}
+                    <Link to="/login">
+                      <a href="">Sign in</a>
+                    </Link>
                   </p>
                 </div>
               </form>

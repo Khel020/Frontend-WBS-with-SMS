@@ -74,7 +74,7 @@ const Table = () => {
 
     // Make a PUT request to update the client data
     axios
-      .put("http://localhost:1020/client/editClient/", selectedClient) // Adjust the URL based on your server configuration
+      .put("http://localhost:1020/client/editClient/", selectedClient)
       .then((response) => {
         // Update the client list with the updated client data
         setClients(
@@ -152,7 +152,7 @@ const Table = () => {
                   {formatDate(eachClient.birthday)}
                 </td>
                 <td className="text-center">
-                  <Link to="/bills">
+                  <Link to="billing-records">
                     <button type="button" className="btn btn-success btn-sm">
                       <i className="bi bi-eye-fill"></i>
                     </button>

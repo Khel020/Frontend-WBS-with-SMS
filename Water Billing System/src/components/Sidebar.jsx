@@ -1,13 +1,15 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import "../styles/sidebar.css"; // Ensure this path is correct
 
 const Sidebar = ({ role }) => {
-  const [activeLink, setActiveLink] = useState("Dashboard");
+  const location = useLocation();
+  const [activeLink, setActiveLink] = useState("");
 
-  const handleLinkClick = (link) => {
-    setActiveLink(link);
-  };
+  useEffect(() => {
+    // Set active link based on the current path
+    setActiveLink(location.pathname);
+  }, [location]);
 
   return (
     <div
@@ -31,15 +33,28 @@ const Sidebar = ({ role }) => {
       </Link>
       <hr />
       <ul className="nav nav-pills flex-column mb-auto">
-        {role === "Billing Manager" && (
+        {role === "biller" && (
           <>
             <li>
               <Link
-                to="/listClient"
+                to="/bill-dashboard"
                 className={`sidebar-nav-link nav-link ${
-                  activeLink === "List Client" ? "active-link" : ""
+                  activeLink === "/bill-dashboard" ? "active-link" : ""
                 } link-body-emphasis mb-4`}
-                onClick={() => handleLinkClick("List Client")}
+              >
+                <i
+                  className="bi bi-house-fill"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/listclient"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "/listclient" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
               >
                 <i
                   className="bi bi-person-lines-fill"
@@ -52,9 +67,8 @@ const Sidebar = ({ role }) => {
               <Link
                 to="/bills"
                 className={`sidebar-nav-link nav-link ${
-                  activeLink === "Billing" ? "active-link" : ""
+                  activeLink === "/bills" ? "active-link" : ""
                 } link-body-emphasis mb-4`}
-                onClick={() => handleLinkClick("Billing")}
               >
                 <i
                   className="bi bi-file-earmark-text"
@@ -67,9 +81,8 @@ const Sidebar = ({ role }) => {
               <Link
                 to="/generateReports"
                 className={`sidebar-nav-link nav-link ${
-                  activeLink === "Generate Reports" ? "active-link" : ""
+                  activeLink === "/generateReports" ? "active-link" : ""
                 } link-body-emphasis mb-4`}
-                onClick={() => handleLinkClick("Generate Reports")}
               >
                 <i
                   className="bi bi-bar-chart"
@@ -81,15 +94,14 @@ const Sidebar = ({ role }) => {
           </>
         )}
 
-        {role === "Admin" && (
+        {role === "admin" && (
           <>
             <li>
               <Link
                 to="/users"
                 className={`sidebar-nav-link nav-link ${
-                  activeLink === "User Management" ? "active-link" : ""
+                  activeLink === "/users" ? "active-link" : ""
                 } link-body-emphasis mb-4`}
-                onClick={() => handleLinkClick("User Management")}
               >
                 <i
                   className="bi bi-people-fill"
@@ -102,9 +114,8 @@ const Sidebar = ({ role }) => {
               <Link
                 to="/reports"
                 className={`sidebar-nav-link nav-link ${
-                  activeLink === "Reports" ? "active-link" : ""
+                  activeLink === "/reports" ? "active-link" : ""
                 } link-body-emphasis mb-4`}
-                onClick={() => handleLinkClick("Reports")}
               >
                 <i
                   className="bi bi-file-earmark-bar-graph"
@@ -117,9 +128,8 @@ const Sidebar = ({ role }) => {
               <Link
                 to="/logs"
                 className={`sidebar-nav-link nav-link ${
-                  activeLink === "Logs" ? "active-link" : ""
+                  activeLink === "/logs" ? "active-link" : ""
                 } link-body-emphasis mb-4`}
-                onClick={() => handleLinkClick("Logs")}
               >
                 <i
                   className="bi bi-journal-text"
@@ -132,9 +142,8 @@ const Sidebar = ({ role }) => {
               <Link
                 to="/customerProfiles"
                 className={`sidebar-nav-link nav-link ${
-                  activeLink === "Customer Profiles" ? "active-link" : ""
+                  activeLink === "/customerProfiles" ? "active-link" : ""
                 } link-body-emphasis mb-4`}
-                onClick={() => handleLinkClick("Customer Profiles")}
               >
                 <i
                   className="bi bi-person-circle"
@@ -147,9 +156,8 @@ const Sidebar = ({ role }) => {
               <Link
                 to="/manageSMS"
                 className={`sidebar-nav-link nav-link ${
-                  activeLink === "Manage SMS" ? "active-link" : ""
+                  activeLink === "/manageSMS" ? "active-link" : ""
                 } link-body-emphasis mb-4`}
-                onClick={() => handleLinkClick("Manage SMS")}
               >
                 <i
                   className="bi bi-envelope-fill"

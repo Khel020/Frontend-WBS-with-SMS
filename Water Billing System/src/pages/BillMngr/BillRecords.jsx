@@ -34,7 +34,7 @@ const BillRecords = () => {
               </div>
             </div>
             <div className="col text-end">
-              <Link to="/bills">
+              <Link to="payments">
                 <button className="btn btn-primary">Payment History</button>
               </Link>
             </div>

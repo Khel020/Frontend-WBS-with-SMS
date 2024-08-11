@@ -4,12 +4,14 @@ import image from "../../assets/bg.jpg";
 import "../../styles/loginreg.css";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 function login() {
   const [show, setShow] = useState(false);
   const [acc_name, setAccName] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const Login = {
@@ -26,18 +28,27 @@ function login() {
 
       if (response.ok) {
         const data = await response.json();
+
         const token = data.token;
-        const acc_name = data.accountName;
+        // const acc_num = data.acc_num;
         const type = data.type;
         const exp = data.expTKN;
+        const name = data.name;
 
         // Store the token in local storage
         localStorage.setItem("tkn", token);
         localStorage.setItem("type", type);
         localStorage.setItem("exp", exp);
-        localStorage.setItem("name", acc_name);
 
-        navigate("/clientdash");
+        if (type === "users") {
+          navigate(`/clientdash/${name}`);
+        } else if (type === "admin") {
+          navigate("/admin-dashboard");
+        } else if (type === "biller") {
+          navigate("/bill-dashboard");
+        } else {
+          navigate("/login");
+        }
       } else {
         console.log("Login failed: ");
       }
@@ -130,10 +141,10 @@ function login() {
                   </button>
                   <div className="form-check text-center mt-4 ">
                     <p>
-                      Don't have an account?{" "}
-                      <a href="/register" className="text-dark">
-                        Sign up
-                      </a>
+                      Don't have an account?
+                      <Link to="/register">
+                        <a href="">Sign up</a>
+                      </Link>
                     </p>
                   </div>
                 </form>

@@ -32,7 +32,7 @@ const UserTable = () => {
         style={{ maxHeight: "60vh", overflow: "auto" }}
       >
         <table className="table table-hover table-bordered">
-          <thead className="table-dark text-center">
+          <thead className="table-success text-center">
             <tr>
               <th scope="col">Account Number</th>
               <th scope="col">Account Name</th>
