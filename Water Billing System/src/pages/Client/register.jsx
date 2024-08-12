@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Card from "react-bootstrap/Card";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import image from "../../assets/bg.jpg";
 import "../../styles/loginreg.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
 
 function ListExample() {
   const [show, setShow] = useState(false);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,7 +17,7 @@ function ListExample() {
 
   // Form data and error state
   const [formData, setFormData] = useState({
-    acc_name: "",
+    username: "",
     email: "",
     password: "",
     contact: "",
@@ -25,13 +25,25 @@ function ListExample() {
     meter_num: "",
     birthday: "",
   });
-  const [error, setError] = useState({});
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+    // Validate input on change
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: validateInput(name, value),
+    }));
+  };
 
   const validateInput = (name, value) => {
     let validationError = "";
 
     switch (name) {
-      case "acc_name":
+      case "username":
         if (!value.trim()) {
           validationError = "Account name is required.";
         } else if (/\d/.test(value)) {
@@ -94,51 +106,46 @@ function ListExample() {
         break;
     }
 
-    setError((prevError) => ({
-      ...prevError,
-      [name]: validationError,
-    }));
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-
-    validateInput(name, value);
+    return validationError;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = {};
 
+    // Validate all inputs before submission
     Object.keys(formData).forEach((key) => {
-      validateInput(key, formData[key]);
-      if (error[key]) validationErrors[key] = error[key];
+      const error = validateInput(key, formData[key]);
+      if (error) {
+        validationErrors[key] = error;
+      }
     });
 
-    if (Object.keys(validationErrors).length === 0) {
-      try {
-        const response = await fetch("http://localhost:1020/user/newUser/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
-        if (response.ok) {
-          toast.success("Registration successful!", {
-            onClose: () => navigate("/login"),
-          });
-        } else {
-          toast.error("Registration failed. Please try again.");
-        }
-      } catch (err) {
-        toast.error("Error occurred: " + err.message);
+    try {
+      const response = await fetch("http://localhost:1020/user/newUser/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      console.log(data);
+      if (data.success) {
+        console.log(data.success);
+        toast.success("Account Successfully Created!", {
+          onClose: () => navigate("/login"),
+        });
+      } else {
+        setErrors(data.errors);
+        toast.error("There were some errors with your submission.");
       }
-    } else {
-      setError(validationErrors);
+    } catch (err) {
+      console.error("An error occurred:", err);
+      toast.error("An error occurred while creating the account.");
     }
   };
 
@@ -190,21 +197,21 @@ function ListExample() {
               </h4>
               <form className="row g-3" onSubmit={handleSubmit}>
                 <div className="col-6">
-                  <label htmlFor="Accountname" className="form-label">
-                    Account Name
+                  <label htmlFor="Username" className="form-label">
+                    Username
                   </label>
                   <div className="input-group">
                     <input
                       type="text"
-                      name="acc_name"
+                      name="username"
                       className="form-control"
                       placeholder="Ex. John Doe"
-                      id="Accountname"
-                      value={formData.acc_name}
-                      onChange={handleInputChange}
+                      id="Username"
+                      value={formData.username}
+                      onChange={handleChange}
                     />
-                    {error.acc_name && (
-                      <div className="text-danger">{error.acc_name}</div>
+                    {errors.username && (
+                      <div className="text-danger">{errors.username}</div>
                     )}
                   </div>
                 </div>
@@ -219,10 +226,10 @@ function ListExample() {
                     name="password"
                     id="pass"
                     value={formData.password}
-                    onChange={handleInputChange}
+                    onChange={handleChange}
                   />
-                  {error.password && (
-                    <div className="text-danger">{error.password}</div>
+                  {errors.password && (
+                    <div className="text-danger">{errors.password}</div>
                   )}
                 </div>
 
@@ -237,10 +244,10 @@ function ListExample() {
                     id="Accountnum"
                     placeholder="000-000-000"
                     value={formData.acc_num}
-                    onChange={handleInputChange}
+                    onChange={handleChange}
                   />
-                  {error.acc_num && (
-                    <div className="text-danger">{error.acc_num}</div>
+                  {errors.acc_num && (
+                    <div className="text-danger">{errors.acc_num}</div>
                   )}
                 </div>
 
@@ -249,16 +256,16 @@ function ListExample() {
                     Contact
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     name="contact"
                     className="form-control"
                     id="Contact"
                     placeholder="+63"
                     value={formData.contact}
-                    onChange={handleInputChange}
+                    onChange={handleChange}
                   />
-                  {error.contact && (
-                    <div className="text-danger">{error.contact}</div>
+                  {errors.contact && (
+                    <div className="text-danger">{errors.contact}</div>
                   )}
                 </div>
 
@@ -267,16 +274,16 @@ function ListExample() {
                     Meter Number
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     name="meter_num"
                     className="form-control"
                     id="Meternumber"
                     placeholder="ex. 00210021"
                     value={formData.meter_num}
-                    onChange={handleInputChange}
+                    onChange={handleChange}
                   />
-                  {error.meter_num && (
-                    <div className="text-danger">{error.meter_num}</div>
+                  {errors.meter_num && (
+                    <div className="text-danger">{errors.meter_num}</div>
                   )}
                 </div>
 
@@ -290,10 +297,10 @@ function ListExample() {
                     className="form-control"
                     id="Birthdate"
                     value={formData.birthday}
-                    onChange={handleInputChange}
+                    onChange={handleChange}
                   />
-                  {error.birthday && (
-                    <div className="text-danger">{error.birthday}</div>
+                  {errors.birthday && (
+                    <div className="text-danger">{errors.birthday}</div>
                   )}
                 </div>
 
@@ -308,10 +315,10 @@ function ListExample() {
                     id="Email"
                     placeholder="Your Email Address"
                     value={formData.email}
-                    onChange={handleInputChange}
+                    onChange={handleChange}
                   />
-                  {error.email && (
-                    <div className="text-danger">{error.email}</div>
+                  {errors.email && (
+                    <div className="text-danger">{errors.email}</div>
                   )}
                 </div>
 
@@ -324,14 +331,22 @@ function ListExample() {
 
                 <div className="col-12 mb-3 text-center">
                   <p>
-                    Already have an account?{" "}
-                    <Link to="/login">
-                      <a href="">Sign in</a>
-                    </Link>
+                    Already have an account? <Link to="/login">Sign in</Link>
                   </p>
                 </div>
               </form>
-              <ToastContainer />
+              <ToastContainer
+                position="top-right"
+                autoClose={1000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                theme="light"
+                transition:Bounce
+              />
             </Card.Body>
           </Card>
         </div>

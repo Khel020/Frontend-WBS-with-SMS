@@ -8,14 +8,14 @@ import { Link } from "react-router-dom";
 
 function login() {
   const [show, setShow] = useState(false);
-  const [acc_name, setAccName] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const Login = {
-      acc_name,
+      username,
       password,
     };
 
@@ -41,10 +41,10 @@ function login() {
         localStorage.setItem("exp", exp);
 
         if (type === "users") {
-          navigate(`/clientdash/${name}`);
+          navigate("/clientdash/");
         } else if (type === "admin") {
           navigate("/admin-dashboard");
-        } else if (type === "biller") {
+        } else if (type === "billmngr") {
           navigate("/bill-dashboard");
         } else {
           navigate("/login");
@@ -112,7 +112,7 @@ function login() {
                       className="form-control"
                       id="floatingUsername"
                       placeholder="Username"
-                      onChange={(e) => setAccName(e.target.value)}
+                      onChange={(e) => setUsername(e.target.value)}
                     />
                     <label htmlFor="floatingInput">Username</label>
                   </div>
