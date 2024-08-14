@@ -18,25 +18,28 @@ import DashClient from "./pages/Client/ClientDash.jsx";
 import ContactUS from "./pages/Client/ContactUs.jsx";
 import Home from "./pages/Client/Home.jsx";
 import Login from "./pages/Client/login.jsx";
-import PayHistory from "./pages/Client/PaymentHisto.jsx";
-import Profile from "./pages/Client/Profile.jsx";
 import Register from "./pages/Client/register.jsx";
 import Services from "./pages/Client/Services.jsx";
-import ViewBill from "./pages/Client/ViewBill.jsx";
+import YourBills from "./pages/Client/billingCus.jsx";
+import Profile from "./pages/Client/Profile.jsx";
+import PaymentHisto from "./pages/Client/PaymentHisto.jsx";
 
 // TODO: Imported Page for Bill MNGR
 import BillingDetails from "./pages/BillMngr/BillingDetails.jsx";
 import BillRecords from "./pages/BillMngr/BillRecords.jsx";
+import Bills from "./pages/BillMngr/ListBills.jsx";
 import ListClient from "./pages/BillMngr/ListClient.jsx";
 import PayBill from "./pages/BillMngr/Paybill.jsx";
-import Payments from "./pages/BillMngr/Payments.jsx";
+import ReceivePayments from "./pages/BillMngr/PaymentHistory.jsx";
 import Reports from "./pages/BillMngr/Reports.jsx";
 import BillerDash from "./pages/BillMngr/BillerDash.jsx";
 
 //TODO: Admin Pages
 import AdminDash from "./pages/Admin/AdminDash.jsx";
 import Userlist from "./pages/Admin/userlist.jsx";
-
+import Settings from "./pages/Admin/Settings.jsx";
+import AdminReports from "./pages/Admin/DetailedReports.jsx";
+import Customers from "./pages/Admin/Customers.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -53,23 +56,49 @@ const router = createBrowserRouter(
       <Route path="clientdash" element={<ClientLayout />}>
         <Route index element={<DashClient />} />
       </Route>
+      <Route path="yourbills" element={<ClientLayout />}>
+        <Route index element={<YourBills />} />
+      </Route>
+      <Route path="payments" element={<ClientLayout />}>
+        <Route index element={<PaymentHisto />} />
+      </Route>
+      <Route path="profile" element={<ClientLayout />}>
+        <Route index element={<Profile />} />
+      </Route>
       //TODO: Biller ROUTES
       <Route path="bill-dashboard" element={<BillerLayout />}>
         <Route index element={<BillerDash />} />
-        <Route path="billing-reports" element={<Reports />} />
-        <Route path="billing-details" element={<BillingDetails />} />
-        <Route path="payments" element={<Payments />} />
+      </Route>
+      <Route path="bills" element={<BillerLayout />}>
+        <Route index element={<Bills />} />
+        <Route path="receive-payments" element={<ReceivePayments />} />
         <Route path="paybill" element={<PayBill />} />
+        <Route path="billing-details" element={<BillingDetails />} />
       </Route>
       <Route path="listclient" element={<BillerLayout />}>
         <Route index element={<ListClient />} />
         <Route path="billing-records" element={<BillRecords />} />
       </Route>
+      <Route path="bill-reports" element={<BillerLayout />}>
+        <Route index element={<Reports />} />
+      </Route>
       //TODO: Admin ROUTES
       <Route path="admin-dashboard" element={<AdminLayout />}>
         <Route index element={<AdminDash />} />
-        <Route path="userlist" element={<Userlist />} />
       </Route>
+      <Route path="userlist" element={<AdminLayout />}>
+        <Route index element={<Userlist />} />
+      </Route>
+      <Route path="settings" element={<AdminLayout />}>
+        <Route index element={<Settings />} />
+      </Route>
+      <Route path="reports" element={<AdminLayout />}>
+        <Route index element={<AdminReports />} />
+      </Route>
+      <Route path="customers" element={<AdminLayout />}>
+        <Route index element={<Customers />} />
+      </Route>
+      <Route path="*" element={<div>Page is not available</div>} />
     </>
   )
 );

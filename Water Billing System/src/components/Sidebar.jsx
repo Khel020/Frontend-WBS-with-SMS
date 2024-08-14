@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "../styles/sidebar.css"; // Ensure this path is correct
+import Dropdown from "react-bootstrap/Dropdown";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ role }) => {
   const location = useLocation();
@@ -11,6 +13,11 @@ const Sidebar = ({ role }) => {
     setActiveLink(location.pathname);
   }, [location]);
 
+  const navigate = useNavigate();
+  const handleLogOut = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
   return (
     <div
       className="d-flex flex-column flex-shrink-0 p-3"
@@ -98,9 +105,23 @@ const Sidebar = ({ role }) => {
           <>
             <li>
               <Link
-                to="/users"
+                to="/admin-dashboard"
                 className={`sidebar-nav-link nav-link ${
-                  activeLink === "/users" ? "active-link" : ""
+                  activeLink === "/admin-dashboard" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
+              >
+                <i
+                  className="bi bi-house-fill"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/userlist"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "/userlist" ? "active-link" : ""
                 } link-body-emphasis mb-4`}
               >
                 <i
@@ -140,7 +161,7 @@ const Sidebar = ({ role }) => {
             </li>
             <li>
               <Link
-                to="/customerProfiles"
+                to="/customers"
                 className={`sidebar-nav-link nav-link ${
                   activeLink === "/customerProfiles" ? "active-link" : ""
                 } link-body-emphasis mb-4`}
@@ -149,43 +170,49 @@ const Sidebar = ({ role }) => {
                   className="bi bi-person-circle"
                   style={{ fontSize: "20px", marginRight: "10px" }}
                 ></i>
-                Clients
+                Customers
               </Link>
             </li>
             <li>
               <Link
-                to="/manageSMS"
+                to="/settings"
                 className={`sidebar-nav-link nav-link ${
-                  activeLink === "/manageSMS" ? "active-link" : ""
+                  activeLink === "/settings" ? "active-link" : ""
                 } link-body-emphasis mb-4`}
               >
                 <i
-                  className="bi bi-envelope-fill"
+                  className="bi bi-gear-fill"
                   style={{ fontSize: "20px", marginRight: "10px" }}
                 ></i>
-                Manage SMS
+                Settings
               </Link>
             </li>
           </>
         )}
       </ul>
       <hr />
-      <div className="dropdown">
-        <a
-          href="#"
-          className="d-flex align-items-center link-body-emphasis text-decoration-none dropdown-toggle"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          <img
-            src="https://github.com/mdo.png"
-            alt=""
-            width="32"
-            height="32"
-            className="rounded-circle me-2"
-          />
-          <strong>Admin</strong>
-        </a>
+      <div className="mx-auto">
+        <Dropdown>
+          <Dropdown.Toggle
+            id="dropdown-basic"
+            className="d-flex align-items-center bg-transparent border-0 text-dark"
+          >
+            <img
+              src="https://github.com/mdo.png"
+              alt=""
+              width="32"
+              height="32"
+              className="rounded-circle me-2"
+            />
+            <span>Admin</span>
+          </Dropdown.Toggle>
+          <Dropdown.Menu align="end">
+            <Dropdown.Item href="#/action-1">Archive List</Dropdown.Item>
+            <Dropdown.Item href="#/action-2">Profile</Dropdown.Item>
+            <Dropdown.Item href="#/action-2">Bills</Dropdown.Item>
+            <Dropdown.Item onClick={handleLogOut}>Log Out</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
       </div>
     </div>
   );

@@ -4,10 +4,16 @@ import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
+import Dropdown from "react-bootstrap/Dropdown";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 const ClientHeader = () => {
+  const navigate = useNavigate();
+  const handleLogOut = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
   return (
     <Navbar expand="lg" style={{ backgroundColor: "#3BAB64" }}>
       <Container fluid>
@@ -21,16 +27,22 @@ const ClientHeader = () => {
             style={{ maxHeight: "100px" }}
             navbarScroll
           >
-            <Nav.Link href="#action1" className="text-white link-body-emphasis">
+            <Nav.Link
+              href="/clientdash"
+              className="text-white link-body-emphasis"
+            >
               Dashboard
             </Nav.Link>
-            <Nav.Link href="#action2" className="text-white link-body-emphasis">
+            <Nav.Link
+              href="/yourbills"
+              className="text-white link-body-emphasis"
+            >
               Your Bills
             </Nav.Link>
             <Nav.Link href="#action2" className="text-white link-body-emphasis">
               Service Request
             </Nav.Link>
-            <Nav.Link href="#" className="text-white link-body-emphasis">
+            <Nav.Link href="payments" className="text-white link-body-emphasis">
               Payment History
             </Nav.Link>
           </Nav>
@@ -51,46 +63,28 @@ const ClientHeader = () => {
               style={{ fontSize: "20px" }}
             ></i>
           </div>
-          <div className="dropdown text-end mx-5">
-            <li
-              to="#"
-              className="d-block link-body-emphasis text-decoration-none dropdown-toggle"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <img
-                src="https://github.com/mdo.png"
-                alt="mdo"
-                width="32"
-                height="32"
-                className="rounded-circle"
-              />
-            </li>
-            <ul className="dropdown-menu text-small">
-              <li>
-                <a className="dropdown-item" href="#">
-                  New project...
-                </a>
-              </li>
-              <li>
-                <a className="dropdown-item" href="#">
-                  Settings
-                </a>
-              </li>
-              <li>
-                <a className="dropdown-item" href="#">
-                  Profile
-                </a>
-              </li>
-              <li>
-                <hr className="dropdown-divider" />
-              </li>
-              <li>
-                <a className="dropdown-item" href="#">
-                  Sign out
-                </a>
-              </li>
-            </ul>
+          <div className="mx-2">
+            <Dropdown>
+              <Dropdown.Toggle
+                id="dropdown-basic"
+                className="d-flex align-items-center bg-transparent border-0 text-dark"
+              >
+                <img
+                  src="https://github.com/mdo.png"
+                  alt=""
+                  width="32"
+                  height="32"
+                  className="rounded-circle me-2"
+                />
+                <span>Admin</span>
+              </Dropdown.Toggle>
+              <Dropdown.Menu align="end">
+                <Dropdown.Item href="#/action-1">Archive List</Dropdown.Item>
+                <Dropdown.Item href="#/action-2">Profile</Dropdown.Item>
+                <Dropdown.Item href="#/action-2">Bills</Dropdown.Item>
+                <Dropdown.Item onClick={handleLogOut}>Log Out</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
         </Navbar.Collapse>
       </Container>

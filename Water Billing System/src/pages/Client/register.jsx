@@ -148,14 +148,6 @@ function ListExample() {
       toast.error("An error occurred while creating the account.");
     }
   };
-  useEffect(() => {
-    fetch(`${backend}/clientdash/${acn}`, {
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${localStorage.getItem("type")}`,
-      },
-    });
-  });
   return (
     <div
       style={{
@@ -204,8 +196,8 @@ function ListExample() {
               </h4>
               <form className="row g-3" onSubmit={handleSubmit}>
                 <div className="col-6">
-                  <label htmlFor="Username" className="form-label">
-                    Username
+                  <label htmlFor="username" className="form-label">
+                    Account Name
                   </label>
                   <div className="input-group">
                     <input
@@ -213,7 +205,7 @@ function ListExample() {
                       name="username"
                       className="form-control"
                       placeholder="Ex. John Doe"
-                      id="Username"
+                      id="username"
                       value={formData.username}
                       onChange={handleChange}
                     />

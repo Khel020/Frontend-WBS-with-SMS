@@ -35,7 +35,7 @@ const UserTable = () => {
           <thead className="table-success text-center">
             <tr>
               <th scope="col">Account Number</th>
-              <th scope="col">Account Name</th>
+              <th scope="col">Username</th>
               <th scope="col">Contact</th>
               <th scope="col">Meter No.</th>
               <th scope="col">Email</th>
@@ -50,11 +50,11 @@ const UserTable = () => {
               return (
                 <tr key={index}>
                   <th>{data.acc_num}</th>
-                  <td>{data.acc_name}</td>
+                  <td>{data.username}</td>
                   <td>{data.contact}</td>
                   <td>{data.meter_num}</td>
                   <td>{data.email}</td>
-                  <td></td>
+                  <td>{data.usertype}</td>
                   <td className="text-center">
                     <div
                       className="btn-group"

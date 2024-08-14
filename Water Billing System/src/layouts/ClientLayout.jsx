@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../components/ClientHeader";
 import { Outlet } from "react-router-dom";
-const ClientHeader = () => {
+const ClientLayout = () => {
   return (
     <div>
       <Header></Header>
@@ -12,4 +12,4 @@ const ClientHeader = () => {
   );
 };
 
-export default ClientHeader;
+export default ClientLayout;

@@ -48,7 +48,7 @@ const Lit = () => {
   };
   const token = localStorage.getItem("type");
   const usertype = token;
-  console.log(usertype);
+
   return (
     <>
       <div

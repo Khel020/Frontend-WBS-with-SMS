@@ -1,9 +1,14 @@
-import React from 'react'
+import React from "react";
+import Sidebar from "../../components/Sidebar";
 
 const Customers = () => {
+  const token = localStorage.getItem("type");
+  const usertype = token;
   return (
-    <div>Customers</div>
-  )
-}
+    <>
+      <Sidebar role={usertype} />
+    </>
+  );
+};
 
-export default Customers
+export default Customers;
