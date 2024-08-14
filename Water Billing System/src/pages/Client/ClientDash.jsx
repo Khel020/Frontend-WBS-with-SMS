@@ -1,21 +1,23 @@
 import React, { useEffect, useRef } from "react";
-
+import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 
 const ClientDash = () => {
+  const token = localStorage.getItem("token");
   const backend = import.meta.env.VITE_BACKEND;
-  const bodyRef = useRef;
-  const navigate = useNavigate;
-  const { acn } = useParams;
-
-  useEffect(() => {
-    fetch(`${backend}/clientdash/${acn}`, {
+  axios
+    .get(`${backend}/`, {
       headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${localStorage.getItem("type")}`,
+        Authorization: `Bearer ${token}`,
       },
+    })
+    .then((response) => {
+      console.log(response.data);
+    })
+    .catch((error) => {
+      console.error("Error:", error);
     });
-  });
+
   return <div>This is dashboard for client side</div>;
 };
 

@@ -10,18 +10,9 @@ const tableStyle = {
 
 const Table = () => {
   // State for holding clients data
+  // State for holding selected client data
   const [clients, setClients] = useState([]);
   const [showEditModal, setEditModal] = useState(false);
-
-  // Fetch clients data
-  useEffect(() => {
-    axios
-      .get("http://localhost:1020/client/clients")
-      .then((response) => setClients(response.data))
-      .catch((err) => console.log(err));
-  }, []);
-
-  // State for holding selected client data
   const [selectedClient, setSelectedClient] = useState({
     acc_num: "",
     accountName: "",
@@ -92,7 +83,30 @@ const Table = () => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
+  const backend = import.meta.env.VITE_BACKEND;
 
+  useEffect(() => {
+    const fetchClients = async () => {
+      const response = await fetch(`${backend}/client/clients`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("tkn")}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.log({ error: "Invalid Credentials" });
+      }
+      const data = await response.json();
+      console.log(data);
+      setClients(data);
+    };
+    fetchClients();
+  }, []);
+  if (!clients) {
+    return <div>Loading...</div>;
+  }
   return (
     <div>
       <div
@@ -136,11 +150,11 @@ const Table = () => {
                 <td className="text-center">{eachClient.meter_num}</td>
                 <td className="text-center">
                   {eachClient.status === "Active" ? (
-                    <span class="badge bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill">
+                    <span className="badge bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill">
                       Active
                     </span>
                   ) : (
-                    <span class="badge bg-danger-subtle border border-danger-subtle text-danger-emphasis rounded-pill">
+                    <span className="badge bg-danger-subtle border border-danger-subtle text-danger-emphasis rounded-pill">
                       Inactive
                     </span>
                   )}
@@ -158,10 +172,10 @@ const Table = () => {
                     </button>
                   </Link>
                   <button type="button" className="btn btn-primary btn-sm ms-1">
-                    <i class="bi bi-key-fill"></i>
+                    <i className="bi bi-key-fill"></i>
                   </button>
                   <button type="button" className="btn btn-danger btn-sm ms-1">
-                    <i class="bi bi-archive-fill"></i>
+                    <i className="bi bi-archive-fill"></i>
                   </button>
                   <button
                     type="button"

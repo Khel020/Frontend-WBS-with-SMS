@@ -33,7 +33,7 @@ const Sidebar = ({ role }) => {
       </Link>
       <hr />
       <ul className="nav nav-pills flex-column mb-auto">
-        {role === "biller" && (
+        {role === "billmngr" && (
           <>
             <li>
               <Link

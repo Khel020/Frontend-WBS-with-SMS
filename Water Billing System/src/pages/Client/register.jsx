@@ -148,7 +148,14 @@ function ListExample() {
       toast.error("An error occurred while creating the account.");
     }
   };
-
+  useEffect(() => {
+    fetch(`${backend}/clientdash/${acn}`, {
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("type")}`,
+      },
+    });
+  });
   return (
     <div
       style={{
