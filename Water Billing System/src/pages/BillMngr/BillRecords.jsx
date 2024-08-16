@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import BILLTABLE from "../../components/BillRecordTable.jsx";
 import Sidebar from "../../components/Sidebar.jsx";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 const BillRecords = () => {
+  const { acc_number } = useParams();
+  const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
+
+  useEffect(() => {
+    const fetchBillByid = async () => {
+      const response = await fetch(
+        `${backend}/biller/getBillbyAccNum/${acc_number}`
+      );
+    };
+  });
   return (
     <div
       style={{
@@ -36,8 +46,8 @@ const BillRecords = () => {
               </div>
             </div>
             <div className="col text-end">
-              <Link to="payments">
-                <button className="btn btn-primary">Payment History</button>
+              <Link to="receive-payments">
+                <button className="btn btn-primary">Receive Payments</button>
               </Link>
             </div>
           </div>

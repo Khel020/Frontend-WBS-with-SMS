@@ -57,6 +57,7 @@ const Lit = () => {
           backgroundColor: "#D6EFD8",
           height: "100vh",
           maxHeight: "100vh",
+          overflow: "hidden",
         }}
       >
         <Sidebar role={usertype} />
@@ -82,8 +83,10 @@ const Lit = () => {
                 className="card total-user"
                 style={{
                   border: "none",
-                  borderRadius: "10px",
                   cursor: "pointer",
+                  background:
+                    "linear-gradient(45deg, rgba(112, 124, 255, 1) 0%, rgba(250, 129, 232, 1) 100%)",
+                  boxShadow: "0 5px 20px rgba(255, 153, 139, 0.3)",
                 }}
               >
                 <div className="card-body d-flex justify-content-between align-items-end">
@@ -112,8 +115,10 @@ const Lit = () => {
                 className="card total-admin"
                 style={{
                   border: "none",
-                  borderRadius: "10px",
                   cursor: "pointer",
+                  background:
+                    "linear-gradient(45deg, rgba(9, 175, 232, 1) 0%, rgba(41, 244, 153, 1) 100%)",
+                  boxShadow: "0 5px 20px rgba(255, 153, 139, 0.3)",
                 }}
               >
                 <div className="card-body d-flex justify-content-between align-items-end">
@@ -144,6 +149,9 @@ const Lit = () => {
                   border: "none",
                   borderRadius: "10px",
                   cursor: "pointer",
+                  background:
+                    "linear-gradient(45deg, rgba(255, 153, 139, 1) 0%, rgba(255, 109, 136, 1) 100%)",
+                  boxShadow: "0 5px 20px rgba(255, 153, 139, 0.3)",
                 }}
               >
                 <div className="card-body d-flex justify-content-between align-items-end">
@@ -151,7 +159,7 @@ const Lit = () => {
                     <i
                       className="bi bi-person-fill"
                       style={{ fontSize: "20px" }}
-                    ></i>{" "}
+                    ></i>
                     Inactive
                   </h5>
                   <span
@@ -170,7 +178,7 @@ const Lit = () => {
           </div>
           <div
             className="card"
-            style={{ borderRadius: "20px", height: "450px" }}
+            style={{ borderRadius: "20px", height: "75vh" }}
           >
             <div className="card-body p-0">
               <div className="d-flex justify-content-end mb-3 mt-3 mx-3">

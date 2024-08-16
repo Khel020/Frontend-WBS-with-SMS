@@ -11,6 +11,7 @@ const tableStyle = {
 const Table = () => {
   // State for holding clients data
   // State for holding selected client data
+  const [showAddBill, setAddBModal] = useState(false);
   const [clients, setClients] = useState([]);
   const [showEditModal, setEditModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState({
@@ -48,6 +49,16 @@ const Table = () => {
       email: "",
       birthday: "",
     });
+  };
+  const handleAddModal = (client) => {
+    setSelectedClient({
+      ...client,
+    });
+    setAddBModal(true);
+  };
+
+  const closeAddBillModal = () => {
+    setAddBModal(false);
   };
   const closeMOdal = () => {
     setEditModal(false);
@@ -111,33 +122,33 @@ const Table = () => {
     <div>
       <div
         className="table table-responsive p-2"
-        style={{ maxHeight: "80vh", overflow: "auto" }}
+        style={{ maxHeight: "65vh", overflow: "auto" }}
       >
         <table className="table  table-hover text-xsmall">
           <thead className="table-secondary">
             <tr>
-              <th scope="col" className="text-center text-secondary">
+              <th scope="col" className="text-center text-dark">
                 Account No.
               </th>
-              <th scope="col" className="text-center text-secondary">
+              <th scope="col" className="text-center text-dark">
                 Full Name
               </th>
-              <th scope="col" className="text-center text-secondary">
+              <th scope="col" className="text-center text-dark">
                 Meter No.
               </th>
-              <th scope="col" className="text-center text-secondary">
+              <th scope="col" className="text-center text-dark">
                 Status
               </th>
-              <th scope="col" className="text-center text-secondary">
+              <th scope="col" className="text-center text-dark">
                 Type
               </th>
-              <th scope="col" className="text-center text-secondary">
+              <th scope="col" className="text-center text-dark">
                 Email Address
               </th>
-              <th scope="col" className="text-center text-secondary">
+              <th scope="col" className="text-center text-dark">
                 Birthday
               </th>
-              <th scope="col" className="text-center text-secondary">
+              <th scope="col" className="text-center text-dark">
                 Action
               </th>
             </tr>
@@ -145,7 +156,7 @@ const Table = () => {
           <tbody>
             {clients.map((eachClient, index) => (
               <tr key={index}>
-                <th className="text-center">{eachClient.acc_num}</th>
+                <td className="text-center">{eachClient.acc_num}</td>
                 <td className="text-center">{eachClient.accountName}</td>
                 <td className="text-center">{eachClient.meter_num}</td>
                 <td className="text-center">
@@ -166,14 +177,23 @@ const Table = () => {
                   {formatDate(eachClient.birthday)}
                 </td>
                 <td className="text-center">
-                  <Link to="billing-records">
-                    <button type="button" className="btn btn-success btn-sm">
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm ms-1"
+                    onClick={() => handleAddModal(eachClient)}
+                  >
+                    <i class="bi bi-file-earmark-plus-fill"></i>
+                  </button>
+
+                  <Link to={`/billing-records/${eachClient.acc_num}`}>
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm ms-1"
+                    >
                       <i className="bi bi-eye-fill"></i>
                     </button>
                   </Link>
-                  <button type="button" className="btn btn-primary btn-sm ms-1">
-                    <i className="bi bi-key-fill"></i>
-                  </button>
+
                   <button type="button" className="btn btn-danger btn-sm ms-1">
                     <i className="bi bi-archive-fill"></i>
                   </button>
@@ -189,7 +209,125 @@ const Table = () => {
             ))}
           </tbody>
         </table>
-        {/* Modal for edit client */}
+        {/* TODO: ADD BILLS FOR CLIENT MODAL */}
+        <Modal show={showAddBill} onHide={closeAddBillModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              Add Bill:
+              <span
+                style={{ color: "blue", fontSize: "20px", marginLeft: "15px" }}
+              >
+                {selectedClient.accountName}
+              </span>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <form class="row g-3">
+              <div class="col-md-6">
+                <label for="readingDate" class="form-label">
+                  Reading Date
+                </label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="readingDate"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="dueDate" class="form-label">
+                  Due Date
+                </label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="due_date"
+                  required
+                  disabled
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="presentRead" class="form-label">
+                  Previous Reading
+                </label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="presentRead"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="presentRead" class="form-label">
+                  Present Reading
+                </label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="presentRead"
+                  required
+                />
+              </div>
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <textarea
+                    class="form-control"
+                    placeholder="Others"
+                    id="floatingTextarea"
+                    style={{ height: "100px" }}
+                  ></textarea>
+                  <label for="floatingTextarea">Others</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-floating">
+                  <textarea
+                    class="form-control"
+                    placeholder="Remarks"
+                    id="floatingTextarea"
+                    style={{ height: "100px" }}
+                  ></textarea>
+                  <label for="floatingTextarea">Remarks</label>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="presentRead" class="form-label">
+                  Total Consumption
+                </label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="presentRead"
+                  required
+                  placeholder="0.00"
+                />
+              </div>
+              <div class="col-md-6">
+                <label for="presentRead" class="form-label">
+                  Total Amount
+                </label>
+                <input
+                  type="number"
+                  class="form-control"
+                  id="presentRead"
+                  required
+                  disabled
+                  placeholder="0.00"
+                />
+              </div>
+            </form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={closeAddBillModal}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={closeAddBillModal}>
+              Add Bill
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* TODO: EDIT CLIENT MODAL */}
         <Modal show={showEditModal} onHide={closeEditModal}>
           <Modal.Header closeButton>
             <Modal.Title>Edit Client</Modal.Title>

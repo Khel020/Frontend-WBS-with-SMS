@@ -79,7 +79,7 @@ const UserCards = () => {
                   className="bi bi-person-fill"
                   style={{ fontSize: "20px" }}
                 ></i>{" "}
-                Total Client
+                Total Staffs
               </h5>
               <span
                 className="card-value"

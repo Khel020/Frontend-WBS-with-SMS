@@ -1,48 +1,43 @@
 import React from "react";
-import Button from "react-bootstrap/Button";
-import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
-import Dropdown from "react-bootstrap/Dropdown";
+import {
+  Navbar,
+  Container,
+  Nav,
+  Form,
+  Button,
+  Dropdown,
+} from "react-bootstrap";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { useNavigate } from "react-router-dom";
+import "../styles/clientnav.css";
 
 const ClientHeader = () => {
   const navigate = useNavigate();
+
   const handleLogOut = () => {
     localStorage.clear();
     navigate("/login");
   };
+
   return (
-    <Navbar expand="lg" style={{ backgroundColor: "#3BAB64" }}>
+    <Navbar expand="lg" className="clientnavbar">
       <Container fluid>
-        <Navbar.Brand href="#" className="text-white">
+        <Navbar.Brand href="/clientdash" className="text-white">
           CWD Client Portal
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
-          <Nav
-            className="me-auto my-2 my-lg-0"
-            style={{ maxHeight: "100px" }}
-            navbarScroll
-          >
-            <Nav.Link
-              href="/clientdash"
-              className="text-white link-body-emphasis"
-            >
+          <Nav className="me-auto my-2 my-lg-0" navbarScroll>
+            <Nav.Link href="/clientdash" className="clientNav-link">
               Dashboard
             </Nav.Link>
-            <Nav.Link
-              href="/yourbills"
-              className="text-white link-body-emphasis"
-            >
+            <Nav.Link href="/yourbills" className="clientNav-link">
               Your Bills
             </Nav.Link>
-            <Nav.Link href="#action2" className="text-white link-body-emphasis">
+            <Nav.Link href="/servicerequest" className="clientNav-link">
               Service Request
             </Nav.Link>
-            <Nav.Link href="payments" className="text-white link-body-emphasis">
+            <Nav.Link href="/payments" className="clientNav-link">
               Payment History
             </Nav.Link>
           </Nav>
@@ -53,25 +48,20 @@ const ClientHeader = () => {
               className="me-2"
               aria-label="Search"
             />
-            <Button variant="outline-white" className="bg-white">
-              Search
-            </Button>
+            <Button variant="outline-light">Search</Button>
           </Form>
           <div className="mx-2">
             <i
-              class="bi bi-bell-fill text-white"
-              style={{ fontSize: "20px" }}
+              className="bi bi-bell-fill text-white bi-bell-custom"
+              aria-label="Notifications"
             ></i>
           </div>
           <div className="mx-2">
             <Dropdown>
-              <Dropdown.Toggle
-                id="dropdown-basic"
-                className="d-flex align-items-center bg-transparent border-0 text-dark"
-              >
+              <Dropdown.Toggle className="d-flex align-items-center bg-transparent border-0 text-dark">
                 <img
                   src="https://github.com/mdo.png"
-                  alt=""
+                  alt="Profile"
                   width="32"
                   height="32"
                   className="rounded-circle me-2"
@@ -79,9 +69,9 @@ const ClientHeader = () => {
                 <span>Admin</span>
               </Dropdown.Toggle>
               <Dropdown.Menu align="end">
-                <Dropdown.Item href="#/action-1">Archive List</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Profile</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Bills</Dropdown.Item>
+                <Dropdown.Item href="/archive">Archive List</Dropdown.Item>
+                <Dropdown.Item href="/profile">Profile</Dropdown.Item>
+                <Dropdown.Item href="/yourbills">Bills</Dropdown.Item>
                 <Dropdown.Item onClick={handleLogOut}>Log Out</Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>

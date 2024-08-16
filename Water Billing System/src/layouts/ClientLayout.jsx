@@ -4,8 +4,8 @@ import { Outlet } from "react-router-dom";
 const ClientLayout = () => {
   return (
     <div>
-      <Header></Header>
       <main>
+        <Header />
         <Outlet />
       </main>
     </div>

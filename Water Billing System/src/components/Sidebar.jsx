@@ -33,10 +33,7 @@ const Sidebar = ({ role }) => {
         to=""
         className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
       >
-        <svg className="bi pe-none me-2" width="40" height="32">
-          <use xlinkHref="#bootstrap" />
-        </svg>
-        <span className="fs-4">Sidebar</span>
+        <h5 className="text-center mx-auto">Water Billing System</h5>
       </Link>
       <hr />
       <ul className="nav nav-pills flex-column mb-auto">
@@ -133,6 +130,20 @@ const Sidebar = ({ role }) => {
             </li>
             <li>
               <Link
+                to="/customers"
+                className={`sidebar-nav-link nav-link ${
+                  activeLink === "/customerProfiles" ? "active-link" : ""
+                } link-body-emphasis mb-4`}
+              >
+                <i
+                  className="bi bi-person-circle"
+                  style={{ fontSize: "20px", marginRight: "10px" }}
+                ></i>
+                Customers
+              </Link>
+            </li>
+            <li>
+              <Link
                 to="/reports"
                 className={`sidebar-nav-link nav-link ${
                   activeLink === "/reports" ? "active-link" : ""
@@ -159,20 +170,7 @@ const Sidebar = ({ role }) => {
                 Logs
               </Link>
             </li>
-            <li>
-              <Link
-                to="/customers"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "/customerProfiles" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
-              >
-                <i
-                  className="bi bi-person-circle"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
-                ></i>
-                Customers
-              </Link>
-            </li>
+
             <li>
               <Link
                 to="/settings"
@@ -191,7 +189,7 @@ const Sidebar = ({ role }) => {
         )}
       </ul>
       <hr />
-      <div className="mx-auto">
+      <div className="text-start">
         <Dropdown>
           <Dropdown.Toggle
             id="dropdown-basic"

@@ -1,125 +1,49 @@
 import React from "react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+
 const BillRecordTable = () => {
-  const bills = [
-    {
-      id: 12,
-      ReadingDate: " 05/09/2024",
-      DueDate: "06/25/2024",
-      Consumption: "20cm3",
-      Amount: "732.00",
-      DisconnectionDate: "06/30/2024",
-    },
-    {
-      id: 13,
-      ReadingDate: "06/27/2024",
-      DueDate: "07/25/2024",
-      Consumption: "25cm3",
-      Amount: "800.00",
-      DisconnectionDate: "07/30/2024",
-    },
-    {
-      id: 14,
-      ReadingDate: "07/28/2024",
-      DueDate: "08/24/2024",
-      Consumption: "26cm3",
-      Amount: "732.00",
-      DisconnectionDate: "08/29/2024",
-    },
-    {
-      id: 15,
-      ReadingDate: "01/10/2024",
-      DueDate: "01/15/2024",
-      Consumption: "30cm2",
-      Amount: "810.00",
-      DisconnectionDate: "01/20/2024",
-    },
-    {
-      id: 16,
-      ReadingDate: "12/01/2023",
-      DueDate: "12/01/2023",
-      Consumption: "35cm2",
-      Amount: "900.00",
-      DisconnectionDate: "12/06/2023",
-    },
-    {
-      id: 16,
-      ReadingDate: "12/01/2023",
-      DueDate: "12/01/2023",
-      Consumption: "35cm2",
-      Amount: "900.00",
-      DisconnectionDate: "12/06/2023",
-    },
-    {
-      id: 16,
-      ReadingDate: "12/01/2023",
-      DueDate: "12/01/2023",
-      Consumption: "35cm2",
-      Amount: "900.00",
-      DisconnectionDate: "12/06/2023",
-    },
-    {
-      id: 16,
-      ReadingDate: "12/01/2023",
-      DueDate: "12/01/2023",
-      Consumption: "35cm2",
-      Amount: "900.00",
-      DisconnectionDate: "12/06/2023",
-    },
-    {
-      id: 16,
-      ReadingDate: "12/01/2023",
-      DueDate: "12/01/2023",
-      Consumption: "35cm2",
-      Amount: "900.00",
-      DisconnectionDate: "12/06/2023",
-    },
-    {
-      id: 16,
-      ReadingDate: "12/01/2023",
-      DueDate: "12/01/2023",
-      Consumption: "35cm2",
-      Amount: "900.00",
-      DisconnectionDate: "12/06/2023",
-    },
-    {
-      id: 16,
-      ReadingDate: "12/01/2023",
-      DueDate: "12/01/2023",
-      Consumption: "35cm2",
-      Amount: "900.00",
-      DisconnectionDate: "12/06/2023",
-    },
-    {
-      id: 16,
-      ReadingDate: "12/01/2023",
-      DueDate: "12/01/2023",
-      Consumption: "35cm2",
-      Amount: "900.00",
-      DisconnectionDate: "12/06/2023",
-    },
-  ];
-
   const [message, setMessage] = useState(false);
-
   const handleClose1 = () => setMessage(false);
   const handleShow1 = () => setMessage(true);
+  const [bills, setBills] = useState([]);
+  const { acc_number } = useParams();
+  const backend = import.meta.env.VITE_BACKEND;
+  const token = localStorage.getItem("type");
+
+  useEffect(() => {
+    const fetchBillByAccNum = async () => {
+      const response = await fetch(
+        `${backend}/biller/getBillbyAccNum/${acc_number}`
+      );
+      if (!response.ok) {
+        return { err: "Failed No Response" };
+      }
+
+      const data = await response.json();
+      console.log(data);
+      setBills(data);
+    };
+    fetchBillByAccNum();
+  }, [acc_number]);
 
   return (
     <div>
       <div
-        class="table-responsive"
+        className="table-responsive"
         style={{ maxHeight: "70vh", overflow: "auto" }}
       >
         <table className="table table-hover table-bordered">
           <thead className="table-dark">
             <tr>
               <th scope="col" className="text-center">
-                ID
+                Bill Number
+              </th>
+              <th scope="col" className="text-center">
+                Account Number
               </th>
               <th scope="col" className="text-center">
                 Reading Date
@@ -134,7 +58,7 @@ const BillRecordTable = () => {
                 Amount
               </th>
               <th scope="col" className="text-center">
-                Disconnection Date
+                Payment Status
               </th>
               <th scope="col" className="text-center">
                 Action
@@ -142,65 +66,80 @@ const BillRecordTable = () => {
             </tr>
           </thead>
           <tbody>
-            {bills.map((data) => {
-              return (
-                <tr>
-                  <th className="text-center">{data.id}</th>
-                  <td className="text-center">{data.ReadingDate}</td>
-                  <td className="text-center">{data.DueDate}</td>
-                  <td className="text-center">{data.Consumption}</td>
-                  <td className="text-center">{data.Amount}</td>
-                  <td className="text-center">{data.DisconnectionDate}</td>
-                  <td className="text-center">
-                    <div
-                      className="btn-group"
-                      role="group"
-                      aria-label="Basic example"
-                    >
-                      <i
-                        class="bi bi-eye-fill"
-                        style={{
-                          fontSize: "24px",
-                          cursor: "pointer",
-                          color: "#04BABA",
-                          marginRight: "10px",
-                        }}
-                      ></i>
-                      <i
-                        class="bi bi-printer"
-                        style={{
-                          fontSize: "24px",
-                          cursor: "pointer",
-                          color: "#C57219",
-                          marginRight: "10px",
-                        }}
-                      ></i>
-                      <i
-                        class="bi bi-chat-left-text-fill"
-                        onClick={handleShow1}
-                        style={{
-                          fontSize: "20px",
-                          cursor: "pointer",
-                          color: "#3E38FC",
-                          marginRight: "10px",
-                          marginTop: "3px",
-                        }}
-                      ></i>
-                      <i
-                        class="bi bi-cash-coin"
-                        style={{
-                          fontSize: "25px",
-                          cursor: "pointer",
-                          color: "#19A903",
-                          marginRight: "10px",
-                          marginTop: "3px",
-                        }}
-                      ></i>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {bills.length > 0 ? (
+              bills.map((data) => {
+                return (
+                  <tr key={data.billNumber}>
+                    <th className="text-center">{data.billNumber}</th>
+                    <td className="text-center">{data.acc_num}</td>
+                    <td className="text-center">
+                      {new Date(data.reading_date).toLocaleDateString()}
+                    </td>
+                    <td className="text-center">
+                      {new Date(data.due_date).toLocaleDateString()}
+                    </td>
+                    <td className="text-center">{data.consumption}</td>
+                    <td className="text-center">Amount</td>
+                    <td className="text-center">{data.payment_status}</td>
+                    <td className="text-center">
+                      <div
+                        className="btn-group"
+                        role="group"
+                        aria-label="Basic example"
+                      >
+                        <Link
+                          to="billing-details"
+                          className="bi bi-eye-fill"
+                          style={{
+                            fontSize: "24px",
+                            cursor: "pointer",
+                            color: "#04BABA",
+                            marginRight: "10px",
+                          }}
+                        ></Link>
+                        <i
+                          className="bi bi-printer"
+                          style={{
+                            fontSize: "24px",
+                            cursor: "pointer",
+                            color: "#C57219",
+                            marginRight: "10px",
+                          }}
+                        ></i>
+                        <i
+                          className="bi bi-chat-left-text-fill"
+                          onClick={handleShow1}
+                          style={{
+                            fontSize: "20px",
+                            cursor: "pointer",
+                            color: "#3E38FC",
+                            marginRight: "10px",
+                            marginTop: "3px",
+                          }}
+                        ></i>
+                        <Link
+                          to="paybill"
+                          className="bi bi-cash-coin"
+                          style={{
+                            fontSize: "25px",
+                            cursor: "pointer",
+                            color: "#19A903",
+                            marginRight: "10px",
+                            marginTop: "3px",
+                          }}
+                        ></Link>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan="8" className="text-center text-danger fw-bold">
+                  No records found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -236,7 +175,7 @@ const BillRecordTable = () => {
               </Form.Group>
               <label htmlFor="">Type of Notice</label>
               <select
-                class="form-select mb-3"
+                className="form-select mb-3"
                 aria-label="Disabled select example"
               >
                 <option value="1">New Bill Notice</option>
@@ -247,7 +186,7 @@ const BillRecordTable = () => {
               <Form.Group className="mb-3" controlId="accountNo">
                 <Form.Label>Message</Form.Label>
                 <textarea
-                  class="form-control"
+                  className="form-control"
                   id="exampleFormControlTextarea1"
                   rows="3"
                 ></textarea>

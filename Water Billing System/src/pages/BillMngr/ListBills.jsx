@@ -21,7 +21,14 @@ function ListBills() {
   const usertype = token;
   return (
     <>
-      <div className="d-flex">
+      <div
+        className="d-flex flex-column flex-md-row"
+        style={{
+          backgroundColor: "#D6EFD8",
+          height: "100vh",
+          maxHeight: "100vh",
+        }}
+      >
         <Sidebar role={usertype} />
         <main className="flex-grow-1 ms-sm-auto px-md-4">
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
@@ -41,7 +48,7 @@ function ListBills() {
           </div>
 
           <Container fluid>
-            <Row className="justify-content-center">
+            <Row className="d-flex align-center justify-content-center mx-auto">
               {[
                 {
                   colors: ["#8BC34A", "#4CAF50"],

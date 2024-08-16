@@ -71,13 +71,15 @@ const router = createBrowserRouter(
       </Route>
       <Route path="bills" element={<BillerLayout />}>
         <Route index element={<Bills />} />
-        <Route path="receive-payments" element={<ReceivePayments />} />
-        <Route path="paybill" element={<PayBill />} />
-        <Route path="billing-details" element={<BillingDetails />} />
       </Route>
       <Route path="listclient" element={<BillerLayout />}>
         <Route index element={<ListClient />} />
-        <Route path="billing-records" element={<BillRecords />} />
+      </Route>
+      <Route path="billing-records/:acc_number" element={<BillerLayout />}>
+        <Route index element={<BillRecords />} />
+        <Route path="billing-details" element={<BillingDetails />} />
+        <Route path="paybill" element={<PayBill />} />
+        <Route path="receive-payments" element={<ReceivePayments />} />
       </Route>
       <Route path="bill-reports" element={<BillerLayout />}>
         <Route index element={<Reports />} />
@@ -102,7 +104,6 @@ const router = createBrowserRouter(
     </>
   )
 );
-
 const App = () => {
   return (
     <>

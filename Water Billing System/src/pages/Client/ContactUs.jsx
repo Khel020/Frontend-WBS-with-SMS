@@ -6,6 +6,7 @@ import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
+import "../../styles/about-us.css";
 const ContactUs = () => {
   return (
     <div
@@ -31,7 +32,6 @@ const ContactUs = () => {
                         padding: "2rem",
                         display: "flex",
                         flexDirection: "column",
-
                         textAlign: "center",
                       }}
                       className="h-100"

@@ -56,40 +56,27 @@ const UserTable = () => {
                   <td>{data.email}</td>
                   <td>{data.usertype}</td>
                   <td className="text-center">
-                    <div
-                      className="btn-group"
-                      role="group"
-                      aria-label="Basic example"
-                    >
+                    <button type="button" className="btn btn-info btn-sm ms-1">
                       <i
                         className="bi bi-pencil-square"
                         onClick={handleShow1}
-                        style={{
-                          fontSize: "24px",
-                          cursor: "pointer",
-                          marginRight: "10px",
-                          color: "#D3BB01",
-                        }}
                       ></i>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-sm ms-1"
+                    >
                       <i
-                        className="bi bi-archive"
+                        className="bi bi-archive-fill"
                         onClick={handleShow2}
-                        style={{
-                          fontSize: "24px",
-                          cursor: "pointer",
-                          marginRight: "10px",
-                          color: "#EE4547",
-                        }}
                       ></i>
-                      <i
-                        className="bi bi-eye"
-                        style={{
-                          fontSize: "24px",
-                          cursor: "pointer",
-                          color: "#04BABA",
-                        }}
-                      ></i>
-                    </div>
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm ms-1"
+                    >
+                      <i className="bi bi-eye-fill"></i>
+                    </button>
                   </td>
                 </tr>
               );

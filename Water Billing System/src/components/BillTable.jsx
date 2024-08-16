@@ -1,43 +1,38 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 const tableStyle = {
   fontSize: "0.9rem",
 };
 
 function BillTable() {
-  const tableData = [
-    {
-      select: <input type="checkbox" />,
-      meterNo: "023-456",
-      readingDate: "2023-08-15",
-      dueDate: "2023-09-15",
-      name: "Diamond Abihin",
-      amountDue: "$150.00",
-      paymentStatus: "Unpaid",
-      paymentType: "Cash",
-    },
-    {
-      select: <input type="checkbox" />,
-      meterNo: "023-456",
-      readingDate: "2023-08-15",
-      dueDate: "2023-09-15",
-      name: "Diamond Abihin",
-      amountDue: "$150.00",
-      paymentStatus: "Unpaid",
-      paymentType: "Cash",
-    },
-    {
-      select: <input type="checkbox" />,
-      meterNo: "023-456",
-      readingDate: "2023-08-15",
-      dueDate: "2023-09-15",
-      name: "Diamond Abihin",
-      amountDue: "$150.00",
-      paymentStatus: "Unpaid",
-      paymentType: "Cash",
-    },
-  ];
+  const [bills, setBills] = useState([]);
+  const backend = import.meta.env.VITE_BACKEND;
 
+  useEffect(() => {
+    const fetchBills = async () => {
+      const response = await fetch(`${backend}/biller/getAllBills`, {
+        method: "GET",
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("tkn")}`,
+      });
+      if (!response.ok) {
+        console.log({ error: "Invalid Credentials" });
+      }
+      const data = await response.json();
+      console.log(data);
+      setBills(data);
+    };
+    fetchBills();
+  }, []);
+
+  if (!bills) {
+    return <div>Loading...</div>;
+  }
+  const formatDate = (dateString) => {
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
   return (
     <div>
       <div
@@ -45,13 +40,13 @@ function BillTable() {
         style={{ maxHeight: "60vh", overflow: "auto" }}
       >
         <table className="table table-hover table-bordered" style={tableStyle}>
-          <thead className="table-dark">
+          <thead className="table-secondary">
             <tr>
               <th scope="col" className="text-center">
                 Select
               </th>
               <th scope="col" className="text-center">
-                Meter No.
+                Bill No.
               </th>
               <th scope="col" className="text-center">
                 Reading Date
@@ -63,13 +58,13 @@ function BillTable() {
                 Name
               </th>
               <th scope="col" className="text-center">
+                Consumption
+              </th>
+              <th scope="col" className="text-center">
                 Amount Due
               </th>
               <th scope="col" className="text-center">
                 Payment Status
-              </th>
-              <th scope="col" className="text-center">
-                Payment Type
               </th>
               <th scope="col" className="text-center">
                 Action
@@ -77,16 +72,16 @@ function BillTable() {
             </tr>
           </thead>
           <tbody>
-            {tableData.map((row, index) => (
+            {bills.map((row, index) => (
               <tr key={index}>
                 <td className="text-center">{row.select}</td>
-                <td className="text-center">{row.meterNo}</td>
-                <td className="text-center">{row.readingDate}</td>
-                <td className="text-center">{row.dueDate}</td>
-                <td className="text-center">{row.name}</td>
-                <td className="text-center">{row.amountDue}</td>
-                <td className="text-center">{row.paymentStatus}</td>
-                <td className="text-center">{row.paymentType}</td>
+                <td className="text-center">{row.billNumber}</td>
+                <td className="text-center">{formatDate(row.reading_date)}</td>
+                <td className="text-center">{formatDate(row.due_date)}</td>
+                <td className="text-center">{row.accountName}</td>
+                <td className="text-center">{row.consumption}</td>
+                <td className="text-center">{row.consumption * 10}</td>
+                <td className="text-center">{row.payment_status}</td>
                 <td className="text-center">
                   <button type="button" className="btn btn-success btn-sm">
                     <Link
