@@ -1,5 +1,5 @@
 .active-link {
-  background-color: #508d4e !important;
+  background-color: #89cff0 !important;
 }
 .sidebar-nav-link {
   color: inherit;
@@ -7,7 +7,7 @@
 }
 
 .sidebar-nav-link:hover {
-  background-color: #c5e1c5;
+  background-color: #b2e0f5;
 }
 
 .active-link {

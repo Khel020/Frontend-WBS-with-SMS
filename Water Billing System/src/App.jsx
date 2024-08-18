@@ -29,7 +29,7 @@ import BillingDetails from "./pages/BillMngr/BillingDetails.jsx";
 import BillRecords from "./pages/BillMngr/BillRecords.jsx";
 import Bills from "./pages/BillMngr/ListBills.jsx";
 import ListClient from "./pages/BillMngr/ListClient.jsx";
-import PayBill from "./pages/BillMngr/Paybill.jsx";
+
 import ReceivePayments from "./pages/BillMngr/PaymentHistory.jsx";
 import Reports from "./pages/BillMngr/Reports.jsx";
 import BillerDash from "./pages/BillMngr/BillerDash.jsx";
@@ -75,10 +75,13 @@ const router = createBrowserRouter(
       <Route path="listclient" element={<BillerLayout />}>
         <Route index element={<ListClient />} />
       </Route>
-      <Route path="billing-records/:acc_number" element={<BillerLayout />}>
+      <Route
+        path="billing-records/:acc_number/:accountName"
+        element={<BillerLayout />}
+      >
         <Route index element={<BillRecords />} />
         <Route path="billing-details" element={<BillingDetails />} />
-        <Route path="paybill" element={<PayBill />} />
+
         <Route path="receive-payments" element={<ReceivePayments />} />
       </Route>
       <Route path="bill-reports" element={<BillerLayout />}>

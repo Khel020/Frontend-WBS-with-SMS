@@ -4,18 +4,11 @@ import Sidebar from "../../components/Sidebar.jsx";
 import { Link, useParams } from "react-router-dom";
 
 const BillRecords = () => {
-  const { acc_number } = useParams();
+  const { acc_number, accountName } = useParams();
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
 
-  useEffect(() => {
-    const fetchBillByid = async () => {
-      const response = await fetch(
-        `${backend}/biller/getBillbyAccNum/${acc_number}`
-      );
-    };
-  });
   return (
     <div
       style={{
@@ -27,7 +20,7 @@ const BillRecords = () => {
         <Sidebar role={usertype} />
         <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded">
-            <h1 className="h2">[Name:] Billing Record</h1>
+            <h1 className="h2">{accountName} Billing Record</h1>
           </div>
           <div className="row mb-3">
             <div className="col">

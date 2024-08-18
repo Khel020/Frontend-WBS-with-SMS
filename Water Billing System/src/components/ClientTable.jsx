@@ -12,6 +12,7 @@ const Table = () => {
   // State for holding clients data
   // State for holding selected client data
   const [showAddBill, setAddBModal] = useState(false);
+  const [showArchive, setArchive] = useState(false);
   const [clients, setClients] = useState([]);
   const [showEditModal, setEditModal] = useState(false);
   const [selectedClient, setSelectedClient] = useState({
@@ -56,12 +57,21 @@ const Table = () => {
     });
     setAddBModal(true);
   };
+  const handleArchive = (client) => {
+    setSelectedClient({
+      ...client,
+    });
+    setArchive(true);
+  };
 
   const closeAddBillModal = () => {
     setAddBModal(false);
   };
   const closeMOdal = () => {
     setEditModal(false);
+  };
+  const closeArchiveModal = () => {
+    setArchive(false);
   };
 
   // Function to handle form input change
@@ -122,10 +132,10 @@ const Table = () => {
     <div>
       <div
         className="table table-responsive p-2"
-        style={{ maxHeight: "65vh", overflow: "auto" }}
+        style={{ maxHeight: "60vh", overflowY: "auto" }}
       >
         <table className="table  table-hover text-xsmall">
-          <thead className="table-secondary">
+          <thead className="table">
             <tr>
               <th scope="col" className="text-center text-dark">
                 Account No.
@@ -185,7 +195,9 @@ const Table = () => {
                     <i class="bi bi-file-earmark-plus-fill"></i>
                   </button>
 
-                  <Link to={`/billing-records/${eachClient.acc_num}`}>
+                  <Link
+                    to={`/billing-records/${eachClient.acc_num}/${eachClient.accountName}`}
+                  >
                     <button
                       type="button"
                       className="btn btn-success btn-sm ms-1"
@@ -194,7 +206,11 @@ const Table = () => {
                     </button>
                   </Link>
 
-                  <button type="button" className="btn btn-danger btn-sm ms-1">
+                  <button
+                    type="button"
+                    className="btn btn-danger btn-sm ms-1"
+                    onClick={() => handleArchive(eachClient)}
+                  >
                     <i className="bi bi-archive-fill"></i>
                   </button>
                   <button
@@ -326,6 +342,43 @@ const Table = () => {
             </Button>
           </Modal.Footer>
         </Modal>
+        {/* TODO: ARCHIVE MODAL */}
+        <Modal show={showArchive} onHide={closeArchiveModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <i
+                  className="bi bi-exclamation-triangle"
+                  style={{ fontSize: "20px", marginRight: "5px" }}
+                ></i>
+                <span style={{ fontSize: "20px" }}>Archive</span>
+              </div>
+
+              <div className="mt-2 g-2">
+                <i>
+                  <span className="fw-bold ">Account name: </span>
+                  <span className="text-danger">
+                    {selectedClient.accountName}
+                  </span>{" "}
+                  <span className="text-danger">
+                    [{selectedClient.acc_num}]
+                  </span>
+                </i>
+              </div>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="text-dark">
+            Are you sure do you want to archive this client?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={closeAddBillModal}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={closeAddBillModal}>
+              Yes
+            </Button>
+          </Modal.Footer>
+        </Modal>
 
         {/* TODO: EDIT CLIENT MODAL */}
         <Modal show={showEditModal} onHide={closeEditModal}>
@@ -334,10 +387,7 @@ const Table = () => {
           </Modal.Header>
           <Modal.Body>
             <div className="px-3">
-              <form
-                className="row g-3 was-validated"
-                onSubmit={handleEditSubmittion}
-              >
+              <form className="row g-3" onSubmit={handleEditSubmittion}>
                 <div className="col-md-6">
                   <label
                     htmlFor="validationServerUsername"
@@ -345,11 +395,11 @@ const Table = () => {
                   >
                     Account Name
                   </label>
-                  <div className="input-group has-validation">
+                  <div className="input-group ">
                     <input
                       type="text"
                       name="accountName"
-                      className="form-control is-invalid"
+                      className="form-control"
                       id="validationServerUsername"
                       aria-describedby="inputGroupPrepend3 validationServerUsernameFeedback"
                       required
@@ -365,12 +415,12 @@ const Table = () => {
                   >
                     Account Number
                   </label>
-                  <div className="input-group has-validation">
+                  <div className="input-group ">
                     <input
                       type="text"
                       name="acc_num"
                       disabled
-                      className="form-control is-invalid"
+                      className="form-control"
                       id="validationServerUsername"
                       aria-describedby="inputGroupPrepend3 validationServerUsernameFeedback"
                       required
@@ -386,7 +436,7 @@ const Table = () => {
                   <input
                     name="meter_num"
                     type="number"
-                    className="form-control is-invalid"
+                    className="form-control"
                     id="validationServer03"
                     aria-describedby="validationServer03Feedback"
                     value={selectedClient.meter_num}
@@ -401,7 +451,7 @@ const Table = () => {
                   <input
                     name="contact"
                     type="number"
-                    className="form-control is-invalid"
+                    className="form-control"
                     id="contact"
                     aria-describedby="validationServer05Feedback"
                     required
@@ -416,7 +466,6 @@ const Table = () => {
                   <select
                     name="status"
                     className="form-select"
-                    aria-label="Default select example"
                     value={selectedClient.status}
                     onChange={handleEditValues}
                   >
@@ -431,7 +480,6 @@ const Table = () => {
                   <select
                     name="client_type"
                     className="form-select"
-                    aria-label="Default select example"
                     value={selectedClient.client_type}
                     onChange={handleEditValues}
                   >
@@ -447,7 +495,7 @@ const Table = () => {
                   <input
                     name="email"
                     type="email"
-                    className="form-control is-invalid"
+                    className="form-control"
                     id="email"
                     aria-describedby="validationServer05Feedback"
                     required
@@ -462,7 +510,7 @@ const Table = () => {
                   <input
                     name="birthday"
                     type="date"
-                    className="form-control is-invalid"
+                    className="form-control"
                     id="birthday"
                     aria-describedby="validationServer05Feedback"
                     required

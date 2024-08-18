@@ -24,9 +24,9 @@ const Sidebar = ({ role }) => {
       style={{
         width: "200px",
         height: "100vh",
-        borderBottomRightRadius: "20px",
-        borderTopRightRadius: "20px",
-        backgroundColor: "#80AF81",
+        // borderBottomRightRadius: "20px",
+        // borderTopRightRadius: "20px",
+        backgroundColor: "#51B0DD",
       }}
     >
       <Link

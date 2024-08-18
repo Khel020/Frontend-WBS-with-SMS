@@ -4,15 +4,16 @@ import { Link, useParams } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
+import { ToastContainer, toast } from "react-toastify";
 
 const BillRecordTable = () => {
   const [message, setMessage] = useState(false);
   const handleClose1 = () => setMessage(false);
   const handleShow1 = () => setMessage(true);
+  const [payment, setpayment] = useState(false);
   const [bills, setBills] = useState([]);
   const { acc_number } = useParams();
   const backend = import.meta.env.VITE_BACKEND;
-  const token = localStorage.getItem("type");
 
   useEffect(() => {
     const fetchBillByAccNum = async () => {
@@ -30,6 +31,10 @@ const BillRecordTable = () => {
     fetchBillByAccNum();
   }, [acc_number]);
 
+  const handlePayment = (data) => {
+    setpayment({ ...data });
+  };
+  const submitpayment = () => {};
   return (
     <div>
       <div
@@ -117,9 +122,12 @@ const BillRecordTable = () => {
                             marginTop: "3px",
                           }}
                         ></i>
-                        <Link
-                          to="paybill"
+                        <i
                           className="bi bi-cash-coin"
+                          onClick={() => handlePayment(data)}
+                          data-bs-toggle="offcanvas"
+                          data-bs-target="#paymentOffcanvas"
+                          aria-controls="paymentOffcanvas"
                           style={{
                             fontSize: "25px",
                             cursor: "pointer",
@@ -127,7 +135,7 @@ const BillRecordTable = () => {
                             marginRight: "10px",
                             marginTop: "3px",
                           }}
-                        ></Link>
+                        ></i>
                       </div>
                     </td>
                   </tr>
@@ -142,6 +150,118 @@ const BillRecordTable = () => {
             )}
           </tbody>
         </table>
+      </div>
+      <div
+        className="offcanvas offcanvas-end"
+        tabIndex="-1"
+        id="paymentOffcanvas"
+        aria-labelledby="paymentOffcanvasLabel"
+      >
+        <div className="offcanvas-header">
+          <h3 className="offcanvas-title" id="paymentOffcanvasLabel">
+            Payment Form
+          </h3>
+          <button
+            type="button"
+            className="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div className="offcanvas-body">
+          <form onSubmit={submitpayment}>
+            <div className="row">
+              <div className="col">
+                <div className="mb-3 mt-2">
+                  <span className="fw-bold" style={{ fontSize: "15px" }}>
+                    Account Number:
+                  </span>{" "}
+                  <span className="text-primary" style={{ fontSize: "15px" }}>
+                    {payment.acc_num}
+                  </span>
+                </div>
+                <div className="mb-3">
+                  <span className="fw-bold" style={{ fontSize: "15px" }}>
+                    Account Name:
+                  </span>{" "}
+                  <span className="text-primary" style={{ fontSize: "15px" }}>
+                    {payment.accountName}
+                  </span>
+                </div>
+                <div className="mb-3">
+                  <span className="fw-bold" style={{ fontSize: "15px" }}>
+                    Duedate:
+                  </span>{" "}
+                  <span className="text-primary" style={{ fontSize: "15px" }}>
+                    {payment.due_date}
+                  </span>
+                </div>
+                <div className="mb-5">
+                  <span className="fw-bold" style={{ fontSize: "15px" }}>
+                    Payment Status:
+                  </span>{" "}
+                  <span className="text-danger" style={{ fontSize: "15px" }}>
+                    {payment.payment_status}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="row">
+              <div className="col">
+                <div className="mb-3">
+                  <label htmlFor="cvv" className="form-label">
+                    Penalty Charge
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="cvv"
+                    placeholder="0.00"
+                    disabled
+                  />
+                </div>
+              </div>
+              <div className="col">
+                <div className="mb-3">
+                  <label htmlFor="cvv" className="form-label">
+                    Total Amount
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="cvv"
+                    placeholder="0.00"
+                    value={payment.amount}
+                    disabled
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="col-8">
+              <div className="mb-5">
+                <label htmlFor="cvv" className="form-label">
+                  Total Amount
+                </label>
+                <div className="input-group">
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="cvv"
+                    placeholder="0.00"
+                    min={0}
+                  />
+                  <button className="btn btn-primary" type="button">
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" className="btn btn-primary col-12">
+              Submit Payment
+            </button>
+          </form>
+        </div>
       </div>
 
       <Modal
@@ -203,6 +323,17 @@ const BillRecordTable = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      <ToastContainer
+        position="top-right"
+        autoClose={1000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        theme="light"
+      />
     </div>
   );
 };
