@@ -39,6 +39,7 @@ import AdminDash from "./pages/Admin/AdminDash.jsx";
 import Userlist from "./pages/Admin/userlist.jsx";
 import Settings from "./pages/Admin/Settings.jsx";
 import AdminReports from "./pages/Admin/DetailedReports.jsx";
+import CustomersProfile from "./pages/Admin/CustomerProf.jsx";
 import Customers from "./pages/Admin/Customers.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -102,6 +103,9 @@ const router = createBrowserRouter(
       </Route>
       <Route path="customers" element={<AdminLayout />}>
         <Route index element={<Customers />} />
+      </Route>
+      <Route path="customer/:id/:accountName" element={<AdminLayout />}>
+        <Route index element={<CustomersProfile />} />
       </Route>
       <Route path="*" element={<div>Page is not available</div>} />
     </>

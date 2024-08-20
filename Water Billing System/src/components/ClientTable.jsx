@@ -3,10 +3,8 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { Link } from "react-router-dom";
-
-const tableStyle = {
-  fontSize: "0.9rem",
-};
+import "bootstrap/dist/css/bootstrap.min.css";
+import "../styles/clientTBL.css";
 
 const Table = () => {
   // State for holding clients data
@@ -104,8 +102,9 @@ const Table = () => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
-  const backend = import.meta.env.VITE_BACKEND;
 
+  //TODO: GET ALL Consumers
+  const backend = import.meta.env.VITE_BACKEND;
   useEffect(() => {
     const fetchClients = async () => {
       const response = await fetch(`${backend}/client/clients`, {
@@ -128,6 +127,11 @@ const Table = () => {
   if (!clients) {
     return <div>Loading...</div>;
   }
+  const [showMenu, setShowMenu] = useState(false);
+
+  const handleToggle = () => setShowMenu(!showMenu);
+
+  const handleClose = () => setShowMenu(false);
   return (
     <div>
       <div
@@ -135,30 +139,30 @@ const Table = () => {
         style={{ maxHeight: "60vh", overflowY: "auto" }}
       >
         <table className="table  table-hover text-xsmall">
-          <thead className="table">
+          <thead className="table-dark">
             <tr>
-              <th scope="col" className="text-center text-dark">
+              <th scope="col" className=" text-white">
                 Account No.
               </th>
-              <th scope="col" className="text-center text-dark">
+              <th scope="col" className=" text-white">
                 Full Name
               </th>
-              <th scope="col" className="text-center text-dark">
+              <th scope="col" className=" text-white">
                 Meter No.
               </th>
-              <th scope="col" className="text-center text-dark">
+              <th scope="col" className=" text-white">
                 Status
               </th>
-              <th scope="col" className="text-center text-dark">
+              <th scope="col" className=" text-white">
                 Type
               </th>
-              <th scope="col" className="text-center text-dark">
+              <th scope="col" className=" text-white">
                 Email Address
               </th>
-              <th scope="col" className="text-center text-dark">
+              <th scope="col" className=" text-white">
                 Birthday
               </th>
-              <th scope="col" className="text-center text-dark">
+              <th scope="col" className=" text-white">
                 Action
               </th>
             </tr>
@@ -166,10 +170,10 @@ const Table = () => {
           <tbody>
             {clients.map((eachClient, index) => (
               <tr key={index}>
-                <td className="text-center">{eachClient.acc_num}</td>
-                <td className="text-center">{eachClient.accountName}</td>
-                <td className="text-center">{eachClient.meter_num}</td>
-                <td className="text-center">
+                <td>{eachClient.acc_num}</td>
+                <td>{eachClient.accountName}</td>
+                <td>{eachClient.meter_num}</td>
+                <td>
                   {eachClient.status === "Active" ? (
                     <span className="badge bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill">
                       Active
@@ -181,45 +185,60 @@ const Table = () => {
                   )}
                 </td>
 
-                <td className="text-center">{eachClient.client_type}</td>
-                <td className="text-center">{eachClient.email}</td>
-                <td className="text-center">
-                  {formatDate(eachClient.birthday)}
-                </td>
-                <td className="text-center">
-                  <button
-                    type="button"
-                    className="btn btn-primary btn-sm ms-1"
-                    onClick={() => handleAddModal(eachClient)}
-                  >
-                    <i class="bi bi-file-earmark-plus-fill"></i>
-                  </button>
+                <td>{eachClient.client_type}</td>
+                <td>{eachClient.email}</td>
+                <td>{formatDate(eachClient.birthday)}</td>
+                <td>
+                  <div class="container-fluid">
+                    <div class="dropdown">
+                      <i
+                        class="bi bi-three-dots-vertical"
+                        id="dropdownMenuButton"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        style={{ cursor: "pointer", fontSize: "20px" }}
+                      ></i>
 
-                  <Link
-                    to={`/billing-records/${eachClient.acc_num}/${eachClient.accountName}`}
-                  >
-                    <button
-                      type="button"
-                      className="btn btn-success btn-sm ms-1"
-                    >
-                      <i className="bi bi-eye-fill"></i>
-                    </button>
-                  </Link>
+                      <ul
+                        class="dropdown-menu"
+                        aria-labelledby="dropdownMenuButton"
+                      >
+                        <li className="">
+                          <Link
+                            to={`/billing-records/${eachClient.acc_num}/${eachClient.accountName}`}
+                            class="dropdown-item"
+                            href="#"
+                          >
+                            <h5 className="d-flex gap-2 align-items-end">
+                              <i class="bi bi-eye text-dark"></i>
+                              <span>View Bills</span>
+                            </h5>
+                          </Link>
+                        </li>
+                        <li>
+                          <a
+                            class="dropdown-item"
+                            href="#"
+                            onClick={() => handleAddModal(eachClient)}
+                            style={{ outline: "none" }}
+                          >
+                            <h5 className="d-flex gap-2 align-items-end ">
+                              <i class="bi bi-plus-lg text-dark"></i>
+                              <span>Add Bills</span>
+                            </h5>
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
 
-                  <button
-                    type="button"
-                    className="btn btn-danger btn-sm ms-1"
-                    onClick={() => handleArchive(eachClient)}
-                  >
-                    <i className="bi bi-archive-fill"></i>
-                  </button>
-                  <button
+                  {/*FIXME: EDIT CLIENT FUNCTION <button
                     type="button"
                     onClick={() => handleEditClick(eachClient)}
                     className="btn btn-info btn-sm ms-1"
                   >
                     <i className="bi bi-pencil-square"></i>
-                  </button>
+                  </button> */}
                 </td>
               </tr>
             ))}

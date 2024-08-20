@@ -64,7 +64,7 @@ const Sidebar = ({ role }) => {
                   className="bi bi-person-lines-fill"
                   style={{ fontSize: "20px", marginRight: "10px" }}
                 ></i>
-                List Client
+                Consumers
               </Link>
             </li>
             <li>
@@ -125,7 +125,7 @@ const Sidebar = ({ role }) => {
                   className="bi bi-people-fill"
                   style={{ fontSize: "20px", marginRight: "10px" }}
                 ></i>
-                Manage User
+                Accounts
               </Link>
             </li>
             <li>

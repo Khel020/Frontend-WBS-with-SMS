@@ -63,7 +63,7 @@ const Lit = () => {
         <Sidebar role={usertype} />
         <main className="col-md-9 ms-sm-auto col-lg-10 px-md-3">
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
-            <h1 className="h2">List Client</h1>
+            <h1 className="h2">List Of Consumers</h1>
             <form className="d-flex mt-3 mt-lg-0" role="search">
               <input
                 className="form-control me-2"
@@ -103,9 +103,7 @@ const Lit = () => {
                       color: "#006F56",
                       marginRight: "10px",
                     }}
-                  >
-                    1500
-                  </span>
+                  ></span>
                 </div>
               </div>
             </div>
