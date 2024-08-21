@@ -1,6 +1,3 @@
-.dropdown-item:focus,
-.dropdown-item:active {
-  outline: none; /* Remove the outline */
-  background-color: transparent; /* Remove the background color */
-  color: inherit; /* Keep text color unchanged */
+.dropdown-item:hover {
+  background-color: aquamarine;
 }

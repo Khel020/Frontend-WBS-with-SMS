@@ -9,7 +9,7 @@ const CustomerTbl = () => {
 
   useEffect(() => {
     const fetchClients = async () => {
-      const response = await fetch(`${backend}/client/clients`, {
+      const response = await fetch(`${backend}/admin/customers/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -48,19 +48,13 @@ const CustomerTbl = () => {
               Full Name
             </th>
             <th scope="col" className=" text-white">
-              Meter No.
+              Address
             </th>
             <th scope="col" className=" text-white">
               Status
             </th>
             <th scope="col" className=" text-white">
-              Type
-            </th>
-            <th scope="col" className=" text-white">
               Email Address
-            </th>
-            <th scope="col" className=" text-white">
-              Birthday
             </th>
             <th scope="col" className=" text-white">
               Action
@@ -72,7 +66,13 @@ const CustomerTbl = () => {
             <tr key={index}>
               <td>{eachClient.acc_num}</td>
               <td>{eachClient.accountName}</td>
-              <td>{eachClient.meter_num}</td>
+              <td>
+                {eachClient.c_address.house_num +
+                  ", Purok " +
+                  eachClient.c_address.purok +
+                  ",  " +
+                  eachClient.c_address.brgy}
+              </td>
               <td>
                 {eachClient.status === "Active" ? (
                   <span className="badge bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill">
@@ -84,12 +84,8 @@ const CustomerTbl = () => {
                   </span>
                 )}
               </td>
-
-              <td>{eachClient.client_type}</td>
               <td>{eachClient.email}</td>
-              <td>{formatDate(eachClient.install_date)}</td>
-
-              <td className="text-center">
+              <td>
                 <Link
                   to={`/customer/${eachClient.acc_num}/${eachClient.accountName}`}
                   type="button"

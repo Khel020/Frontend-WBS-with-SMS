@@ -1,6 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const BillingDetails = () => {
+  const [billdetails, setBillDetails] = useState([
+    {
+      acc_num: " ",
+      reading_date: " ",
+      due_date: " ",
+      accountName: " ",
+      consumption: " ",
+      dc_date: " ",
+      category: " ",
+      totalAmount: " ",
+      rate: " ",
+      p_charge: " ",
+      others: " ",
+      remarks: " ",
+    },
+  ]);
+  console.log(billdetails);
+
+  const backend = import.meta.env.VITE_BACKEND;
+  const { billNumber } = useParams();
+
+  useEffect(() => {
+    const fetchBillNum = async () => {
+      const response = await fetch(
+        `${backend}/biller/getBillbyBillNum/${billNumber}`
+      );
+      if (!response.ok) {
+        return { Message: "No bills found" };
+      }
+      const data = response.json();
+      console.log("data from fetch", data);
+      setBillDetails(data);
+    };
+    fetchBillNum();
+  }, []);
   return (
     <>
       <div className="card">
@@ -21,7 +57,7 @@ const BillingDetails = () => {
             <tbody>
               <tr>
                 <td>
-                  <b>Reading Date:</b> December 15, 2022 (Thursday)
+                  <b>Reading Date:</b> {billdetails.reading_date}
                 </td>
                 <td>
                   <b>Due Date:</b> January 01, 2023 (Sunday)

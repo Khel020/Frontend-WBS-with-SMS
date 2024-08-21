@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import DETAILS from "../../components/BCDetails.jsx";
 import Sidebar from "../../components/Sidebar.jsx";
+import { useParams } from "react-router-dom";
 
 const BillingDetails = () => {
   const token = localStorage.getItem("type");

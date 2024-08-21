@@ -85,6 +85,13 @@ const router = createBrowserRouter(
 
         <Route path="receive-payments" element={<ReceivePayments />} />
       </Route>
+      <Route path="billing-details/:billNumber" element={<BillerLayout />}>
+        <Route index element={<BillingDetails />} />
+        <Route path="billing-details" element={<BillingDetails />} />
+      </Route>
+      <Route path="receive-payments" element={<BillerLayout />}>
+        <Route index element={<ReceivePayments />} />
+      </Route>
       <Route path="bill-reports" element={<BillerLayout />}>
         <Route index element={<Reports />} />
       </Route>
@@ -104,7 +111,7 @@ const router = createBrowserRouter(
       <Route path="customers" element={<AdminLayout />}>
         <Route index element={<Customers />} />
       </Route>
-      <Route path="customer/:id/:accountName" element={<AdminLayout />}>
+      <Route path="customer/:acc_number/:accountName" element={<AdminLayout />}>
         <Route index element={<CustomersProfile />} />
       </Route>
       <Route path="*" element={<div>Page is not available</div>} />

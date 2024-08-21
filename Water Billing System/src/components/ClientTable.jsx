@@ -7,12 +7,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/clientTBL.css";
 
 const Table = () => {
-  // State for holding clients data
-  // State for holding selected client data
-  const [showAddBill, setAddBModal] = useState(false);
-  const [showArchive, setArchive] = useState(false);
+  //State for storing data
   const [clients, setClients] = useState([]);
-  const [showEditModal, setEditModal] = useState(false);
+  const [clientBill, setClientBill] = useState([]);
+  const [dueDate, setDueDate] = useState("");
+  const [readingDate, setReading] = useState("");
   const [selectedClient, setSelectedClient] = useState({
     acc_num: "",
     accountName: "",
@@ -23,19 +22,10 @@ const Table = () => {
     email: "",
     birthday: "",
   });
-
-  // View Selected client in edit modal
-  const handleEditClick = (client) => {
-    setSelectedClient({
-      ...client,
-      birthday: client.birthday
-        ? new Date(client.birthday).toISOString().substring(0, 10)
-        : "",
-    });
-    setEditModal(true);
-  };
-
-  // Set values to empty when modal close
+  //State for Modal Show
+  const [showAddBill, setAddBModal] = useState(false);
+  const [showArchive, setArchive] = useState(false);
+  const [showEditModal, setEditModal] = useState(false);
   const closeEditModal = () => {
     setEditModal(false);
     setSelectedClient({
@@ -72,30 +62,70 @@ const Table = () => {
     setArchive(false);
   };
 
+  const handleReadingDateChange = (e) => {
+    const date = e.target.value;
+    setReading(date);
+
+    const newDueDate = new Date(date);
+    newDueDate.setDate(newDueDate.getDate() + 30);
+
+    const formattedDueDate = newDueDate.toISOString().split("T")[0];
+    setDueDate(formattedDueDate);
+  };
+
+  useEffect(() => {
+    const fetchBillByAccNum = async () => {
+      const response = await fetch(
+        `${backend}/biller/getBillbyAccNum/${selectedClient.acc_num}`
+      );
+      if (!response.ok) {
+        return { err: "Failed No Response" };
+      }
+
+      const data = await response.json();
+      console.log(data);
+      setClientBill(data);
+    };
+    fetchBillByAccNum();
+  }, []);
+
+  //TODO: "EDIT CLIENT" View Selected client in edit modal
+  // const handleEditClick = (client) => {
+  //   setSelectedClient({
+  //     ...client,
+  //     birthday: client.birthday
+  //       ? new Date(client.birthday).toISOString().substring(0, 10)
+  //       : "",
+  //   });
+  //   setEditModal(true);
+  // };
+
+  // Set values to empty when modal close
+
   // Function to handle form input change
-  const handleEditValues = (e) => {
-    const { name, value } = e.target;
-    setSelectedClient({ ...selectedClient, [name]: value });
-  };
+  // const handleEditValues = (e) => {
+  //   const { name, value } = e.target;
+  //   setSelectedClient({ ...selectedClient, [name]: value });
+  // };
 
-  // Function to handle form submission from edit modal
-  const handleEditSubmittion = (e) => {
-    e.preventDefault();
+  // // Function to handle form submission from edit modal
+  // const handleEditSubmittion = (e) => {
+  //   e.preventDefault();
 
-    // Make a PUT request to update the client data
-    axios
-      .put("http://localhost:1020/client/editClient/", selectedClient)
-      .then((response) => {
-        // Update the client list with the updated client data
-        setClients(
-          clients.map((client) =>
-            client.acc_num === selectedClient.acc_num ? response.data : client
-          )
-        );
-        window.location.reload();
-      })
-      .catch((error) => console.error("Error updating client:", error));
-  };
+  //   // Make a PUT request to update the client data
+  //   axios
+  //     .put("http://localhost:1020/client/editClient/", selectedClient)
+  //     .then((response) => {
+  //       // Update the client list with the updated client data
+  //       setClients(
+  //         clients.map((client) =>
+  //           client.acc_num === selectedClient.acc_num ? response.data : client
+  //         )
+  //       );
+  //       window.location.reload();
+  //     })
+  //     .catch((error) => console.error("Error updating client:", error));
+  // };
 
   // TODO: FORMAT DATE
   const formatDate = (dateString) => {
@@ -119,7 +149,6 @@ const Table = () => {
         console.log({ error: "Invalid Credentials" });
       }
       const data = await response.json();
-      console.log(data);
       setClients(data);
     };
     fetchClients();
@@ -127,11 +156,7 @@ const Table = () => {
   if (!clients) {
     return <div>Loading...</div>;
   }
-  const [showMenu, setShowMenu] = useState(false);
 
-  const handleToggle = () => setShowMenu(!showMenu);
-
-  const handleClose = () => setShowMenu(false);
   return (
     <div>
       <div
@@ -160,7 +185,7 @@ const Table = () => {
                 Email Address
               </th>
               <th scope="col" className=" text-white">
-                Birthday
+                Address
               </th>
               <th scope="col" className=" text-white">
                 Action
@@ -187,12 +212,18 @@ const Table = () => {
 
                 <td>{eachClient.client_type}</td>
                 <td>{eachClient.email}</td>
-                <td>{formatDate(eachClient.birthday)}</td>
                 <td>
-                  <div class="container-fluid">
-                    <div class="dropdown">
+                  {eachClient.c_address.house_num +
+                    ", Purok " +
+                    eachClient.c_address.purok +
+                    " ," +
+                    eachClient.c_address.brgy}
+                </td>
+                <td>
+                  <div className="container-fluid">
+                    <div className="dropdown">
                       <i
-                        class="bi bi-three-dots-vertical"
+                        className="bi bi-three-dots-vertical"
                         id="dropdownMenuButton"
                         data-bs-toggle="dropdown"
                         aria-expanded="false"
@@ -200,30 +231,30 @@ const Table = () => {
                       ></i>
 
                       <ul
-                        class="dropdown-menu"
+                        className="dropdown-menu p-0 "
                         aria-labelledby="dropdownMenuButton"
                       >
-                        <li className="">
+                        <li>
                           <Link
                             to={`/billing-records/${eachClient.acc_num}/${eachClient.accountName}`}
-                            class="dropdown-item"
+                            className="dropdown-item"
                             href="#"
                           >
                             <h5 className="d-flex gap-2 align-items-end">
-                              <i class="bi bi-eye text-dark"></i>
+                              <i className="bi bi-eye text-dark"></i>
                               <span>View Bills</span>
                             </h5>
                           </Link>
                         </li>
                         <li>
                           <a
-                            class="dropdown-item"
+                            className="dropdown-item"
                             href="#"
                             onClick={() => handleAddModal(eachClient)}
                             style={{ outline: "none" }}
                           >
                             <h5 className="d-flex gap-2 align-items-end ">
-                              <i class="bi bi-plus-lg text-dark"></i>
+                              <i className="bi bi-plus-lg text-dark"></i>
                               <span>Add Bills</span>
                             </h5>
                           </a>
@@ -257,56 +288,59 @@ const Table = () => {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <form class="row g-3">
-              <div class="col-md-6">
-                <label for="readingDate" class="form-label">
+            <form className="row g-3">
+              <div className="col-md-6">
+                <label htmlFor="read_date" className="form-label">
                   Reading Date
                 </label>
                 <input
                   type="date"
-                  class="form-control"
-                  id="readingDate"
+                  className="form-control"
+                  id="read_date"
                   required
+                  value={readingDate}
+                  onChange={handleReadingDateChange}
                 />
               </div>
-              <div class="col-md-6">
-                <label for="dueDate" class="form-label">
+              <div className="col-md-6">
+                <label htmlFor="dueDate" className="form-label">
                   Due Date
                 </label>
                 <input
                   type="date"
-                  class="form-control"
+                  className="form-control"
                   id="due_date"
                   required
+                  value={dueDate}
                   disabled
                 />
               </div>
-              <div class="col-md-6">
-                <label for="presentRead" class="form-label">
+              <div className="col-md-6">
+                <label for="presentRead" className="form-label">
                   Previous Reading
                 </label>
                 <input
                   type="number"
-                  class="form-control"
+                  className="form-control"
                   id="presentRead"
                   required
                 />
               </div>
-              <div class="col-md-6">
-                <label for="presentRead" class="form-label">
+              <div className="col-md-6">
+                <label for="presentRead" className="form-label">
                   Present Reading
                 </label>
                 <input
                   type="number"
-                  class="form-control"
+                  className="form-control"
                   id="presentRead"
                   required
                 />
               </div>
-              <div class="col-md-6">
-                <div class="form-floating">
+              <div className="col-md-6">
+                <div className="form-floating">
                   <textarea
-                    class="form-control"
+                    className="form-control"
                     placeholder="Others"
                     id="floatingTextarea"
                     style={{ height: "100px" }}
@@ -314,10 +348,10 @@ const Table = () => {
                   <label for="floatingTextarea">Others</label>
                 </div>
               </div>
-              <div class="col-md-6">
-                <div class="form-floating">
+              <div className="col-md-6">
+                <div className="form-floating">
                   <textarea
-                    class="form-control"
+                    className="form-control"
                     placeholder="Remarks"
                     id="floatingTextarea"
                     style={{ height: "100px" }}
@@ -325,25 +359,25 @@ const Table = () => {
                   <label for="floatingTextarea">Remarks</label>
                 </div>
               </div>
-              <div class="col-md-6">
-                <label for="presentRead" class="form-label">
+              <div className="col-md-6">
+                <label for="presentRead" className="form-label">
                   Total Consumption
                 </label>
                 <input
                   type="number"
-                  class="form-control"
+                  className="form-control"
                   id="presentRead"
                   required
                   placeholder="0.00"
                 />
               </div>
-              <div class="col-md-6">
-                <label for="presentRead" class="form-label">
+              <div className="col-md-6">
+                <label for="presentRead" className="form-label">
                   Total Amount
                 </label>
                 <input
                   type="number"
-                  class="form-control"
+                  className="form-control"
                   id="presentRead"
                   required
                   disabled
@@ -356,12 +390,12 @@ const Table = () => {
             <Button variant="secondary" onClick={closeAddBillModal}>
               Cancel
             </Button>
-            <Button variant="primary" onClick={closeAddBillModal}>
+            <Button variant="primary" onClick={closeAddBillModal} type="submit">
               Add Bill
             </Button>
           </Modal.Footer>
         </Modal>
-        {/* TODO: ARCHIVE MODAL */}
+        {/* TODO: ARCHIVE MODAL
         <Modal show={showArchive} onHide={closeArchiveModal}>
           <Modal.Header closeButton>
             <Modal.Title>
@@ -397,10 +431,10 @@ const Table = () => {
               Yes
             </Button>
           </Modal.Footer>
-        </Modal>
+        </Modal> */}
 
         {/* TODO: EDIT CLIENT MODAL */}
-        <Modal show={showEditModal} onHide={closeEditModal}>
+        {/* <Modal show={showEditModal} onHide={closeEditModal}>
           <Modal.Header closeButton>
             <Modal.Title>Edit Client</Modal.Title>
           </Modal.Header>
@@ -554,7 +588,7 @@ const Table = () => {
               </form>
             </div>
           </Modal.Body>
-        </Modal>
+        </Modal> */}
       </div>
     </div>
   );

@@ -52,7 +52,7 @@ const Lit = () => {
   return (
     <>
       <div
-        className="listclient d-flex flex-column flex-md-row"
+        className=" d-flex flex-column flex-md-row"
         style={{
           backgroundColor: "white",
           height: "100vh",
@@ -174,14 +174,7 @@ const Lit = () => {
             className="card"
             style={{ borderRadius: "15px", height: "75vh" }}
           >
-            <div className="card-body p-0">
-              <div className="d-flex justify-content-end mb-3 mt-3 mx-3">
-                <Button variant="primary" onClick={handleShow}>
-                  <i className="bi bi-person-plus"></i>
-                  Add Client
-                </Button>
-              </div>
-
+            <div className="card-body p-2 ">
               <ClientTable />
             </div>
           </div>
