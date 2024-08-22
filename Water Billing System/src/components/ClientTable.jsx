@@ -220,48 +220,13 @@ const Table = () => {
                     eachClient.c_address.brgy}
                 </td>
                 <td>
-                  <div className="container-fluid">
-                    <div className="dropdown">
-                      <i
-                        className="bi bi-three-dots-vertical"
-                        id="dropdownMenuButton"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                        style={{ cursor: "pointer", fontSize: "20px" }}
-                      ></i>
-
-                      <ul
-                        className="dropdown-menu p-0 "
-                        aria-labelledby="dropdownMenuButton"
-                      >
-                        <li>
-                          <Link
-                            to={`/billing-records/${eachClient.acc_num}/${eachClient.accountName}`}
-                            className="dropdown-item"
-                            href="#"
-                          >
-                            <h5 className="d-flex gap-2 align-items-end">
-                              <i className="bi bi-eye text-dark"></i>
-                              <span>View Bills</span>
-                            </h5>
-                          </Link>
-                        </li>
-                        <li>
-                          <a
-                            className="dropdown-item"
-                            href="#"
-                            onClick={() => handleAddModal(eachClient)}
-                            style={{ outline: "none" }}
-                          >
-                            <h5 className="d-flex gap-2 align-items-end ">
-                              <i className="bi bi-plus-lg text-dark"></i>
-                              <span>Add Bills</span>
-                            </h5>
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
+                  <Link
+                    to={`/billing-records/${eachClient.acc_num}/${eachClient.accountName}`}
+                  >
+                    <a className="btn btn-info btn-sm">
+                      <span>View Bills</span>
+                    </a>
+                  </Link>
 
                   {/*FIXME: EDIT CLIENT FUNCTION <button
                     type="button"

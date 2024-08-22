@@ -24,7 +24,7 @@ function ListBills() {
       <div
         className="d-flex flex-column flex-md-row"
         style={{
-          backgroundColor: "#D6EFD8",
+          backgroundColor: "white",
           height: "100vh",
           maxHeight: "100vh",
         }}
@@ -48,55 +48,6 @@ function ListBills() {
           </div>
 
           <Container fluid>
-            <Row className="d-flex align-center justify-content-center mx-auto">
-              {[
-                {
-                  colors: ["#8BC34A", "#4CAF50"],
-                  text: "Total Bills:",
-                  value: "10",
-                },
-                {
-                  colors: ["#FFEB3B", "#FF9800"],
-                  text: "Unpaid Bills:",
-                  value: "20",
-                },
-                {
-                  colors: ["#D648EE", "#1976D2"],
-                  text: "Paid Bills:",
-                  value: "30",
-                },
-                {
-                  colors: ["#716767", "#CAC4D0"],
-                  text: "Overdue:",
-                  value: "50",
-                },
-              ].map((item, index) => (
-                <Col key={index} md={3} className="mb-2 mx-auto">
-                  <Card
-                    className={`dash-card ${
-                      index === 3 ? "members-card" : "User-card"
-                    }`}
-                    style={{
-                      width: "14rem",
-                      height: "4rem",
-                      background: `linear-gradient(to right, ${item.colors[0]}, ${item.colors[1]})`,
-                      color: "dark",
-                    }}
-                  >
-                    <Card.Body className="dash-card-body d-flex flex-column">
-                      <h6>
-                        <PeopleAltIcon
-                          className="dash-card-icon"
-                          style={{ fontSize: "20px", marginRight: "8px" }}
-                        />
-                        {item.text}
-                      </h6>
-                      <h6 className="text-end">{item.value}</h6>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
             <Bills />
           </Container>
         </main>

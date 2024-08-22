@@ -1,16 +1,90 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import { useParams } from "react-router-dom";
-
+import { Container, Button, Modal } from "react-bootstrap";
+import axios from "axios";
 const CustomerProf = () => {
   const { acc_number } = useParams();
   const [customers, setCustomer] = useState([]);
+  const [editCustomer, setEditCustomer] = useState({
+    accountName: "",
+    acc_num: "",
+    meter_num: "",
+    contact: "",
+    status: "",
+    client_type: "",
+    email: "",
+    install_date: "",
+    c_address: {
+      house_num: "",
+      purok: "",
+      brgy: "",
+    },
+  });
 
+  const [show, setShow] = useState(false);
   const token = localStorage.getItem("type");
   const usertype = token;
   const backend = import.meta.env.VITE_BACKEND;
+  // const houseNumber = editCustomer.c_address.house_num;
+  // const Purok = editCustomer.c_address.purok;
+  // const Barangay = editCustomer.c_address.brgy;
+  const handleEditModal = (data) => {
+    setEditCustomer({
+      ...data,
+      c_address: {
+        house_num: data.c_address.house_num || "",
+        purok: data.c_address.purok || "",
+        brgy: data.c_address.brgy || "",
+      },
+      install_date: data.install_date
+        ? new Date(data.install_date).toISOString().substring(0, 10)
+        : "",
+    });
+    setShow(true);
+  };
+  const handleCloseEdit = () => {
+    setShow(false);
+  };
+  const handleEditValues = (e) => {
+    const { name, value } = e.target;
+    if (name === "house_num" || name === "purok" || name === "brgy") {
+      setEditCustomer({
+        ...editCustomer,
+        c_address: {
+          ...editCustomer.c_address,
+          [name]: value,
+        },
+      });
+    } else {
+      setEditCustomer({ ...editCustomer, [name]: value });
+    }
+  };
 
-  console.log("Your Acc Number is", acc_number);
+  const handleEditCustomer = (e) => {
+    e.preventDefault();
+
+    axios
+      .put(`${backend}/admin/editClient/`, editCustomer)
+      .then((response) => {
+        // Update the client list with the updated client data
+        setCustomer((prevCustomers) =>
+          prevCustomers.map((customer) =>
+            customer.acc_num === setEditCustomer.acc_num
+              ? response.data
+              : customer
+          )
+        );
+        window.location.reload();
+        handleCloseEdit();
+
+        console.log("Client updated successfully!");
+      })
+      .catch((error) => {
+        console.error("Error updating client:", error);
+        // Optionally, set an error state to display an error message
+      });
+  };
 
   useEffect(() => {
     const customer_details = async () => {
@@ -26,9 +100,18 @@ const CustomerProf = () => {
       }
       const data = await response.json();
       setCustomer(data);
+      // Assuming you want to also initialize editCustomer here
+      if (data.length > 0) {
+        setEditCustomer({
+          ...data[0], // Adjust if needed
+          install_date: new Date(data[0].install_date)
+            .toISOString()
+            .substring(0, 10),
+        });
+      }
     };
     customer_details();
-  }, []);
+  }, [acc_number, backend]);
 
   return (
     <div
@@ -37,6 +120,7 @@ const CustomerProf = () => {
         backgroundColor: "white",
         height: "100vh",
         maxHeight: "100vh",
+        overflow: "hidden",
       }}
     >
       <Sidebar role={usertype} />
@@ -65,7 +149,11 @@ const CustomerProf = () => {
                         customer.c_address.brgy}
                     </p>
                     <p class="card-text">{customer.contact}</p>
-                    <button type="button" class="btn btn-link">
+                    <button
+                      type="button"
+                      class="btn btn-link"
+                      onClick={() => handleEditModal(customer)}
+                    >
                       Edit Profile
                     </button>
                   </div>
@@ -75,10 +163,6 @@ const CustomerProf = () => {
                   <div class="card-body">
                     <h5 class="card-title d-flex justify-content-between align-items-center mb-3">
                       <strong>Account Information</strong>
-                      <i
-                        class="bi bi-pencil-square text-primary"
-                        style={{ cursor: "pointer", fontSize: "20px" }}
-                      ></i>
                     </h5>
 
                     <p class="card-text">
@@ -176,6 +260,200 @@ const CustomerProf = () => {
             </div>
           </div>
         ))}
+        <Modal show={show} onHide={handleCloseEdit}>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit Client</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="px-3">
+              <form className="row g-3" onSubmit={handleEditCustomer}>
+                <div className="col-md-6">
+                  <label htmlFor="accountName" className="form-label">
+                    Account Name
+                  </label>
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="accountName"
+                      name="accountName"
+                      aria-describedby="inputGroupPrepend3"
+                      required
+                      value={editCustomer.accountName || ""}
+                      onChange={handleEditValues}
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="accountNumber" className="form-label">
+                    Account Number
+                  </label>
+                  <div className="input-group">
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="accountNumber"
+                      name="acc_num"
+                      aria-describedby="inputGroupPrepend3"
+                      required
+                      disabled
+                      value={editCustomer.acc_num || ""}
+                    />
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="meterNumber" className="form-label">
+                    Meter Number
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="meterNumber"
+                    name="meter_num"
+                    aria-describedby="meterNumberFeedback"
+                    required
+                    value={editCustomer.meter_num || ""}
+                    onChange={handleEditValues}
+                  />
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="contact" className="form-label">
+                    Contact
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="contact"
+                    name="contact"
+                    aria-describedby="contactFeedback"
+                    required
+                    value={editCustomer.contact || ""}
+                    onChange={handleEditValues}
+                  />
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="status" className="form-label">
+                    Status
+                  </label>
+                  <select
+                    className="form-select"
+                    id="status"
+                    name="status"
+                    value={editCustomer.status || ""}
+                    onChange={handleEditValues}
+                  >
+                    <option value="">Select a status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="clientType" className="form-label">
+                    Client Type
+                  </label>
+                  <select
+                    className="form-select"
+                    id="clientType"
+                    name="client_type"
+                    value={editCustomer.client_type || ""}
+                    onChange={handleEditValues}
+                  >
+                    <option value="">Select a type</option>
+                    <option value="Residential">Residential</option>
+                    <option value="Commercial">Commercial</option>
+                    <option value="Industrial">Industrial</option>
+                  </select>
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="email" className="form-label">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="email"
+                    name="email"
+                    aria-describedby="emailFeedback"
+                    required
+                    value={editCustomer.email || ""}
+                    onChange={handleEditValues}
+                  />
+                </div>
+                <div className="col-md-6">
+                  <label htmlFor="install_date" className="form-label">
+                    Installation Date
+                  </label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="install_date"
+                    name="install_date"
+                    aria-describedby="install_dateFeedback"
+                    required
+                    disabled
+                    value={editCustomer.install_date || ""}
+                  />
+                </div>
+                <div className="row mt-3">
+                  <div className="col-md-4">
+                    <label htmlFor="house_num" className="form-label">
+                      House Number
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="house_num"
+                      name="house_num"
+                      placeholder="130"
+                      required
+                      value={editCustomer.c_address?.house_num || ""}
+                      onChange={handleEditValues}
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <label htmlFor="purok" className="form-label">
+                      Purok
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="purok"
+                      name="purok"
+                      placeholder="4"
+                      required
+                      value={editCustomer.c_address?.purok || ""}
+                      onChange={handleEditValues}
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <label htmlFor="brgy" className="form-label">
+                      Barangay
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="brgy"
+                      name="brgy"
+                      placeholder="Timbayog"
+                      required
+                      value={editCustomer.c_address?.brgy || ""}
+                      onChange={handleEditValues}
+                    />
+                  </div>
+                </div>
+
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={handleCloseEdit}>
+                    Close
+                  </Button>
+                  <Button variant="primary" type="submit">
+                    Submit
+                  </Button>
+                </Modal.Footer>
+              </form>
+            </div>
+          </Modal.Body>
+        </Modal>
       </main>
     </div>
   );

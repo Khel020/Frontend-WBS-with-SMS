@@ -49,7 +49,7 @@ const Customers = () => {
     };
     try {
       const response = await axios.post(
-        "http://localhost:1020/client/newclient/",
+        "http://localhost:1020/admin/newclient/",
         newClient
       );
       console.log(response.data);

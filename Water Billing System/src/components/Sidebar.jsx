@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import "../styles/sidebar.css"; // Ensure this path is correct
 import Dropdown from "react-bootstrap/Dropdown";
 import { useNavigate } from "react-router-dom";
 
@@ -9,7 +8,6 @@ const Sidebar = ({ role }) => {
   const [activeLink, setActiveLink] = useState("");
 
   useEffect(() => {
-    // Set active link based on the current path
     setActiveLink(location.pathname);
   }, [location]);
 
@@ -18,79 +16,94 @@ const Sidebar = ({ role }) => {
     localStorage.clear();
     navigate("/login");
   };
+
+  const linkStyle = (path) => ({
+    color: activeLink === path ? "#343a40" : "white",
+    display: "flex",
+    alignItems: "center",
+    textDecoration: "none",
+    padding: "5px 10px",
+    borderRadius: "10px",
+    backgroundColor: activeLink === path ? "#e9ecef" : "transparent",
+    marginBottom: "10px",
+    fontWeight: "500",
+  });
+
+  const iconStyle = (path) => ({
+    fontSize: "20px",
+    marginRight: "10px",
+    color: activeLink === path ? "#343a40" : "white",
+  });
+
   return (
     <div
       className="d-flex flex-column flex-shrink-0 p-3"
       style={{
         width: "200px",
         height: "100vh",
-        // borderBottomRightRadius: "20px",
-        // borderTopRightRadius: "20px",
-        backgroundColor: "#51B0DD",
+        backgroundColor: "#1F316F",
       }}
     >
       <Link
         to=""
-        className="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none"
+        className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none"
       >
-        <h5 className="text-center mx-auto">Water Billing System</h5>
+        <h5 className="text-center mx-auto" style={{ color: "white" }}>
+          Water Billing System
+        </h5>
       </Link>
-      <hr />
+      <hr style={{ borderColor: "white" }} />
       <ul className="nav nav-pills flex-column mb-auto">
         {role === "billmngr" && (
           <>
-            <li>
+            <li className="nav-item">
               <Link
                 to="/bill-dashboard"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "/bill-dashboard" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
+                style={linkStyle("/bill-dashboard")}
+                className="nav-link"
               >
                 <i
-                  className="bi bi-house-fill"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
+                  className="bi bi-speedometer2"
+                  style={iconStyle("/bill-dashboard")}
                 ></i>
                 Dashboard
               </Link>
             </li>
-            <li>
+            <li className="nav-item">
               <Link
                 to="/listclient"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "/listclient" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
+                style={linkStyle("/listclient")}
+                className="nav-link"
               >
                 <i
                   className="bi bi-person-lines-fill"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
+                  style={iconStyle("/listclient")}
                 ></i>
                 Consumers
               </Link>
             </li>
-            <li>
+            <li className="nav-item">
               <Link
                 to="/bills"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "/bills" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
+                style={linkStyle("/bills")}
+                className="nav-link"
               >
                 <i
                   className="bi bi-file-earmark-text"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
+                  style={iconStyle("/bills")}
                 ></i>
                 Billing
               </Link>
             </li>
-            <li>
+            <li className="nav-item">
               <Link
                 to="/generateReports"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "/generateReports" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
+                style={linkStyle("/generateReports")}
+                className="nav-link"
               >
                 <i
                   className="bi bi-bar-chart"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
+                  style={iconStyle("/generateReports")}
                 ></i>
                 Reports
               </Link>
@@ -100,87 +113,76 @@ const Sidebar = ({ role }) => {
 
         {role === "admin" && (
           <>
-            <li>
+            <li className="nav-item">
               <Link
                 to="/admin-dashboard"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "/admin-dashboard" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
+                style={linkStyle("/admin-dashboard")}
+                className="nav-link"
               >
                 <i
                   className="bi bi-house-fill"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
+                  style={iconStyle("/admin-dashboard")}
                 ></i>
                 Dashboard
               </Link>
             </li>
-            <li>
+            <li className="nav-item">
               <Link
                 to="/userlist"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "/userlist" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
+                style={linkStyle("/userlist")}
+                className="nav-link"
               >
                 <i
                   className="bi bi-people-fill"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
+                  style={iconStyle("/userlist")}
                 ></i>
                 Accounts
               </Link>
             </li>
-            <li>
+            <li className="nav-item">
               <Link
                 to="/customers"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "/customerProfiles" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
+                style={linkStyle("/customers")}
+                className="nav-link"
               >
                 <i
                   className="bi bi-person-circle"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
+                  style={iconStyle("/customers")}
                 ></i>
                 Customers
               </Link>
             </li>
-            <li>
+            <li className="nav-item">
               <Link
                 to="/reports"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "/reports" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
+                style={linkStyle("/reports")}
+                className="nav-link"
               >
                 <i
                   className="bi bi-file-earmark-bar-graph"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
+                  style={iconStyle("/reports")}
                 ></i>
                 Reports
               </Link>
             </li>
-            <li>
-              <Link
-                to="/logs"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "/logs" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
-              >
+            <li className="nav-item">
+              <Link to="/logs" style={linkStyle("/logs")} className="nav-link">
                 <i
                   className="bi bi-journal-text"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
+                  style={iconStyle("/logs")}
                 ></i>
                 Logs
               </Link>
             </li>
-
-            <li>
+            <li className="nav-item">
               <Link
                 to="/settings"
-                className={`sidebar-nav-link nav-link ${
-                  activeLink === "/settings" ? "active-link" : ""
-                } link-body-emphasis mb-4`}
+                style={linkStyle("/settings")}
+                className="nav-link"
               >
                 <i
                   className="bi bi-gear-fill"
-                  style={{ fontSize: "20px", marginRight: "10px" }}
+                  style={iconStyle("/settings")}
                 ></i>
                 Settings
               </Link>
@@ -188,12 +190,13 @@ const Sidebar = ({ role }) => {
           </>
         )}
       </ul>
-      <hr />
+      <hr style={{ borderColor: "white" }} />
       <div className="text-start">
         <Dropdown>
           <Dropdown.Toggle
             id="dropdown-basic"
-            className="d-flex align-items-center bg-transparent border-0 text-dark"
+            className="d-flex align-items-center bg-transparent border-0"
+            style={{ color: "dark" }}
           >
             <img
               src="https://github.com/mdo.png"
@@ -202,7 +205,7 @@ const Sidebar = ({ role }) => {
               height="32"
               className="rounded-circle me-2"
             />
-            <span>Admin</span>
+            <span style={{ color: "white" }}>Admin</span>
           </Dropdown.Toggle>
           <Dropdown.Menu align="end">
             <Dropdown.Item href="#/action-1">Archive List</Dropdown.Item>
