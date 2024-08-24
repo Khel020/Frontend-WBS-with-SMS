@@ -43,9 +43,6 @@ function BillTable() {
           <thead className="table-secondary">
             <tr>
               <th scope="col" className="text-center">
-                Select
-              </th>
-              <th scope="col" className="text-center">
                 Bill No.
               </th>
               <th scope="col" className="text-center">
@@ -74,13 +71,12 @@ function BillTable() {
           <tbody>
             {bills.map((row, index) => (
               <tr key={index}>
-                <td className="text-center">{row.select}</td>
                 <td className="text-center">{row.billNumber}</td>
                 <td className="text-center">{formatDate(row.reading_date)}</td>
                 <td className="text-center">{formatDate(row.due_date)}</td>
                 <td className="text-center">{row.accountName}</td>
                 <td className="text-center">{row.consumption}</td>
-                <td className="text-center">{row.consumption * 10}</td>
+                <td className="text-center">{row.totalAmount}</td>
                 <td className="text-center">{row.payment_status}</td>
                 <td className="text-center">
                   <button type="button" className="btn btn-success btn-sm">
