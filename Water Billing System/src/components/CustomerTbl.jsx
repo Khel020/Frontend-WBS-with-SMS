@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DataTable, { defaultThemes } from "react-data-table-component";
-
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import Dropdown from "react-bootstrap/Dropdown";
+import DropdownButton from "react-bootstrap/DropdownButton";
 const CustomerTbl = () => {
   const [clients, setClients] = useState([]);
-  const token = localStorage.getItem("type");
   const backend = import.meta.env.VITE_BACKEND;
+  const [show, setShow] = useState(false);
 
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   useEffect(() => {
     const fetchClients = async () => {
       try {
@@ -22,14 +27,16 @@ const CustomerTbl = () => {
           throw new Error("Invalid Credentials");
         }
         const data = await response.json();
-        setClients(data);
-        console.log("data", clients);
+        setClients(data || []); // Set clients to empty array if data is null or undefined
+        console.log("Fetched data:", data); // Debugging log
       } catch (error) {
         console.error(error.message);
+        setClients([]); // Ensure clients is set to empty array on error
       }
     };
     fetchClients();
   }, [backend]);
+
   function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -37,6 +44,7 @@ const CustomerTbl = () => {
       day: "numeric",
     });
   }
+
   const columns = [
     {
       name: "Full Name",
@@ -44,11 +52,11 @@ const CustomerTbl = () => {
         <div style={{ display: "flex", alignItems: "center" }}>
           {row.status && (
             <span
-              className={`badge  border mx-2  rounded-pill ${
+              className={`badge border mx-2 rounded-pill ${
                 row.status === "Active"
-                  ? "bg-success-subtle border-success-subtle text-success-emphasis "
+                  ? "bg-success-subtle border-success-subtle text-success-emphasis"
                   : row.status === "Inactive"
-                  ? "bg-danger-subtle border-danger-subtle text-danger-emphasis "
+                  ? "bg-danger-subtle border-danger-subtle text-danger-emphasis"
                   : "bg-secondary"
               }`}
             >
@@ -63,33 +71,43 @@ const CustomerTbl = () => {
     },
     {
       name: "Address",
-      selector: (row) =>
-        `${row.c_address.house_num}, Purok ${row.c_address.purok}, ${row.c_address.brgy}`,
+      selector: (row) => {
+        const address = row.c_address || {};
+        return `${address.house_num || "N/A"}, Purok ${
+          address.purok || "N/A"
+        }, ${address.brgy || "N/A"}`;
+      },
       sortable: true,
       width: "250px", // Adjust width as needed
     },
     {
       name: "Last Bill Date",
-      selector: (row) => formatDate(row.last_billDate),
+      selector: (row) =>
+        row.last_billDate ? formatDate(row.last_billDate) : "Soon",
       sortable: true,
       width: "200px", // Adjust width as needed
     },
     {
       name: "Total Balance",
-      selector: (row) => (row.totalBalance ? row.totalBalance : 0),
+      selector: (row) => row.totalBalance || 0,
       sortable: true,
       width: "200px", // Adjust width as needed
     },
     {
       name: "Action",
       cell: (row) => (
-        <Link
-          to={`/customer/${row.acc_num}/${row.accountName}`}
-          className="btn btn-success btn-sm"
-          onClick={() => handleAction(row)}
-        >
-          View Details
-        </Link>
+        <div>
+          {/* View Details Button */}
+          <Button
+            variant="success"
+            size="sm"
+            as={Link}
+            to={`/customer/${row.acc_num}/${row.accountName}`}
+            className="mx-1"
+          >
+            View Details
+          </Button>
+        </div>
       ),
     },
   ];
@@ -115,7 +133,6 @@ const CustomerTbl = () => {
         },
       },
     },
-
     pagination: {
       style: {
         border: "none",
@@ -159,8 +176,28 @@ const CustomerTbl = () => {
         responsive
         fixedHeader
         highlightOnHover
-        noDataComponent={<div>No data available</div>}
+        noDataComponent={<div>No records found</div>}
       />
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Modal title</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          I will not close if you click outside me. Do not even try to press
+          escape key.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary">Understood</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

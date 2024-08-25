@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import Container from "react-bootstrap/Container";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
+import { Modal, Button, Form, InputGroup } from "react-bootstrap";
 import { useState } from "react";
 import axios from "axios";
 import ClientTable from "../../components/ClientTable.jsx";
@@ -61,7 +60,7 @@ const Lit = () => {
         }}
       >
         <Sidebar role={usertype} />
-        <main className="col-md-9 ms-sm-auto col-lg-10 px-md-3">
+        <main className="col-md-9 ms-sm-auto col-lg-10 px-md-2">
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
             <h1 className="h2">List Of Consumers</h1>
             <form className="d-flex mt-3 mt-lg-0" role="search">
@@ -77,7 +76,7 @@ const Lit = () => {
             </form>
           </div>
           {/* TODO: CARDS FOR Client Categories */}
-          <div className="row mt-3 mb-4">
+          <div className="row mt-3 mb-3">
             <div className="col">
               <div
                 className="card total-user"
@@ -170,158 +169,115 @@ const Lit = () => {
               </div>
             </div>
           </div>
-          <div
-            className="card"
-            style={{ borderRadius: "15px", height: "75vh" }}
-          >
-            <div className="card-body p-2 ">
-              <ClientTable />
-            </div>
+          <div className="d-flex justify-content-end mb-2">
+            <button
+              className="btn btn-success btn-sm mx-3"
+              onClick={handleShow}
+            >
+              Proceed to Payment
+            </button>
           </div>
-
-          {/* FIXME: Modal for adding client */}
-          <Modal show={show} onHide={handleClose}>
-            <Modal.Header closeButton>
-              <Modal.Title>Add Client</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-              <div className="px-3">
-                <form className="row g-3" onSubmit={handleSubmit}>
-                  <div className="col-md-6">
-                    <label
-                      for="validationServerUsername"
-                      className="form-label"
-                    >
-                      Account Name
-                    </label>
-                    <div className="input-group ">
-                      <input
-                        type="text"
-                        className="form-control "
-                        id="validationServerUsername"
-                        aria-describedby="inputGroupPrepend3 validationServerUsernameFeedback"
-                        required
-                        onChange={(e) => setAccName(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <label
-                      for="validationServerUsername"
-                      className="form-label"
-                    >
-                      Account Number
-                    </label>
-                    <div className="input-group ">
-                      <input
-                        type="text"
-                        className="form-control "
-                        id="validationServerUsername"
-                        aria-describedby="inputGroupPrepend3 validationServerUsernameFeedback"
-                        required
-                        onChange={(e) => setAccNum(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-md-6">
-                    <label for="validationServer03" className="form-label">
-                      Meter Number
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control "
-                      id="validationServer03"
-                      aria-describedby="validationServer03Feedback"
-                      onChange={(e) => setMeterNum(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label for="contact" className="form-label">
-                      Contact
-                    </label>
-                    <input
-                      type="Number"
-                      className="form-control "
-                      id="contact"
-                      aria-describedby="validationServer05Feedback"
-                      required
-                      onChange={(e) => setContact(e.target.value)}
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label for="validationCustom04" className="form-label">
-                      Status
-                    </label>
-                    <select
-                      className="form-select"
-                      onChange={(e) => setStatus(e.target.value)}
-                    >
-                      <option selected>Select a status</option>
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                    </select>
-                  </div>
-                  <div className="col-md-6">
-                    <label for="validationCustom04" className="form-label">
-                      Client Type
-                    </label>
-                    <select
-                      className="form-select"
-                      onChange={(e) => setType(e.target.value)}
-                    >
-                      <option selected>Select a type</option>
-                      <option name="residential" value="Residential">
-                        Residential
-                      </option>
-                      <option name="commercial" value="Commercial">
-                        Commercial
-                      </option>
-                      <option name="industiral" value="Industrial">
-                        Industrial
-                      </option>
-                    </select>
-                  </div>
-                  <div className="col-md-6">
-                    <label for="email" className="form-label">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      className="form-control "
-                      id="email"
-                      aria-describedby="validationServer05Feedback"
-                      required
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label for="birthday" className="form-label">
-                      Birthday
-                    </label>
-                    <input
-                      type="date"
-                      className="form-control "
-                      id="birthday"
-                      aria-describedby="validationServer05Feedback"
-                      required
-                      onChange={(e) => setBday(e.target.value)}
-                    />
-                  </div>
-                  <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                      Close
-                    </Button>
-                    <button className="btn btn-primary" type="submit">
-                      Submit
-                    </button>
-                  </Modal.Footer>
-                </form>
-              </div>
-            </Modal.Body>
-          </Modal>
-          {/* FIXME: END OF ADD CLIENT MODAL */}
+          <ClientTable />
         </main>
+        <Modal
+          show={show}
+          onHide={handleClose}
+          backdrop="static"
+          keyboard={false}
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>Payment Modal</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <h5>Account Information :</h5>
+            <div className="row mt-4">
+              <div className="col">
+                <Form.Label>Account Name:</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Enter amount"
+                  step="0.01"
+                />
+              </div>
+              <div className="col">
+                <Form.Label>Account Number</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Enter amount"
+                  step="0.01"
+                />
+              </div>
+            </div>
+            <hr />
+            <h5>Bill Information :</h5>
+            <div className="row mt-4">
+              <div className="col">
+                <Form.Label>Unpaid Bills:</Form.Label>
+                <Form.Select aria-label="Select Bill Number">
+                  <option value="">Select Bill No.</option>
+                  <option value="bill1">Bill 1</option>
+                  <option value="bill2">Bill 2</option>
+                  <option value="bill3">Bill 3</option>
+                </Form.Select>
+              </div>
+              <div className="col">
+                <Form.Label>Due Date</Form.Label>
+                <Form.Control type="Date" placeholder="" step="0.01" disabled />
+              </div>
+            </div>
+            <div className="row mt-2">
+              <div className="col">
+                <Form.Label>Penalty Charge</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="0.00"
+                  step="0.01"
+                  disabled
+                />
+              </div>
+              <div className="col">
+                <Form.Label>Amount</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="0.00"
+                  step="0.01"
+                  disabled
+                />
+              </div>
+            </div>
+            <hr />
+
+            <div className="mt-4">
+              <h5>Payment Details for :</h5>
+              <div className="row">
+                <div className="col">
+                  <Form.Group controlId="amount">
+                    <Form.Label>Amount to pay:</Form.Label>
+                    <Form.Control
+                      type="number"
+                      placeholder="Enter amount"
+                      step="0.01"
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col">
+                  <Form>
+                    <Form.Group controlId="paymentDate" className="">
+                      <Form.Label>Payment Date</Form.Label>
+                      <Form.Control type="date" />
+                    </Form.Group>
+                  </Form>
+                </div>
+              </div>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Close
+            </Button>
+            <Button variant="primary">Proceed to Payment</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </>
   );

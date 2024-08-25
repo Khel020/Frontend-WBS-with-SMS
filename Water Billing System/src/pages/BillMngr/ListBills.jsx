@@ -46,7 +46,95 @@ function ListBills() {
               </button>
             </form>
           </div>
-
+          <div className="row mt-3 mb-4">
+            <div className="col">
+              <div
+                className="card total-user"
+                style={{
+                  border: "none",
+                  cursor: "pointer",
+                  backgroundColor: "#DEF0F7",
+                  borderRadius: "15px",
+                }}
+              >
+                <div className="card-body d-flex justify-content-between align-items-end">
+                  <h5>
+                    <i
+                      className="bi bi-people-fill"
+                      style={{ fontSize: "20px" }}
+                    ></i>
+                    Total Bills
+                  </h5>
+                  <span
+                    className="card-value"
+                    style={{
+                      fontSize: "24px",
+                      color: "#006F56",
+                      marginRight: "10px",
+                    }}
+                  ></span>
+                </div>
+              </div>
+            </div>
+            <div className="col">
+              <div
+                className="card total-admin"
+                style={{
+                  border: "none",
+                  cursor: "pointer",
+                  backgroundColor: "#DEF0F7",
+                  borderRadius: "15px",
+                }}
+              >
+                <div className="card-body d-flex justify-content-between align-items-end">
+                  <h5>
+                    <i
+                      className="bi bi-person-fill-gear"
+                      style={{ fontSize: "20px" }}
+                    ></i>{" "}
+                    Unpaid
+                  </h5>
+                  <span
+                    className="card-value"
+                    style={{
+                      fontSize: "24px",
+                      color: "#006F56",
+                      marginRight: "10px",
+                    }}
+                  ></span>
+                </div>
+              </div>
+            </div>
+            <div className="col">
+              <div
+                className="card total-client"
+                style={{
+                  border: "none",
+                  cursor: "pointer",
+                  backgroundColor: "#DEF0F7",
+                  borderRadius: "15px",
+                }}
+              >
+                <div className="card-body d-flex justify-content-between align-items-end">
+                  <h5>
+                    <i
+                      className="bi bi-person-fill"
+                      style={{ fontSize: "20px" }}
+                    ></i>
+                    Paid
+                  </h5>
+                  <span
+                    className="card-value"
+                    style={{
+                      fontSize: "24px",
+                      color: "#006F56",
+                      marginRight: "10px",
+                    }}
+                  ></span>
+                </div>
+              </div>
+            </div>
+          </div>
           <Container fluid>
             <Bills />
           </Container>
