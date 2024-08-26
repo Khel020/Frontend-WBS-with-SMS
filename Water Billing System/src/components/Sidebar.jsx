@@ -205,7 +205,9 @@ const Sidebar = ({ role }) => {
               height="32"
               className="rounded-circle me-2"
             />
-            <span style={{ color: "white" }}>Admin</span>
+            <span style={{ color: "white" }}>
+              {role === "admin" ? "Admin" : "Biller"}
+            </span>
           </Dropdown.Toggle>
           <Dropdown.Menu align="end">
             <Dropdown.Item href="#/action-1">Archive List</Dropdown.Item>

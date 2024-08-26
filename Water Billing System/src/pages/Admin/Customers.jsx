@@ -27,6 +27,7 @@ const Customers = () => {
     purok: "",
     brgy: "",
   });
+
   const [brand_num, setBrandNum] = useState("");
   const [show, setShow] = useState(false);
 
@@ -144,8 +145,6 @@ const Customers = () => {
           <Modal.Body>
             <div className="px-3">
               <form className="row g-3" onSubmit={handleSubmit}>
-                {/* Client Details */}
-
                 <div className="col-md-4">
                   <label htmlFor="accountName" className="form-label fw-bold">
                     Account Name

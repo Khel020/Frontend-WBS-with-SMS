@@ -29,10 +29,10 @@ import BillingDetails from "./pages/BillMngr/BillingDetails.jsx";
 import BillRecords from "./pages/BillMngr/BillRecords.jsx";
 import Bills from "./pages/BillMngr/ListBills.jsx";
 import ListClient from "./pages/BillMngr/ListClient.jsx";
-
 import ReceivePayments from "./pages/BillMngr/PaymentHistory.jsx";
 import Reports from "./pages/BillMngr/Reports.jsx";
 import BillerDash from "./pages/BillMngr/BillerDash.jsx";
+import Fees from "./pages/BillMngr/Fees.jsx";
 
 //TODO: Admin Pages
 import AdminDash from "./pages/Admin/AdminDash.jsx";
@@ -72,6 +72,9 @@ const router = createBrowserRouter(
       </Route>
       <Route path="bills" element={<BillerLayout />}>
         <Route index element={<Bills />} />
+      </Route>
+      <Route path="manage-fees" element={<BillerLayout />}>
+        <Route index element={<Fees />} />
       </Route>
       <Route path="listclient" element={<BillerLayout />}>
         <Route index element={<ListClient />} />

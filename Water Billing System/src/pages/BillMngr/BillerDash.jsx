@@ -61,7 +61,7 @@ const BillerDash = () => {
               </div>
             </div>
           </div>
-          <div className="col-md-12 mb-4">
+          {/* <div className="col-md-12 mb-4">
             <h5>Charts Overview</h5>
             <div className="row">
               <div className="col-md-6 mb-4">
@@ -106,7 +106,7 @@ const BillerDash = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </main>
     </div>

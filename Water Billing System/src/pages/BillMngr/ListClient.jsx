@@ -1,57 +1,51 @@
-import React, { useEffect } from "react";
-import Container from "react-bootstrap/Container";
-import { Modal, Button, Form, InputGroup } from "react-bootstrap";
-import { useState } from "react";
-import axios from "axios";
-import ClientTable from "../../components/ClientTable.jsx";
+import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar.jsx";
+import ClientTable from "../../components/ClientTable.jsx";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Lit = () => {
-  //TODO: modals
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const backend = import.meta.env.VITE_BACKEND;
 
-  //TODO: states for adding client
-  const [accountName, setAccName] = useState("");
-  const [acc_num, setAccNum] = useState("");
-  const [meter_num, setMeterNum] = useState("");
-  const [status, setStatus] = useState("");
-  const [client_type, setType] = useState("");
-  const [contact, setContact] = useState("");
-  const [email, setEmail] = useState("");
-  const [birthday, setBday] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const newClient = {
-      acc_num,
-      accountName,
-      meter_num,
-      contact,
-      status,
-      client_type,
-      email,
-      birthday,
-    };
+  const [clientStats, setClientStats] = useState({
+    totalClients: 0,
+    activeClients: 0,
+    inactiveClients: 0,
+  });
+  const fetchClientStats = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:1020/client/newclient/",
-        newClient
-      );
-      console.log(response.data);
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
+      const response = await fetch(`${backend}/biller/status`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("tkn")}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        setClientStats(data);
+      } else {
+        toast.error("Error fetching client statistics.");
+      }
+    } catch (error) {
+      console.error("Error fetching client statistics:", error);
+      toast.error("Error fetching client statistics.");
     }
   };
+  useEffect(() => {
+    fetchClientStats();
+  }, []);
+  //TODO: Fetch Bill to modal
+
   const token = localStorage.getItem("type");
   const usertype = token;
 
   return (
     <>
       <div
-        className=" d-flex flex-column flex-md-row"
+        className="d-flex flex-column flex-md-row"
         style={{
           backgroundColor: "white",
           height: "100vh",
@@ -63,20 +57,9 @@ const Lit = () => {
         <main className="col-md-9 ms-sm-auto col-lg-10 px-md-2">
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
             <h1 className="h2">List Of Consumers</h1>
-            <form className="d-flex mt-3 mt-lg-0" role="search">
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search Client..."
-                aria-label="Search"
-              />
-              <button className="btn btn-primary" type="submit">
-                Search
-              </button>
-            </form>
+            <div className="d-flex justify-content-end"></div>
           </div>
-          {/* TODO: CARDS FOR Client Categories */}
-          <div className="row mt-3 mb-3">
+          <div className="row mt-3 mb-4">
             <div className="col">
               <div
                 className="card total-user"
@@ -102,7 +85,9 @@ const Lit = () => {
                       color: "#006F56",
                       marginRight: "10px",
                     }}
-                  ></span>
+                  >
+                    {clientStats.totalClients}
+                  </span>
                 </div>
               </div>
             </div>
@@ -132,7 +117,7 @@ const Lit = () => {
                       marginRight: "10px",
                     }}
                   >
-                    10
+                    {clientStats.activeClients}
                   </span>
                 </div>
               </div>
@@ -163,122 +148,17 @@ const Lit = () => {
                       marginRight: "10px",
                     }}
                   >
-                    1490
+                    {clientStats.inactiveClients}
                   </span>
                 </div>
               </div>
             </div>
           </div>
-          <div className="d-flex justify-content-end mb-2">
-            <button
-              className="btn btn-success btn-sm mx-3"
-              onClick={handleShow}
-            >
-              Proceed to Payment
-            </button>
-          </div>
+
           <ClientTable />
         </main>
-        <Modal
-          show={show}
-          onHide={handleClose}
-          backdrop="static"
-          keyboard={false}
-        >
-          <Modal.Header closeButton>
-            <Modal.Title>Payment Modal</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <h5>Account Information :</h5>
-            <div className="row mt-4">
-              <div className="col">
-                <Form.Label>Account Name:</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Enter amount"
-                  step="0.01"
-                />
-              </div>
-              <div className="col">
-                <Form.Label>Account Number</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Enter amount"
-                  step="0.01"
-                />
-              </div>
-            </div>
-            <hr />
-            <h5>Bill Information :</h5>
-            <div className="row mt-4">
-              <div className="col">
-                <Form.Label>Unpaid Bills:</Form.Label>
-                <Form.Select aria-label="Select Bill Number">
-                  <option value="">Select Bill No.</option>
-                  <option value="bill1">Bill 1</option>
-                  <option value="bill2">Bill 2</option>
-                  <option value="bill3">Bill 3</option>
-                </Form.Select>
-              </div>
-              <div className="col">
-                <Form.Label>Due Date</Form.Label>
-                <Form.Control type="Date" placeholder="" step="0.01" disabled />
-              </div>
-            </div>
-            <div className="row mt-2">
-              <div className="col">
-                <Form.Label>Penalty Charge</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="0.00"
-                  step="0.01"
-                  disabled
-                />
-              </div>
-              <div className="col">
-                <Form.Label>Amount</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="0.00"
-                  step="0.01"
-                  disabled
-                />
-              </div>
-            </div>
-            <hr />
-
-            <div className="mt-4">
-              <h5>Payment Details for :</h5>
-              <div className="row">
-                <div className="col">
-                  <Form.Group controlId="amount">
-                    <Form.Label>Amount to pay:</Form.Label>
-                    <Form.Control
-                      type="number"
-                      placeholder="Enter amount"
-                      step="0.01"
-                    />
-                  </Form.Group>
-                </div>
-                <div className="col">
-                  <Form>
-                    <Form.Group controlId="paymentDate" className="">
-                      <Form.Label>Payment Date</Form.Label>
-                      <Form.Control type="date" />
-                    </Form.Group>
-                  </Form>
-                </div>
-              </div>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
-            <Button variant="primary">Proceed to Payment</Button>
-          </Modal.Footer>
-        </Modal>
       </div>
+      <ToastContainer />
     </>
   );
 };
