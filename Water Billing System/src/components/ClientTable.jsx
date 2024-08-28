@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
@@ -10,26 +11,26 @@ import "../styles/clientTBL.css";
 
 const Table = () => {
   //State for storing data
-  const [clients, setClients] = useState([]);
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   //TODO: GET ALL Consumers
   const backend = import.meta.env.VITE_BACKEND;
-  const [bills, setBills] = useState([]);
+
   const [search, setSearch] = useState("");
   const [acc_name, setAccName] = useState("");
   const [acc_num, setAccNum] = useState("");
-  const [selectedBill, setSelectedBill] = useState("");
-  const [duedate, setDueDate] = useState("");
-  const [totalAmount, setTotalAmount] = useState("");
-  const [penaltyCharge, setPenalty] = useState("");
+
+  const [penaltyCharge, setTotalPenalty] = useState("");
   const [balance, setTotalBalance] = useState("");
   const [paymentAmount, setPayment] = useState("");
   const [p_date, setPdate] = useState("");
   const [address, setAddress] = useState("");
-  // Filtered data based on search input
+  const [totalChange, setTotalChange] = useState("");
+  const [advTotalAmount, setAdvance] = useState("");
+
+  //TODO: Filtered data based on search input
+  const [clients, setClients] = useState([]);
   const filteredClients = clients.filter((client) => {
     return (
       client.acc_num.toLowerCase().includes(search.toLowerCase()) ||
@@ -47,6 +48,7 @@ const Table = () => {
     );
   });
 
+  //TODO: FETCH DATA IF HAS ACC NUM
   const fetchData = async () => {
     if (acc_num) {
       try {
@@ -60,56 +62,92 @@ const Table = () => {
             },
           }
         );
-
-        if (response.ok) {
-          const data = await response.json();
-          setBills(data.consumerBills || []);
-          setTotalBalance(data.totalBill || "0");
-
-          if (data.consumerBills && data.consumerBills.length > 0) {
-            setAccName(data.consumerBills[0].accountName);
-            setAddress(data.address);
-          } else {
-            setAccName("");
-            toast.info("No bills found.");
-          }
-        } else {
-          setBills([]);
-          setTotalBalance("0");
-          setAccName("");
-          toast.error("Error fetching data or no bills found.");
+        if (!response.ok) {
+          toast.warn(`Account number ${acc_num} Not found`);
         }
+        const data = await response.json();
+        setAccName(data.consumerName);
+        setAddress(data.address);
+        setTotalPenalty(data.totalPenalty);
+        setTotalBalance(data.totalBill);
       } catch (error) {
         console.error("Error fetching data:", error);
         setAccName("");
+        setAddress(""); // Ensure address is cleared
         setBills([]);
         setTotalBalance("0");
+        setTotalPenalty("0"); // Ensure totalPenalty is cleared
         toast.warn("Error No Bills Found");
       }
     }
   };
 
-  const handleBillSelect = (e) => {
-    const billId = e.target.value;
-    setSelectedBill(billId);
+  useEffect(() => {
+    CalculateChange(paymentAmount);
+  }, [paymentAmount, advTotalAmount]);
 
-    const selectedBill = bills.find((bill) => bill._id === billId);
+  const handlePaymentAmountChange = (e) => {
+    const amount = parseFloat(e.target.value);
+    console.log("Setting payment amount to:", amount);
+    setPayment(amount);
+    // if (amount > balance) {
+    //   setTotalBalance(0);
+    // } else {
+    //   setTotalBalance(balance);
+    // }
+    CalculateChange(amount); // Pass the latest amount directly
+  };
+  const handleAdvancePaymentChange = (e) => {
+    const advancePayment = parseFloat(e.target.value);
+    setAdvance(advancePayment);
+    CalculateChange(paymentAmount); // Recalculate change with the updated advance payment
+  };
+  const CalculateChange = async (amount) => {
+    if (amount) {
+      try {
+        // Prepare the payload for the request
+        const payload = {
+          acc_num: acc_num,
+          paymentAmount: amount,
+        };
 
-    if (selectedBill) {
-      setDueDate(
-        selectedBill.due_date
-          ? new Date(selectedBill.due_date).toLocaleDateString()
-          : "N/A"
-      );
-      setTotalAmount(selectedBill.totalAmount ? selectedBill.totalAmount : "0");
-      setPenalty(selectedBill.p_charge ? selectedBill.p_charge : "0");
-    } else {
-      setDueDate("");
-      setTotalAmount("0");
-      setPenalty("0");
+        console.log("Data to calculate change:", payload);
+
+        // Make the API call to calculate the change
+        const response = await fetch(`${backend}/biller/calculateChange`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem("tkn")}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          console.error("Failed to calculate change");
+        } else {
+          const data = await response.json();
+
+          // Calculate the final change after deducting advance payment
+          const rawChange = parseFloat(data.change || 0);
+          console.log("Change before advance payment:", rawChange);
+
+          const advancePayment = parseFloat(advTotalAmount) || 0; // Handle potential NaN value
+          const finalChange = Math.max(rawChange - advancePayment, 0); // Ensure non-negative change
+
+          console.log("Advance payment:", advancePayment);
+          console.log("Final change:", finalChange);
+
+          // Log the final change and set it in the state
+          setTotalChange(finalChange);
+        }
+      } catch (error) {
+        console.error("Error calculating change:", error);
+      }
     }
   };
 
+  //TODO: FETCH ALL CLIENT
   useEffect(() => {
     const fetchClients = async () => {
       const response = await fetch(`${backend}/client/clients`, {
@@ -129,26 +167,44 @@ const Table = () => {
     fetchClients();
   }, []);
 
+  //FIXME: FOR PAYMENT
   const handleSubmitPay = async (e) => {
     e.preventDefault();
-    const newBill = {
+
+    if (!paymentAmount || isNaN(paymentAmount) || paymentAmount <= 0) {
+      toast.warn("Please enter a valid payment amount.");
+      return;
+    }
+    setTotalBalance(0);
+    const newPayment = {
       acc_num,
       acc_name,
+      p_date,
       address,
-      totalAmount,
-      paymentAmount,
+      balance, // balance
+      paymentAmount, //tendered
+      advTotalAmount, //for advance payment
+      totalChange, // change
     };
-    try {
-      const response = await axios.post(
-        `${backend}/biller/newclient/`,
-        newBill
-      );
-      console.log(response.data);
-      window.location.reload();
-    } catch (err) {
-      console.error(err);
+    console.log("Data for payments", newPayment);
+
+    const response = await axios.post(
+      `${backend}/biller/newPayment`,
+      newPayment
+    );
+    if (response.data.success) {
+      toast.success("Payment successful");
+      setAccNum("0");
+      setAccName(" ");
+      setTotalPenalty("0");
+      setTotalBalance("0");
+      setPayment("0");
+      setPdate(" ");
+    } else {
+      toast.error(response.data.message || "Payment failed");
     }
   };
+
   if (!clients) {
     return <div>Loading...</div>;
   }
@@ -210,9 +266,9 @@ const Table = () => {
       cell: (row) => (
         <div>
           <Link to={`/billing-records/${row.acc_num}/${row.accountName}`}>
-            <a className="btn btn-info btn-sm">
+            <button className="btn btn-info btn-sm">
               <span>View Bills</span>
-            </a>
+            </button>
           </Link>
         </div>
       ),
@@ -314,7 +370,7 @@ const Table = () => {
           responsive
           fixedHeader
           highlightOnHover
-          noDataComponent={<div>No data available</div>}
+          noDataComponent={<div>Loading</div>}
         />
       </div>
       <Modal
@@ -355,34 +411,9 @@ const Table = () => {
               />
             </div>
           </div>
-
           <hr />
-
           <h5>Bill Information:</h5>
           <div className="row mt-4">
-            <div className="col">
-              <Form.Label>Unpaid Bills:</Form.Label>
-              <Form.Select
-                aria-label="Select Bill Number"
-                onChange={handleBillSelect}
-                value={selectedBill}
-                name="acc_num"
-              >
-                <option value="">Select Bill No. or Period</option>
-                {bills.map((bill) => (
-                  <option key={bill._id} value={bill._id}>
-                    {bill.billNumber}
-                  </option>
-                ))}
-              </Form.Select>
-            </div>
-            <div className="col">
-              <Form.Label>Due Date:</Form.Label>
-              <Form.Control type="text" value={duedate} disabled />
-            </div>
-          </div>
-
-          <div className="row mt-2">
             <div className="col">
               <Form.Label>Penalty Charge:</Form.Label>
               <Form.Control
@@ -392,17 +423,6 @@ const Table = () => {
                 disabled
               />
             </div>
-            <div className="col">
-              <Form.Label>Amount Due:</Form.Label>
-              <Form.Control
-                type="number"
-                value={totalAmount}
-                placeholder="0.00"
-                disabled
-              />
-            </div>
-          </div>
-          <div className="row">
             <div className="col-6">
               <Form.Label>Total Balance:</Form.Label>
               <Form.Control
@@ -414,7 +434,6 @@ const Table = () => {
             </div>
           </div>
           <hr />
-
           <h5>Payment Details:</h5>
           <div className="row">
             <div className="col">
@@ -425,7 +444,7 @@ const Table = () => {
                   placeholder="Enter amount"
                   step="0.01"
                   value={paymentAmount}
-                  onChange={(e) => setPayment(e.target.value)}
+                  onChange={handlePaymentAmountChange}
                 />
               </Form.Group>
             </div>
@@ -436,6 +455,34 @@ const Table = () => {
                   type="date"
                   value={p_date}
                   onChange={(e) => setPdate(e.target.value)}
+                />
+              </Form.Group>
+            </div>
+          </div>
+          <div className="row mt-2">
+            <div className="col-6">
+              <Form.Group controlId="advancePayment">
+                <Form.Label>Advance Payment (Optional):</Form.Label>
+                <Form.Control
+                  type="number"
+                  step="0.01"
+                  placeholder="Enter advance amount"
+                  value={advTotalAmount}
+                  onChange={handleAdvancePaymentChange}
+                />
+              </Form.Group>
+            </div>
+          </div>
+          <hr />
+          <div className="row">
+            <div className="col-4">
+              <Form.Group controlId="totalChange">
+                <Form.Label>Total Change:</Form.Label>
+                <Form.Control
+                  type="number"
+                  disabled
+                  value={totalChange}
+                  placeholder="0.00"
                 />
               </Form.Group>
             </div>

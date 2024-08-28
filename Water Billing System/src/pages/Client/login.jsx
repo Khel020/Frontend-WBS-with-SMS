@@ -11,6 +11,7 @@ function ClientLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const backend = import.meta.env.VITE_BACKEND;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,9 +19,8 @@ function ClientLogin() {
       username,
       password,
     };
-
     try {
-      const response = await fetch("http://localhost:1020/login/newLogin", {
+      const response = await fetch(`${backend}/login/newLogin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(Login),

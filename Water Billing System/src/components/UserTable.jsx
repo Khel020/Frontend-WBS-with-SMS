@@ -8,9 +8,11 @@ import axios from "axios";
 const UserTable = () => {
   const [users, setUsers] = useState([]);
 
+  const backend = import.meta.env.VITE_BACKEND;
+
   useEffect(() => {
     axios
-      .get("http://localhost:1020/user/users")
+      .get(`${backend}/user/users`)
       .then((users) => setUsers(users.data))
       .catch((err) => console.log(err));
   }, []);

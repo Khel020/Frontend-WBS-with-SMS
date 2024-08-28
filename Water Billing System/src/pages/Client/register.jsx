@@ -10,6 +10,7 @@ function ListExample() {
   const [show, setShow] = useState(false);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const backend = import.meta.env.VITE_BACKEND;
 
   useEffect(() => {
     setShow(true);
@@ -127,7 +128,7 @@ function ListExample() {
     }
 
     try {
-      const response = await fetch("http://localhost:1020/user/newUser/", {
+      const response = await fetch(`{backend}/user/newUser/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
