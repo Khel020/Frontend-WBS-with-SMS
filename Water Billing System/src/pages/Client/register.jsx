@@ -127,29 +127,26 @@ function ListExample() {
       return;
     }
 
-    try {
-      const response = await fetch(`{backend}/user/newUser/`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+    console.log("User data", formData);
+    fetch(`${backend}/user/newUser/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        console.log(res);
+        if (res.success) {
+          console.log(res.success);
+          toast.success("Account Successfully Created!", {
+            onClose: () => navigate("/login"),
+          });
+        } else {
+          setErrors(res.errors);
+          toast.error("There were some errors with your submission.");
+        }
       });
-      const data = await response.json();
-      console.log(data);
-      if (data.success) {
-        console.log(data.success);
-        toast.success("Account Successfully Created!", {
-          onClose: () => navigate("/login"),
-        });
-      } else {
-        setErrors(data.errors);
-        toast.error("There were some errors with your submission.");
-      }
-    } catch (err) {
-      console.error("An error occurred:", err);
-      toast.error("An error occurred while creating the account.");
-    }
   };
-
   return (
     <div
       style={{
