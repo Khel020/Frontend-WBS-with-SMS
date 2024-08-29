@@ -175,7 +175,6 @@ const Table = () => {
       toast.warn("Please enter a valid payment amount.");
       return;
     }
-    setTotalBalance(0);
     const newPayment = {
       acc_num,
       acc_name,
@@ -187,22 +186,40 @@ const Table = () => {
       totalChange, // change
     };
     console.log("Data for payments", newPayment);
+    const response = await fetch(`${backend}/biller/newPayment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("tkn")}`,
+      },
+      body: JSON.stringify(newPayment),
+    })
+      .then((response) => response.json()) // Parse JSON from response
+      .then((result) => {
+        // Access success property to determine the response flow
+        if (result.success) {
+          // Extract data from the first element of the data array
+          const paymentData = result.data[0]; // Assuming the first object is what you need
 
-    const response = await axios.post(
-      `${backend}/biller/newPayment`,
-      newPayment
-    );
-    if (response.data.success) {
-      toast.success("Payment successful");
-      setAccNum("0");
-      setAccName(" ");
-      setTotalPenalty("0");
-      setTotalBalance("0");
-      setPayment("0");
-      setPdate(" ");
-    } else {
-      toast.error(response.data.message || "Payment failed");
-    }
+          setAccNum(paymentData.acc_num || "0");
+          setAccName(paymentData.accountName || " ");
+          setTotalPenalty(paymentData.paid || "0"); // Example mapping
+          setTotalBalance(paymentData.balance || "0");
+          setPayment(paymentData.change || "0"); // Example mapping
+          setPdate(new Date().toLocaleDateString()); // Setting a date example
+
+          // Show success toast
+          toast.success(result.message || "Payment successful");
+        } else {
+          // If response.success is false, show an error toast
+          toast.error(result.message || "Payment failed");
+        }
+      })
+      .catch((error) => {
+        // Handle any fetch-related errors
+        console.error("Request failed:", error);
+        toast.error("Request failed");
+      });
   };
 
   if (!clients) {

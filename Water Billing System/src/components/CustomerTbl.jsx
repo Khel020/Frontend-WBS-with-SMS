@@ -83,7 +83,7 @@ const CustomerTbl = () => {
     {
       name: "Last Bill Date",
       selector: (row) =>
-        row.last_billDate ? formatDate(row.last_billDate) : "Soon",
+        row.last_billDate ? formatDate(row.last_billDate) : "For Activation",
       sortable: true,
       width: "200px", // Adjust width as needed
     },

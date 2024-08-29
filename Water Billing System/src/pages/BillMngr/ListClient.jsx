@@ -12,6 +12,7 @@ const Lit = () => {
     activeClients: 0,
     inactiveClients: 0,
   });
+  
   const fetchClientStats = async () => {
     try {
       const response = await fetch(`${backend}/biller/status`, {
@@ -154,7 +155,6 @@ const Lit = () => {
               </div>
             </div>
           </div>
-
           <ClientTable />
         </main>
       </div>
