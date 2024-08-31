@@ -7,6 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Userlist() {
+  const backend = import.meta.env.VITE_BACKEND;
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -27,7 +28,6 @@ function Userlist() {
     role: "",
   });
   const [search, setSearch] = useState("");
-  const backend = import.meta.env.VITE_BACKEND;
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -77,7 +77,6 @@ function Userlist() {
     e.preventDefault();
 
     let endpoint;
-    console.log("Role:", editAccount.role);
 
     switch (editAccount.role) {
       case "admin":
@@ -123,7 +122,27 @@ function Userlist() {
     }
   };
 
-  const handleAccountStatusChange = (data) => {};
+  const handleAccountStatusChange = async (data) => {
+    try {
+      const update = {
+        _id: data._id,
+        status: data.status,
+        usertype: data.usertype,
+      };
+      console.log("updates", update);
+      const response = await fetch(`${backend}/admin/updateAccountStatus`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("tkn")}`,
+        },
+        body: JSON.stringify(update),
+      });
+      if (response.data.success) {
+        window.location.reload();
+      }
+    } catch {}
+  };
 
   const filterUsers = users.filter((users) => {
     return users.username.toLowerCase().includes(search.toLowerCase());
@@ -222,7 +241,7 @@ function Userlist() {
       name: "Status",
       sortable: true,
       selector: (row) => row.status,
-      width: "150px", // Adjust width as needed
+      width: "100px", // Adjust width as needed
     },
     {
       name: "Action",
@@ -234,7 +253,13 @@ function Userlist() {
               row.status === "active" ? "on" : "off"
             } ${row.status === "active" ? "text-success" : "text-danger"}`}
             style={{ fontSize: "25px", cursor: "pointer", marginRight: "10px" }}
-            onClick={() => handleAccountStatusChange(row._id, row.status)}
+            onClick={() =>
+              handleAccountStatusChange({
+                _id: row._id,
+                status: row.status,
+                usertype: row.usertype,
+              })
+            }
             title={
               row.status === "active"
                 ? "Deactivate Account"
@@ -253,7 +278,7 @@ function Userlist() {
           ></i>
         </div>
       ),
-      width: "152px", // Adjust width as needed
+      width: "140px", // Adjust width as needed
     },
   ];
   function formatDate(dateString) {
