@@ -118,7 +118,7 @@ function ClientLogin() {
                         placeholder="Username"
                         onChange={(e) => setUsername(e.target.value)}
                       />
-                      <label htmlFor="floatingInput">Username</label>
+                      <label htmlFor="floatingInput">Account Name</label>
                     </div>
                     <div className="form-floating">
                       <input

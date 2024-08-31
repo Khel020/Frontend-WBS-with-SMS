@@ -20,6 +20,8 @@ function ListExample() {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
+    fname: "",
+    lastname: "",
     password: "",
     contact: "",
     acc_num: "",
@@ -122,6 +124,7 @@ function ListExample() {
       }
     });
 
+    // If there are validation errors, set them and stop submission
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -135,18 +138,37 @@ function ListExample() {
     })
       .then((response) => response.json())
       .then((res) => {
-        console.log(res);
         if (res.success) {
-          console.log(res.success);
           toast.success("Account Successfully Created!", {
             onClose: () => navigate("/login"),
           });
         } else {
-          setErrors(res.errors);
-          toast.error("There were some errors with your submission.");
+          const serverErrors = {};
+
+          // Handle server-side validation errors
+          if (res.errors) {
+            Object.keys(res.errors).forEach((key) => {
+              serverErrors[key] = res.errors[key];
+            });
+          }
+
+          // Handle other potential errors
+          if (res.message) {
+            toast.error(res.message);
+          } else {
+            toast.error("An error occurred while creating the account.");
+          }
+
+          // Set errors to be displayed on the form
+          setErrors(serverErrors);
         }
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Failed to create account. Please try again later.");
       });
   };
+
   return (
     <div
       style={{
@@ -249,7 +271,6 @@ function ListExample() {
                       <div className="text-danger">{errors.acc_num}</div>
                     )}
                   </div>
-
                   <div className="col-12 col-md-6">
                     <label htmlFor="Contact" className="form-label">
                       Contact
@@ -267,7 +288,35 @@ function ListExample() {
                       <div className="text-danger">{errors.contact}</div>
                     )}
                   </div>
-
+                  <div className="col-12 col-md-6">
+                    <label htmlFor="fname" className="form-label">
+                      Firstname:
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="fname"
+                      id="fname"
+                      value={formData.fname}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="col-12 col-md-6">
+                    <label htmlFor="lastname" className="form-label">
+                      Lastname:
+                    </label>
+                    <input
+                      type="text"
+                      name="lastname"
+                      className="form-control"
+                      id="lastname"
+                      value={formData.lastname}
+                      onChange={handleChange}
+                    />
+                    {errors.contact && (
+                      <div className="text-danger">{errors.contact}</div>
+                    )}
+                  </div>
                   <div className="col-12 col-md-6">
                     <label htmlFor="Meternumber" className="form-label">
                       Meter Number
@@ -330,7 +379,6 @@ function ListExample() {
                       Sign up
                     </button>
                   </div>
-
                   <div className="col-12 text-center mt-3">
                     <p>
                       Already have an account? <Link to="/login">Sign in</Link>

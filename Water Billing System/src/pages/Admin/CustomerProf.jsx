@@ -112,7 +112,13 @@ const CustomerProf = () => {
     };
     customer_details();
   }, [acc_number, backend]);
-
+  function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
   return (
     <div
       className="userlist d-flex flex-column flex-md-row"
@@ -159,12 +165,11 @@ const CustomerProf = () => {
                   </div>
                 </div>
 
-                <div class="card mb-3">
+                <div class="card">
                   <div class="card-body">
                     <h5 class="card-title d-flex justify-content-between align-items-center mb-3">
                       <strong>Account Information</strong>
                     </h5>
-
                     <p class="card-text">
                       <strong>Account Number: </strong> {customer.acc_num}
                     </p>
@@ -176,10 +181,16 @@ const CustomerProf = () => {
                     </p>
                     <p class="card-text">
                       <strong>Installation Date:</strong>{" "}
-                      {customer.install_date}
+                      {formatDate(customer.install_date)}
                     </p>
                     <p class="card-text">
                       <strong>Meter Number:</strong> {customer.meter_num}
+                    </p>
+                    <p class="card-text">
+                      <strong>Pipe Size:</strong> {customer.pipe_size}
+                    </p>
+                    <p class="card-text">
+                      <strong>Brand Number:</strong> {customer.brand_num}
                     </p>
                   </div>
                 </div>
@@ -218,16 +229,21 @@ const CustomerProf = () => {
                       <div class="card-body">
                         <h5 class="card-title">Account Summary</h5>
                         <p class="card-text">
-                          <strong>Account Balance:</strong> $250.00
+                          <strong>Account Balance:</strong>{" "}
+                          {customer.totalBalance ? customer.totalBalance : 0}
                         </p>
                         <p class="card-text">
-                          <strong>Last Payment Date:</strong> July 25, 2024
+                          <strong>Account Deposit:</strong>
+                          {customer.advancePayment
+                            ? " ₱ " + customer.advancePayment
+                            : " ₱" + 0}
+                        </p>
+                        <p class="card-text">
+                          <strong>Last Payment Date:</strong>{" "}
+                          {formatDate(customer.last_billDate)}
                         </p>
                         <p class="card-text">
                           <strong>Next Payment Due:</strong> August 30, 2024
-                        </p>
-                        <p class="card-text">
-                          <strong>Payment Method:</strong> Cash
                         </p>
                       </div>
                     </div>

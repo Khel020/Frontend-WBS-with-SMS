@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Dropdown from "react-bootstrap/Dropdown";
 import { useNavigate } from "react-router-dom";
-
+import "../styles/sidebar.css";
 const Sidebar = ({ role }) => {
   const location = useLocation();
   const [activeLink, setActiveLink] = useState("");
@@ -153,17 +153,52 @@ const Sidebar = ({ role }) => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link
-                to="/reports"
-                style={linkStyle("/reports")}
-                className="nav-link"
-              >
-                <i
-                  className="bi bi-file-earmark-bar-graph"
-                  style={iconStyle("/reports")}
-                ></i>
-                Reports
-              </Link>
+              <>
+                <li className="nav-item dropdown">
+                  <Link
+                    to="/reports"
+                    style={linkStyle("/reports")}
+                    className="nav-link dropdown-toggle"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <i
+                      className="bi bi-file-earmark-bar-graph"
+                      style={iconStyle("/reports")}
+                    ></i>
+                    Reports
+                  </Link>
+                  <ul className="dropdown-menu dropdown-menu-end">
+                    <li>
+                      <Link to="/cus_reports" className="dropdown-item">
+                        Customer Reports
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/consumption_rep" className="dropdown-item">
+                        Consumption Reports
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/payment_rep" className="dropdown-item">
+                        Payment Reports
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/reports/consumption" className="dropdown-item">
+                        Consumption Reports
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/reports/consumption" className="dropdown-item">
+                        Consumption Reports
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
+                {/* Other navigation links */}
+              </>
+              {/* Other navigation links */}
             </li>
             <li className="nav-item">
               <Link to="/logs" style={linkStyle("/logs")} className="nav-link">
