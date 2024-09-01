@@ -69,7 +69,7 @@ const Table = () => {
         setAccName(data.consumerName);
         setAddress(data.address);
         setTotalPenalty(data.totalPenalty);
-        setTotalBalance(data.totalBill);
+        setTotalBalance(data.totalAmountDue);
       } catch (error) {
         console.error("Error fetching data:", error);
         setAccName("");
@@ -90,11 +90,6 @@ const Table = () => {
     const amount = parseFloat(e.target.value);
     console.log("Setting payment amount to:", amount);
     setPayment(amount);
-    // if (amount > balance) {
-    //   setTotalBalance(0);
-    // } else {
-    //   setTotalBalance(balance);
-    // }
     CalculateChange(amount); // Pass the latest amount directly
   };
   const handleAdvancePaymentChange = (e) => {

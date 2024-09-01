@@ -78,7 +78,7 @@ function BillTable() {
       cell: (row) => (
         <div>
           <Link
-            to={`/customer/${row.acc_num}/${row.accountName}`}
+            to={`/billing-details/${row.billNumber}`}
             className="btn btn-success btn-sm me-2"
             onClick={() => handleAction(row)}
           >
