@@ -22,7 +22,8 @@ const Customers = () => {
   const [connection_fee, setConnectionFee] = useState("");
   const [meter_installer, setMeterInstaller] = useState("");
   const [zone, setZone] = useState("");
-
+  const [seq_num, setSeqNum] = useState("");
+  const [book, setBook] = useState("");
   const [address, setAddress] = useState({
     house_num: "",
     purok: "",
@@ -90,8 +91,9 @@ const Customers = () => {
             throw new Error("Network response was not ok");
           }
           const result = await response.json();
-          console.log("Your Account Number", result);
-          setAccNum(result);
+          setAccNum(result.result.acc_num);
+          setSeqNum(result.result.seq_num);
+          setBook(result.result.book);
         } catch (err) {
           console.error("Fetch error:", err);
           setError(err.message);
@@ -106,7 +108,7 @@ const Customers = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (acc_num) {
-      const accountNumber = acc_num.accountNumber;
+      const accountNumber = acc_num;
       const newClient = {
         accountNumber,
         accountName,
@@ -123,6 +125,8 @@ const Customers = () => {
         connection_fee,
         meter_installer,
         zone,
+        seq_num,
+        book,
       };
       try {
         const response = await axios.post(
@@ -209,7 +213,7 @@ const Customers = () => {
                       id="acc_num"
                       required
                       disabled
-                      value={acc_num.accountNumber}
+                      value={acc_num}
                     />
                   </div>
 
@@ -298,7 +302,6 @@ const Customers = () => {
                       </option>
                       <option value="Residential">Residential</option>
                       <option value="Commercial">Commercial</option>
-                      <option value="Industrial">Industrial</option>
                       <option value="Government">Government</option>
                     </select>
                   </div>

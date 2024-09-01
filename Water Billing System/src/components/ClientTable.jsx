@@ -218,7 +218,11 @@ const Table = () => {
   };
 
   if (!clients) {
-    return <div>Loading...</div>;
+    return (
+      <div className="text-danger">
+        <span>No Record found</span>
+      </div>
+    );
   }
   const columns = [
     {

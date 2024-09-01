@@ -70,7 +70,7 @@ function BillTable() {
     },
     {
       name: "Total Amount",
-      selector: (row) => "₱ " + row.totalAmount.toFixed(2),
+      selector: (row) => "₱ " + row.totalDue.toFixed(2),
       sortable: true,
     },
     {
