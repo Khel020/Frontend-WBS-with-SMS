@@ -68,21 +68,21 @@ function Rtable() {
 
   const [records, setRecords] = useState(data);
 
-  function handleFilter(event) {
-    const value = event.target.value.toLowerCase();
-    const filteredData = data.filter((row) => {
-      return (
-        row.Customer.toLowerCase().includes(value) ||
-        row.Account.toLowerCase().includes(value) ||
-        row.Category.toLowerCase().includes(value) ||
-        row.Consumptions.toLowerCase().includes(value) ||
-        row.Billing.toLowerCase().includes(value) ||
-        row.Reading.toLowerCase().includes(value) ||
-        row.Due.toLowerCase().includes(value)
-      );
-    });
-    setRecords(filteredData);
-  }
+  // function handleFilter(event) {
+  //   const value = event.target.value.toLowerCase();
+  //   const filteredData = data.filter((row) => {
+  //     return (
+  //       row.Customer.toLowerCase().includes(value) ||
+  //       row.Account.toLowerCase().includes(value) ||
+  //       row.Category.toLowerCase().includes(value) ||
+  //       row.Consumptions.toLowerCase().includes(value) ||
+  //       row.Billing.toLowerCase().includes(value) ||
+  //       row.Reading.toLowerCase().includes(value) ||
+  //       row.Due.toLowerCase().includes(value)
+  //     );
+  //   });
+  //   setRecords(filteredData);
+  // }
 
   const customStyles = {
     headCells: {
@@ -127,14 +127,14 @@ function Rtable() {
           <h1 className="h2">Consumptions</h1>
         </div>
         <div className="row">
-          <div className="mb-3 col-3">
+          {/* <div className="mb-3 col-3">
             <input
               type="text"
               placeholder="Filter by customer or category"
               onChange={handleFilter}
               className="form-control d-inline-block w-auto"
             />
-          </div>
+          </div> */}
           <button onClick={printTable} className="btn btn-primary">
             Print
           </button>
@@ -148,7 +148,6 @@ function Rtable() {
           customStyles={customStyles}
           responsive
         />
-        ; ;
       </main>
     </div>
   );

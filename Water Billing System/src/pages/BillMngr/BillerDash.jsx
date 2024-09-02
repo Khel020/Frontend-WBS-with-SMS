@@ -43,25 +43,8 @@ const BillerDash = () => {
           <h1 className="h2">Dashboard</h1>
         </div>
         <div className="row">
-          <div className="col-md-4 mb-4">
-            <div className="card">
-              <div className="card-header">
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  99+
-                  <span class="visually-hidden">unread messages</span>
-                </span>
-                <h5>Fees Management</h5>
-              </div>
-              <div className="card-body">
-                <p>Manage your Consumers fee and other related charges here.</p>
-
-                <Link to="/manage-fees" className="btn btn-primary">
-                  Manage Fees
-                </Link>
-              </div>
-            </div>
-          </div>
-          {/* <div className="col-md-12 mb-4">
+          <div className="col-md-4 mb-4"></div>
+          <div className="col-md-12 mb-4">
             <h5>Charts Overview</h5>
             <div className="row">
               <div className="col-md-6 mb-4">
@@ -106,7 +89,7 @@ const BillerDash = () => {
                 </div>
               </div>
             </div>
-          </div> */}
+          </div>
         </div>
       </main>
     </div>

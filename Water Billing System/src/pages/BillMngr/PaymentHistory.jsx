@@ -44,12 +44,7 @@ const PaymentHistory = () => {
       sortable: true,
       width: "100px", // Adjust width as needed
     },
-    {
-      name: "Acc No.",
-      selector: (row) => row.acc_num,
-      sortable: true,
-      width: "150px", // Adjust width as needed
-    },
+
     {
       name: "Account Name",
       selector: (row) => row.accountName,
@@ -63,13 +58,20 @@ const PaymentHistory = () => {
       width: "180px", // Adjust width as needed
     },
     {
+      name: "Arrears",
+      selector: (row) => `₱${row.arrears ? row.arrears.toFixed(2) : "0.00"}`,
+
+      sortable: true,
+      width: "150px", // Adjust width as needed
+    },
+    {
       name: "Amount Due",
-      selector: (row) => `${row.amountDue} `,
+      selector: (row) => `₱${row.amountDue.toFixed(2)}`,
     },
     {
       name: "Amount Paid",
       sortable: true,
-      selector: (row) => row.tendered,
+      selector: (row) => `₱${row.tendered.toFixed(2)}`,
     },
     {
       name: "Action",
@@ -182,9 +184,16 @@ const PaymentHistory = () => {
         <div className="d-flex align-items-center pt-3 pb-2 mb-3 border-bottom">
           <h1 className="h2 me-3">Payments of Consumer</h1>
         </div>
-        <Button variant="outlined" startIcon={<ArrowBackIcon />} size="small">
-          Back
-        </Button>
+        <Link to="/billing-records/:acc_number/:accountName">
+          <Button
+            variant="outlined"
+            startIcon={<ArrowBackIcon />}
+            size="small"
+            className="mb-3"
+          >
+            Back
+          </Button>
+        </Link>
         <DataTable
           customStyles={customStyles}
           pagination

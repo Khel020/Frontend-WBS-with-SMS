@@ -37,7 +37,7 @@
     "socket.io": "^4.7.5",
     "socket.io-client": "^4.7.5",
     "styled-components": "^6.1.11",
-    "sweetalert2": "^11.12.2"
+    "sweetalert2": "^11.12.4"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

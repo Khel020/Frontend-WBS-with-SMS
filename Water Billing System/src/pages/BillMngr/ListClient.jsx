@@ -3,6 +3,7 @@ import Sidebar from "../../components/Sidebar.jsx";
 import ClientTable from "../../components/ClientTable.jsx";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Link } from "react-router-dom";
 
 const Lit = () => {
   const backend = import.meta.env.VITE_BACKEND;
@@ -12,7 +13,7 @@ const Lit = () => {
     activeClients: 0,
     inactiveClients: 0,
   });
-  
+
   const fetchClientStats = async () => {
     try {
       const response = await fetch(`${backend}/biller/status`, {

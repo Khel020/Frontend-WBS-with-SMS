@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import Sidebar from "../../components/Sidebar";
 
-function Rtable() {
+function BillsSummary() {
   // Define the columns for the DataTable
   const [records, setRecords] = useState([]);
   const backend = import.meta.env.VITE_BACKEND;
@@ -28,25 +28,25 @@ function Rtable() {
   }
   const columns = [
     {
-      name: "Acc No.",
+      name: "Name",
       selector: (row) => row.acc_num,
       sortable: true,
       width: "150px", // Adjust width as needed
     },
     {
-      name: "Name",
+      name: "Total Bills Generated",
       selector: (row) => row.accountName,
       sortable: true,
       width: "200px", // Adjust width as needed
     },
     {
-      name: "Group",
+      name: "Total  Billed",
       selector: (row) => row.client_type,
       sortable: true,
       width: "150px", // Adjust width as needed
     },
     {
-      name: "Address",
+      name: "Total  Paid",
       selector: (row) =>
         row.c_address.house_num +
         " Purok " +
@@ -57,14 +57,24 @@ function Rtable() {
       width: "200px", // Adjust width as needed
     },
     {
-      name: "Status",
-      selector: (row) => row.status,
+      name: "Last Bill Date",
+      selector: (row) =>
+        row.c_address.house_num +
+        " Purok " +
+        row.c_address.purok +
+        " " +
+        row.c_address.brgy,
       sortable: true,
-      width: "150px", // Adjust width as needed
+      width: "200px", // Adjust width as needed
     },
     {
-      name: "Date of Registration",
-      selector: (row) => formatDate(row.install_date),
+      name: "Last Payment Date",
+      selector: (row) =>
+        row.c_address.house_num +
+        " Purok " +
+        row.c_address.purok +
+        " " +
+        row.c_address.brgy,
       sortable: true,
       width: "200px", // Adjust width as needed
     },
@@ -151,7 +161,7 @@ function Rtable() {
       <Sidebar role={usertype} />
       <main className="col-md-9 ms-sm-auto col-lg-10 px-md-3">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded ">
-          <h1 className="h2">Customer Report</h1>
+          <h1 className="h2">Customer Bills Summary</h1>
         </div>
         <div className="row">
           <div className="mb-3 col-3">
@@ -176,4 +186,4 @@ function Rtable() {
   );
 }
 
-export default Rtable;
+export default BillsSummary;

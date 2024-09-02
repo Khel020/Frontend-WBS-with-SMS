@@ -44,6 +44,7 @@ import Customers from "./pages/Admin/Customers.jsx";
 import CusReport from "./pages/Admin/customerReports.jsx";
 import ConsumptionReport from "./pages/Admin/Consumptions.jsx";
 import PaymentsReport from "./pages/Admin/PaymentReps.jsx";
+import BillSummary from "./pages/Admin/BillsSummary.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -120,6 +121,9 @@ const router = createBrowserRouter(
       </Route>
       <Route path="consumption_rep" element={<AdminLayout />}>
         <Route index element={<ConsumptionReport />} />
+      </Route>
+      <Route path="bill-summary" element={<AdminLayout />}>
+        <Route index element={<BillSummary />} />
       </Route>
       <Route path="payment_rep" element={<AdminLayout />}>
         <Route index element={<PaymentsReport />} />

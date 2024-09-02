@@ -24,9 +24,8 @@ const BillRecords = () => {
 
       const data = await response.json();
       setBills(data);
-      setAccountName;
     };
-    console;
+
     fetchBillByAccNum();
   }, [acc_number]);
 
@@ -43,13 +42,6 @@ const BillRecords = () => {
       selector: (row) => row.billNumber,
       sortable: true,
       width: "100px", // Adjust width as needed
-    },
-
-    {
-      name: "Acc No.",
-      selector: (row) => row.acc_num,
-      sortable: true,
-      width: "1", // Adjust width as needed
     },
     {
       name: "Reading Date",
@@ -70,6 +62,11 @@ const BillRecords = () => {
     },
     {
       name: "Amount",
+      selector: (row) => `₱${row.currentBill.toFixed(2)}`, // Format amount with peso sign and two decimal places
+      sortable: true,
+    },
+    {
+      name: "Total Due",
       selector: (row) => `₱${row.totalDue.toFixed(2)}`, // Format amount with peso sign and two decimal places
       sortable: true,
     },
@@ -200,13 +197,15 @@ const BillRecords = () => {
         </div>
         <div className="row mb-3">
           <div className="col">
-            <Button
-              variant="outlined"
-              startIcon={<ArrowBackIcon />}
-              size="small"
-            >
-              Back
-            </Button>
+            <Link to="/listclient">
+              <Button
+                variant="outlined"
+                startIcon={<ArrowBackIcon />}
+                size="small"
+              >
+                Back
+              </Button>
+            </Link>
           </div>
           <div className="col text-end">
             <Link to={`/receive-payments/${acc_number}`}>

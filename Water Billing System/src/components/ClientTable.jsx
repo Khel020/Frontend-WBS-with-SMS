@@ -367,10 +367,16 @@ const Table = () => {
               onBlur={(e) => (e.target.style.borderColor = "#ced4da")} // Revert color on blur
             />
           </div>
-          <div className="col d-flex justify-content-end mb-2">
+          <div className="col justify-content-end mb-2 align-items-end">
+            <Link to="/manage-fees">
+              <button type="button" class="btn btn-primary">
+                Manage Fees <span class="badge text-bg-secondary">4</span>
+              </button>
+            </Link>
             <button
-              className="btn btn-success btn-sm mx-3"
+              className="btn btn-success  mx-3"
               onClick={handleShow}
+              type="button"
             >
               Proceed to Payment
             </button>

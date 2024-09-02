@@ -1,106 +1,141 @@
-import React, { useState } from "react";
-import DataTable from "react-data-table-component";
-import Sidebar from "../../components/Sidebar.jsx";
+import React, { useEffect, useState } from "react";
+import DataTable, { defaultThemes } from "react-data-table-component";
+import Sidebar from "../../components/Sidebar";
 
 function Rtable() {
+  // Define the columns for the DataTable
+  const [records, setRecords] = useState([]);
+  const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
+
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      const response = await fetch(`${backend}/admin/customers`);
+      if (response) {
+        const data = await response.json();
+        setRecords(data);
+      }
+    };
+    fetchCustomers();
+  }, [backend]);
+  function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
   const columns = [
     {
-      name: "Payment ID",
-      selector: (row) => row.Identifier,
-      sortable: true,
-    },
-    {
-      name: "Account Number",
-      selector: (row) => row.Number,
-      sortable: true,
-    },
-    {
-      name: "Customer Name",
-      selector: (row) => row.Customer,
-      sortable: true,
-    },
-    {
       name: "Payment Date",
-      selector: (row) => row.PaymentDate,
+      selector: (row) => row.acc_num,
       sortable: true,
+      width: "200px", // Adjust width as needed
+    },
+    {
+      name: "Name",
+      selector: (row) => row.accountName,
+      sortable: true,
+      width: "200px", // Adjust width as needed
     },
     {
       name: "Payment Amount",
-      selector: (row) => row.PaymentAmount,
+      selector: (row) => row.client_type,
       sortable: true,
+      width: "180ox", // Adjust width as needed
     },
     {
-      name: "Payment Method",
-      selector: (row) => row.PaymentMethod,
+      name: "Bill Number",
+      selector: (row) =>
+        row.c_address.house_num +
+        " Purok " +
+        row.c_address.purok +
+        " " +
+        row.c_address.brgy,
       sortable: true,
+      width: "200px", // Adjust width as needed
     },
     {
-      name: "Payment Status",
-      selector: (row) => row.PaymentStatus,
+      name: "Remaining Balance",
+      selector: (row) =>
+        row.c_address.house_num +
+        " Purok " +
+        row.c_address.purok +
+        " " +
+        row.c_address.brgy,
       sortable: true,
+      width: "200px", // Adjust width as needed
     },
   ];
-
-  const data = [
-    {
-      id: 1,
-      Identifier: "1",
-      Number: "002-873-837",
-      Customer: "Errol Christian Aurelio",
-      PaymentDate: "06-21-24",
-      PaymentAmount: 1250,
-      PaymentMethod: "Cash",
-      PaymentStatus: "Paid",
-    },
-    // Add more records as needed
-  ];
-
-  const [records, setRecords] = useState(data);
 
   function handleFilter(event) {
     const value = event.target.value.toLowerCase();
-    const filteredData = data.filter((row) => {
+    const filteredData = records.filter((row) => {
       return (
-        row.Identifier.toLowerCase().includes(value) ||
-        row.Number.toLowerCase().includes(value) ||
-        row.Customer.toLowerCase().includes(value) ||
-        row.PaymentDate.toLowerCase().includes(value) ||
-        row.PaymentAmount.toString().includes(value) ||
-        row.PaymentMethod.toLowerCase().includes(value) ||
-        row.PaymentStatus.toLowerCase().includes(value)
+        row.name.toLowerCase().includes(value) ||
+        row.water.toString().toLowerCase().includes(value) ||
+        row.present.toString().toLowerCase().includes(value) ||
+        row.previous.toString().toLowerCase().includes(value) ||
+        row.total.toString().toLowerCase().includes(value)
       );
     });
     setRecords(filteredData);
   }
 
   const customStyles = {
+    table: {
+      style: {
+        border: "1px solid #ddd", // Border around the entire table
+      },
+    },
     headCells: {
       style: {
-        background: "linear-gradient(to right, #0f3a3f, #2f6b7a)",
-        color: "white",
-        textAlign: "center",
         fontWeight: "bold",
-        fontSize: "16px",
-        padding: "8px",
+        backgroundColor: "#61b390",
+        color: "dark",
+        fontSize: "10px",
       },
     },
-    cells: {
+    rows: {
       style: {
-        padding: "8px",
-        wordBreak: "break-word", // Ensure text wraps within cells
+        minHeight: "45px", // override the row height
+        "&:hover": {
+          backgroundColor: "#f1f1f1",
+        },
       },
     },
-  };
 
-  const containerStyle = {
-    maxHeight: "400px", // Adjust the height as needed
-    overflowY: "auto",
-  };
-
-  const printTable = () => {
-    window.print();
+    pagination: {
+      style: {
+        border: "none",
+        fontSize: "13px",
+        color: defaultThemes.default.text.primary,
+        backgroundColor: "#f7f7f7",
+        minHeight: "50px",
+      },
+      pageButtonsStyle: {
+        borderRadius: "50%",
+        height: "40px",
+        width: "40px",
+        padding: "8px",
+        margin: "0px 5px",
+        cursor: "pointer",
+        transition: "0.4s",
+        color: defaultThemes.default.text.primary,
+        fill: defaultThemes.default.text.primary,
+        backgroundColor: "#fff",
+        "&:hover:not(:disabled)": {
+          backgroundColor: defaultThemes.default.text.primary,
+          fill: "#fff",
+        },
+        "&:focus": {
+          outline: "none",
+          backgroundColor: defaultThemes.default.text.primary,
+          fill: "#fff",
+        },
+      },
+    },
   };
 
   return (
@@ -115,20 +150,17 @@ function Rtable() {
       <Sidebar role={usertype} />
       <main className="col-md-9 ms-sm-auto col-lg-10 px-md-3">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded ">
-          <h1 className="h2">Payment Reports</h1>
+          <h1 className="h2">Customer Bills Summary</h1>
         </div>
         <div className="row">
           <div className="mb-3 col-3">
             <input
               type="text"
-              placeholder="Filter by category"
+              placeholder="Filter by name"
               onChange={handleFilter}
               className="form-control d-inline-block w-auto"
             />
           </div>
-          <button onClick={printTable} className="btn btn-primary">
-            Print
-          </button>
         </div>
         <DataTable
           columns={columns}
@@ -137,9 +169,7 @@ function Rtable() {
           fixedHeader
           pagination
           customStyles={customStyles}
-          responsive
         />
-        ;
       </main>
     </div>
   );

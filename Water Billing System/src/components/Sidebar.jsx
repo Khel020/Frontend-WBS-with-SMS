@@ -170,28 +170,19 @@ const Sidebar = ({ role }) => {
                   </Link>
                   <ul className="dropdown-menu dropdown-menu-end">
                     <li>
+                      <Link to="/bill-summary" className="dropdown-item">
+                        Bill Summary
+                      </Link>
+                    </li>
+                    <li>
                       <Link to="/cus_reports" className="dropdown-item">
                         Customer Reports
                       </Link>
                     </li>
-                    <li>
-                      <Link to="/consumption_rep" className="dropdown-item">
-                        Consumption Reports
-                      </Link>
-                    </li>
+
                     <li>
                       <Link to="/payment_rep" className="dropdown-item">
                         Payment Reports
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/reports/consumption" className="dropdown-item">
-                        Consumption Reports
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/reports/consumption" className="dropdown-item">
-                        Consumption Reports
                       </Link>
                     </li>
                   </ul>
