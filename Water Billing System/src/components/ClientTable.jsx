@@ -8,7 +8,8 @@ import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/clientTBL.css";
-
+import ReactToPrint from "react-to-print";
+import Receipt from "../components/receipt";
 const Table = () => {
   //State for storing data
   const [show, setShow] = useState(false);
@@ -28,7 +29,7 @@ const Table = () => {
   const [address, setAddress] = useState("");
   const [totalChange, setTotalChange] = useState("");
   const [advTotalAmount, setAdvance] = useState("");
-
+  const [printReceiptDetails, setPrintReceiptDetails] = useState(null);
   //TODO: Filtered data based on search input
   const [clients, setClients] = useState([]);
   const filteredClients = clients.filter((client) => {
@@ -69,7 +70,11 @@ const Table = () => {
         setAccName(data.consumerName);
         setAddress(data.address);
         setTotalPenalty(data.totalPenalty);
-        setTotalBalance(data.totalAmountDue);
+        setTotalBalance(
+          data.totalAmountDue && data.totalBalance
+            ? parseFloat(data.totalAmountDue) + parseFloat(data.totalAmountDue)
+            : data.totalAmountDue
+        );
       } catch (error) {
         console.error("Error fetching data:", error);
         setAccName("");
@@ -204,7 +209,12 @@ const Table = () => {
           setPdate(new Date().toLocaleDateString()); // Setting a date example
 
           // Show success toast
+          const receiptDetails = {
+            amount: paymentAmount, // o anumang payment amount na ginagamit mo
+            accountName: paymentData.accountName,
+          };
           toast.success(result.message || "Payment successful");
+          setPrintReceiptDetails(receiptDetails);
         } else {
           // If response.success is false, show an error toast
           toast.error(result.message || "Payment failed");
@@ -367,14 +377,9 @@ const Table = () => {
               onBlur={(e) => (e.target.style.borderColor = "#ced4da")} // Revert color on blur
             />
           </div>
-          <div className="col justify-content-end mb-2 align-items-end">
-            <Link to="/manage-fees">
-              <button type="button" class="btn btn-primary">
-                Manage Fees <span class="badge text-bg-secondary">4</span>
-              </button>
-            </Link>
+          <div className="col justify-content-end mb-2 text-end">
             <button
-              className="btn btn-success  mx-3"
+              className="btn btn-success justify-content-end mx-3"
               onClick={handleShow}
               type="button"
             >
@@ -517,6 +522,13 @@ const Table = () => {
           <Button variant="primary" onClick={handleSubmitPay}>
             Submit Payment
           </Button>
+          {printReceiptDetails && (
+            <ReactToPrint
+              trigger={() => <button>Print Receipt</button>}
+              content={() => <Receipt paymentDetails={printReceiptDetails} />}
+              onAfterPrint={() => setPrintReceiptDetails(null)}
+            />
+          )}
         </Modal.Footer>
       </Modal>
     </div>

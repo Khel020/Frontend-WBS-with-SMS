@@ -32,7 +32,6 @@ import ListClient from "./pages/BillMngr/ListClient.jsx";
 import ReceivePayments from "./pages/BillMngr/PaymentHistory.jsx";
 import Reports from "./pages/BillMngr/Reports.jsx";
 import BillerDash from "./pages/BillMngr/BillerDash.jsx";
-import Fees from "./pages/BillMngr/Fees.jsx";
 
 //TODO: Admin Pages
 import AdminDash from "./pages/Admin/AdminDash.jsx";
@@ -45,6 +44,7 @@ import CusReport from "./pages/Admin/customerReports.jsx";
 import ConsumptionReport from "./pages/Admin/Consumptions.jsx";
 import PaymentsReport from "./pages/Admin/PaymentReps.jsx";
 import BillSummary from "./pages/Admin/BillsSummary.jsx";
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -76,9 +76,6 @@ const router = createBrowserRouter(
       </Route>
       <Route path="bills" element={<BillerLayout />}>
         <Route index element={<Bills />} />
-      </Route>
-      <Route path="manage-fees" element={<BillerLayout />}>
-        <Route index element={<Fees />} />
       </Route>
       <Route path="listclient" element={<BillerLayout />}>
         <Route index element={<ListClient />} />

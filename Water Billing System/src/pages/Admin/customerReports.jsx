@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import DataTable, { defaultThemes } from "react-data-table-component";
+import DataTable from "react-data-table-component";
 import Sidebar from "../../components/Sidebar";
+import * as XLSX from "xlsx";
 
 function Rtable() {
-  // Define the columns for the DataTable
   const [records, setRecords] = useState([]);
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
@@ -19,6 +19,7 @@ function Rtable() {
     };
     fetchCustomers();
   }, [backend]);
+
   function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -26,70 +27,49 @@ function Rtable() {
       day: "numeric",
     });
   }
+
   const columns = [
     {
       name: "Acc No.",
       selector: (row) => row.acc_num,
       sortable: true,
-      width: "150px", // Adjust width as needed
+      width: "150px",
     },
     {
       name: "Name",
       selector: (row) => row.accountName,
       sortable: true,
-      width: "200px", // Adjust width as needed
+      width: "200px",
     },
     {
       name: "Group",
       selector: (row) => row.client_type,
       sortable: true,
-      width: "150px", // Adjust width as needed
+      width: "150px",
     },
     {
       name: "Address",
       selector: (row) =>
-        row.c_address.house_num +
-        " Purok " +
-        row.c_address.purok +
-        " " +
-        row.c_address.brgy,
+        `${row.c_address.house_num} Purok ${row.c_address.purok} ${row.c_address.brgy}`,
       sortable: true,
-      width: "200px", // Adjust width as needed
+      width: "200px",
     },
     {
       name: "Status",
       selector: (row) => row.status,
       sortable: true,
-      width: "150px", // Adjust width as needed
+      width: "150px",
     },
     {
       name: "Date of Registration",
       selector: (row) => formatDate(row.install_date),
       sortable: true,
-      width: "200px", // Adjust width as needed
+      width: "200px",
     },
   ];
 
-  function handleFilter(event) {
-    const value = event.target.value.toLowerCase();
-    const filteredData = records.filter((row) => {
-      return (
-        row.name.toLowerCase().includes(value) ||
-        row.water.toString().toLowerCase().includes(value) ||
-        row.present.toString().toLowerCase().includes(value) ||
-        row.previous.toString().toLowerCase().includes(value) ||
-        row.total.toString().toLowerCase().includes(value)
-      );
-    });
-    setRecords(filteredData);
-  }
-
   const customStyles = {
-    table: {
-      style: {
-        border: "1px solid #ddd", // Border around the entire table
-      },
-    },
+    table: { style: { border: "1px solid #ddd" } },
     headCells: {
       style: {
         fontWeight: "bold",
@@ -99,54 +79,39 @@ function Rtable() {
       },
     },
     rows: {
-      style: {
-        minHeight: "45px", // override the row height
-        "&:hover": {
-          backgroundColor: "#f1f1f1",
-        },
-      },
+      style: { minHeight: "45px", "&:hover": { backgroundColor: "#f1f1f1" } },
     },
-
     pagination: {
       style: {
         border: "none",
         fontSize: "13px",
-        color: defaultThemes.default.text.primary,
+        color: "#000",
         backgroundColor: "#f7f7f7",
         minHeight: "50px",
       },
-      pageButtonsStyle: {
-        borderRadius: "50%",
-        height: "40px",
-        width: "40px",
-        padding: "8px",
-        margin: "0px 5px",
-        cursor: "pointer",
-        transition: "0.4s",
-        color: defaultThemes.default.text.primary,
-        fill: defaultThemes.default.text.primary,
-        backgroundColor: "#fff",
-        "&:hover:not(:disabled)": {
-          backgroundColor: defaultThemes.default.text.primary,
-          fill: "#fff",
-        },
-        "&:focus": {
-          outline: "none",
-          backgroundColor: defaultThemes.default.text.primary,
-          fill: "#fff",
-        },
-      },
     },
+  };
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(
+      records.map((record) => ({
+        "Acc No.": record.acc_num,
+        Name: record.accountName,
+        Group: record.client_type,
+        Address: `${record.c_address.house_num} Purok ${record.c_address.purok} ${record.c_address.brgy}`,
+        Status: record.status,
+        "Date of Registration": formatDate(record.install_date),
+      }))
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.writeFile(workbook, "Customer_Report.xlsx");
   };
 
   return (
     <div
       className="userlist d-flex flex-column flex-md-row"
-      style={{
-        backgroundColor: "white",
-        height: "100vh",
-        maxHeight: "100vh",
-      }}
+      style={{ backgroundColor: "white", height: "100vh", maxHeight: "100vh" }}
     >
       <Sidebar role={usertype} />
       <main className="col-md-9 ms-sm-auto col-lg-10 px-md-3">
@@ -154,15 +119,20 @@ function Rtable() {
           <h1 className="h2">Customer Report</h1>
         </div>
         <div className="row">
-          <div className="mb-3 col-3">
+          <div className="mb-3 col-6">
             <input
               type="text"
               placeholder="Filter by name"
-              onChange={handleFilter}
               className="form-control d-inline-block w-auto"
             />
           </div>
+          <div className="mb-3 col-6 text-end">
+            <button onClick={exportToExcel} className="btn btn-primary">
+              Export to Excel
+            </button>
+          </div>
         </div>
+
         <DataTable
           columns={columns}
           data={records}

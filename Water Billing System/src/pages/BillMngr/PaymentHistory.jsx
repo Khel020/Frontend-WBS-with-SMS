@@ -59,8 +59,7 @@ const PaymentHistory = () => {
     },
     {
       name: "Arrears",
-      selector: (row) => `₱${row.arrears ? row.arrears.toFixed(2) : "0.00"}`,
-
+      selector: (row) => row.arrears,
       sortable: true,
       width: "150px", // Adjust width as needed
     },

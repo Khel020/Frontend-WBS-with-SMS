@@ -21,35 +21,19 @@ const AdminDash = () => {
         <Container fluid>
           <Row>
             <Col md={4} className="mb-4">
-              <Card className="dash-card category-card">
-                <Card.Body className="dash-card-body d-flex flex-column">
-                  <div className="d-flex align-items-center mb-2">
-                    <ListIcon className="dash-card-icon me-2" />
-                    <span>Categories</span>
-                  </div>
-                  <p className="dash-card-value mt-auto mb-0 text-end">2</p>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={4} className="mb-4">
-              <Card className="dash-card clients-card">
-                <Card.Body className="dash-card-body d-flex flex-column">
-                  <div className="d-flex align-items-center mb-2">
-                    <PeopleAltIcon className="dash-card-icon me-2" />
-                    <span>Total Clients</span>
-                  </div>
-                  <p className="dash-card-value mt-auto mb-0 text-end">20K</p>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={4} className="mb-4">
               <Card className="dash-card pending-card">
                 <Card.Body className="dash-card-body d-flex flex-column">
                   <div className="d-flex align-items-center mb-2">
-                    <HourglassTopIcon className="dash-card-icon me-2" />
-                    <span>Pending</span>
+                    <span>Pending Accounts</span>
                   </div>
-                  <p className="dash-card-value mt-auto mb-0 text-end">10</p>
+                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    99+
+                    <span class="visually-hidden">unread messages</span>
+                  </span>
+
+                  <p className="dash-card-value mt-auto mb-0 text-end">
+                    Click me
+                  </p>
                 </Card.Body>
               </Card>
             </Col>
