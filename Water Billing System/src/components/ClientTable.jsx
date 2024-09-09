@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
 import DataTable, { defaultThemes } from "react-data-table-component";
@@ -8,8 +8,9 @@ import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/clientTBL.css";
-import ReactToPrint from "react-to-print";
-import Receipt from "../components/receipt";
+import { useReactToPrint } from "react-to-print";
+import ReceiptComponent from "./receipt"; // Import the receipt component
+
 const Table = () => {
   //State for storing data
   const [show, setShow] = useState(false);
@@ -17,11 +18,14 @@ const Table = () => {
   const handleShow = () => setShow(true);
   //TODO: GET ALL Consumers
   const backend = import.meta.env.VITE_BACKEND;
-
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   const [search, setSearch] = useState("");
   const [acc_name, setAccName] = useState("");
   const [acc_num, setAccNum] = useState("");
-
+  const [billNo, setBillNo] = useState("");
   const [penaltyCharge, setTotalPenalty] = useState("");
   const [balance, setTotalBalance] = useState("");
   const [paymentAmount, setPayment] = useState("");
@@ -29,7 +33,7 @@ const Table = () => {
   const [address, setAddress] = useState("");
   const [totalChange, setTotalChange] = useState("");
   const [advTotalAmount, setAdvance] = useState("");
-  const [printReceiptDetails, setPrintReceiptDetails] = useState(null);
+  const [details, setDetails] = useState({});
   //TODO: Filtered data based on search input
   const [clients, setClients] = useState([]);
   const filteredClients = clients.filter((client) => {
@@ -67,6 +71,8 @@ const Table = () => {
           toast.warn(`Account number ${acc_num} Not found`);
         }
         const data = await response.json();
+        console.log("Data", data);
+        setBillNo(data.billNo);
         setAccName(data.consumerName);
         setAddress(data.address);
         setTotalPenalty(data.totalPenalty);
@@ -79,7 +85,6 @@ const Table = () => {
         console.error("Error fetching data:", error);
         setAccName("");
         setAddress(""); // Ensure address is cleared
-        setBills([]);
         setTotalBalance("0");
         setTotalPenalty("0"); // Ensure totalPenalty is cleared
         toast.warn("Error No Bills Found");
@@ -175,56 +180,67 @@ const Table = () => {
       toast.warn("Please enter a valid payment amount.");
       return;
     }
+
     const newPayment = {
+      billNo,
       acc_num,
       acc_name,
       p_date,
       address,
-      balance, // balance
-      paymentAmount, //tendered
-      advTotalAmount, //for advance payment
-      totalChange, // change
+      balance,
+      paymentAmount,
+      advTotalAmount,
+      totalChange,
     };
+
     console.log("Data for payments", newPayment);
-    const response = await fetch(`${backend}/biller/newPayment`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: `Bearer ${localStorage.getItem("tkn")}`,
-      },
-      body: JSON.stringify(newPayment),
-    })
-      .then((response) => response.json()) // Parse JSON from response
-      .then((result) => {
-        // Access success property to determine the response flow
-        if (result.success) {
-          // Extract data from the first element of the data array
-          const paymentData = result.data[0]; // Assuming the first object is what you need
 
-          setAccNum(paymentData.acc_num || "0");
-          setAccName(paymentData.accountName || " ");
-          setTotalPenalty(paymentData.paid || "0"); // Example mapping
-          setTotalBalance(paymentData.balance || "0");
-          setPayment(paymentData.change || "0"); // Example mapping
-          setPdate(new Date().toLocaleDateString()); // Setting a date example
-
-          // Show success toast
-          const receiptDetails = {
-            amount: paymentAmount, // o anumang payment amount na ginagamit mo
-            accountName: paymentData.accountName,
-          };
-          toast.success(result.message || "Payment successful");
-          setPrintReceiptDetails(receiptDetails);
-        } else {
-          // If response.success is false, show an error toast
-          toast.error(result.message || "Payment failed");
-        }
-      })
-      .catch((error) => {
-        // Handle any fetch-related errors
-        console.error("Request failed:", error);
-        toast.error("Request failed");
+    try {
+      const response = await fetch(`${backend}/biller/newPayment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("tkn")}`,
+        },
+        body: JSON.stringify(newPayment),
       });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const paymentData = result.data[0]; // Assuming the first object is what you need
+
+        setDetails({
+          acc_number: paymentData.paymentResult.acc_num || "N/A",
+          name: paymentData.paymentResult.accountName || "N/A",
+          balance: paymentData.paymentResult.balance || "0",
+          address: paymentData.paymentResult.address || "0",
+          amountpaid: paymentAmount,
+          paymentDate: p_date,
+          change: totalChange || "0",
+          OR_NUM: paymentData.OR_NUM,
+        });
+
+        setAccNum(paymentData.acc_num || "0");
+        setAccName(paymentData.accountName || " ");
+        setTotalPenalty(paymentData.paid || "0");
+        setTotalBalance(paymentData.balance || "0");
+        setPayment(paymentData.change || "0");
+        setPdate(new Date().toLocaleDateString());
+
+        toast.success(result.message || "Payment successful", {
+          autoClose: 1000, // Auto close after 1 second
+        });
+        setTimeout(() => {
+          handlePrint();
+        }, 1000);
+      } else {
+        toast.error(result.message || "Payment failed");
+      }
+    } catch (error) {
+      console.error("Request failed:", error);
+      toast.error("Request failed");
+    }
   };
 
   if (!clients) {
@@ -522,15 +538,11 @@ const Table = () => {
           <Button variant="primary" onClick={handleSubmitPay}>
             Submit Payment
           </Button>
-          {printReceiptDetails && (
-            <ReactToPrint
-              trigger={() => <button>Print Receipt</button>}
-              content={() => <Receipt paymentDetails={printReceiptDetails} />}
-              onAfterPrint={() => setPrintReceiptDetails(null)}
-            />
-          )}
         </Modal.Footer>
       </Modal>
+      <div style={{ display: "none" }}>
+        <ReceiptComponent ref={componentRef} details={details} />
+      </div>
     </div>
   );
 };

@@ -18,27 +18,6 @@ const AdminDash = () => {
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
           <h1 className="h2">Dashboard</h1>
         </div>
-        <Container fluid>
-          <Row>
-            <Col md={4} className="mb-4">
-              <Card className="dash-card pending-card">
-                <Card.Body className="dash-card-body d-flex flex-column">
-                  <div className="d-flex align-items-center mb-2">
-                    <span>Pending Accounts</span>
-                  </div>
-                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    99+
-                    <span class="visually-hidden">unread messages</span>
-                  </span>
-
-                  <p className="dash-card-value mt-auto mb-0 text-end">
-                    Click me
-                  </p>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
       </main>
     </div>
   );
