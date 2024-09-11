@@ -243,31 +243,42 @@ const CustomerProf = () => {
                           {formatDate(customer.last_billDate)}
                         </p>
                         <p class="card-text">
+                          {/* dapat nakadepende last duedate */}
                           <strong>Next Payment Due:</strong> August 30, 2024
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
-
                 <div class="row">
                   <div class="col-md-12">
-                    <div class="card mb-3">
+                    <div class="card mb-3" style={{ height: "250px" }}>
                       <div class="card-body">
                         <h5 class="card-title">Activities</h5>
-                        <p class="card-text">
-                          <strong>Visit:</strong> Jan 12, 2020 - 2:32 PM PDT -
-                          F&M - New York, 340 5th Street - 32 minutes
-                        </p>
-                        <p class="card-text">
-                          <strong>Connection:</strong> Jan 12, 2020 - 2:35 PM
-                          PDT - F&M - New York, 340 5th Street - 45 minutes - 56
-                          MB
-                        </p>
-                        <p class="card-text">
-                          <strong>WiFi Sign-Up:</strong> Feb 09, 2020 - 1:47 PM
-                          PDT - San Francisco, 120 Sutter Street
-                        </p>
+                        <div style={{ maxHeight: "200px", overflowY: "auto" }}>
+                          <ul class="list-unstyled">
+                            <li>
+                              <p class="card-text">
+                                <strong>Visit:</strong> Jan 12, 2020 - 2:32 PM
+                                PDT - F&M - New York, 340 5th Street - 32
+                                minutes
+                              </p>
+                            </li>
+                            <li>
+                              <p class="card-text">
+                                <strong>Connection:</strong> Jan 12, 2020 - 2:35
+                                PM PDT - F&M - New York, 340 5th Street - 45
+                                minutes - 56 MB
+                              </p>
+                            </li>
+                            <li>
+                              <p class="card-text">
+                                <strong>WiFi Sign-Up:</strong> Feb 09, 2020 -
+                                1:47 PM PDT - San Francisco, 120 Sutter Street
+                              </p>
+                            </li>
+                          </ul>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -333,21 +344,6 @@ const CustomerProf = () => {
                   />
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="contact" className="form-label">
-                    Contact
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="contact"
-                    name="contact"
-                    aria-describedby="contactFeedback"
-                    required
-                    value={editCustomer.contact || ""}
-                    onChange={handleEditValues}
-                  />
-                </div>
-                <div className="col-md-6">
                   <label htmlFor="status" className="form-label">
                     Status
                   </label>
@@ -379,21 +375,6 @@ const CustomerProf = () => {
                     <option value="Commercial">Commercial</option>
                     <option value="Industrial">Industrial</option>
                   </select>
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="email" className="form-label">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="email"
-                    name="email"
-                    aria-describedby="emailFeedback"
-                    required
-                    value={editCustomer.email || ""}
-                    onChange={handleEditValues}
-                  />
                 </div>
                 <div className="col-md-6">
                   <label htmlFor="install_date" className="form-label">

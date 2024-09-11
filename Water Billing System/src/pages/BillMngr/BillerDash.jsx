@@ -1,6 +1,8 @@
 import React from "react";
 import Sidebar from "../../components/Sidebar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import Countdown from "react-countdown";
+import Dropdown from "react-bootstrap/Dropdown";
 import {
   BarChart,
   Bar,
@@ -14,6 +16,11 @@ import {
 } from "recharts";
 
 const BillerDash = () => {
+  const navigate = useNavigate();
+  const handleLogOut = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
   const data = [
     { name: "Page A", uv: 4000, pv: 2400, amt: 2400 },
     { name: "Page B", uv: 3000, pv: 1398, amt: 2210 },
@@ -41,6 +48,36 @@ const BillerDash = () => {
       <main className="col-md-9 ms-sm-auto col-lg-10 px-md-3">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
           <h1 className="h2">Dashboard</h1>
+          <div className="ms-auto d-flex align-items-center">
+            <i
+              className="bi bi-bell"
+              style={{
+                fontSize: "20px",
+                cursor: "pointer",
+              }}
+            ></i>
+            <Dropdown align="end">
+              <Dropdown.Toggle
+                id="dropdown-basic"
+                className="d-flex align-items-center bg-transparent border-0"
+                style={{ color: "dark" }}
+              >
+                <img
+                  src="https://github.com/mdo.png"
+                  alt=""
+                  width="32"
+                  height="32"
+                  className="rounded-circle me-2"
+                />
+              </Dropdown.Toggle>
+              <Dropdown.Menu align="end">
+                <Dropdown.Item href="#/action-1">Archive List</Dropdown.Item>
+                <Dropdown.Item href="#/action-2">Profile</Dropdown.Item>
+                <Dropdown.Item href="#/action-2">Bills</Dropdown.Item>
+                <Dropdown.Item onClick={handleLogOut}>Log Out</Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
         </div>
         <div className="row">
           <div className="col-md-4 mb-4"></div>

@@ -25,7 +25,7 @@ const BillingDetails = () => {
       }
     };
     fetchBillNum();
-  }, [backend, billNumber]); // Add dependencies to useEffect
+  }, [backend, billNumber]);
 
   return (
     <>

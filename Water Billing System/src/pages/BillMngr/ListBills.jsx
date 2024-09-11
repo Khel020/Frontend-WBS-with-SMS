@@ -1,24 +1,47 @@
-import React from "react";
-import Card from "react-bootstrap/Card";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import React, { useState, useEffect } from "react";
 
-import {
-  Divider,
-  TextField,
-  InputAdornment,
-  IconButton,
-  Button,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import Container from "react-bootstrap/Container";
+
+import { toast, ToastContainer } from "react-toastify";
+
 import Bills from "../../components/BillTable.jsx";
 import Sidebar from "../../components/Sidebar.jsx";
 
 function ListBills() {
+  const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
+  const [billStatus, setBillStatus] = useState({
+    totalBills: 0,
+    unpaidBills: 0,
+    paidBills: 0,
+  });
+
+  const fetchBillStatus = async () => {
+    try {
+      const response = await fetch(`${backend}/biller/billStatus`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("tkn")}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+
+        setBillStatus(data);
+      } else {
+        toast.error("Error fetching bills status.");
+      }
+    } catch (error) {
+      console.error("Error fetching client statistics:", error);
+      toast.error("Error fetching client statistics.");
+    }
+  };
+  useEffect(() => {
+    fetchBillStatus();
+  }, []);
   return (
     <>
       <div
@@ -46,7 +69,7 @@ function ListBills() {
               </button>
             </form>
           </div>
-          <div className="row mt-3 mb-4">
+          <div className="row mt-3 mb-4 mx-1">
             <div className="col">
               <div
                 className="card total-user"
@@ -72,7 +95,9 @@ function ListBills() {
                       color: "#006F56",
                       marginRight: "10px",
                     }}
-                  ></span>
+                  >
+                    {billStatus.totalBills}
+                  </span>
                 </div>
               </div>
             </div>
@@ -101,7 +126,9 @@ function ListBills() {
                       color: "#006F56",
                       marginRight: "10px",
                     }}
-                  ></span>
+                  >
+                    {billStatus.unpaidBills}
+                  </span>
                 </div>
               </div>
             </div>
@@ -130,14 +157,14 @@ function ListBills() {
                       color: "#006F56",
                       marginRight: "10px",
                     }}
-                  ></span>
+                  >
+                    {billStatus.paidBills}
+                  </span>
                 </div>
               </div>
             </div>
           </div>
-          <Container fluid>
-            <Bills />
-          </Container>
+          <Bills />
         </main>
       </div>
     </>

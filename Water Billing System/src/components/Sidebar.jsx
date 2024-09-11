@@ -95,11 +95,15 @@ const Sidebar = ({ role }) => {
                 Billing
               </Link>
             </li>
-            <li className="nav-item">
+            <li className="nav-item dropdown">
               <Link
-                to="/generateReports"
+                to="#"
+                className="nav-link dropdown-toggle"
+                id="reportsDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
                 style={linkStyle("/generateReports")}
-                className="nav-link"
               >
                 <i
                   className="bi bi-bar-chart"
@@ -107,6 +111,23 @@ const Sidebar = ({ role }) => {
                 ></i>
                 Reports
               </Link>
+              <ul className="dropdown-menu" aria-labelledby="reportsDropdown">
+                <li>
+                  <Link to="/dailyReport" className="dropdown-item">
+                    Daily Transactions
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/monthly-report" className="dropdown-item">
+                    Monthly Summary
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/outstanding-bills" className="dropdown-item">
+                    Outstanding Bills
+                  </Link>
+                </li>
+              </ul>
             </li>
           </>
         )}
@@ -216,33 +237,6 @@ const Sidebar = ({ role }) => {
           </>
         )}
       </ul>
-      <hr style={{ borderColor: "white" }} />
-      <div className="text-start">
-        <Dropdown>
-          <Dropdown.Toggle
-            id="dropdown-basic"
-            className="d-flex align-items-center bg-transparent border-0"
-            style={{ color: "dark" }}
-          >
-            <img
-              src="https://github.com/mdo.png"
-              alt=""
-              width="32"
-              height="32"
-              className="rounded-circle me-2"
-            />
-            <span style={{ color: "white" }}>
-              {role === "admin" ? "Admin" : "Biller"}
-            </span>
-          </Dropdown.Toggle>
-          <Dropdown.Menu align="end">
-            <Dropdown.Item href="#/action-1">Archive List</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Profile</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Bills</Dropdown.Item>
-            <Dropdown.Item onClick={handleLogOut}>Log Out</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
     </div>
   );
 };

@@ -2,13 +2,41 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
-const tableStyle = {
-  fontSize: "0.9rem",
-};
-
+import { Modal, ListGroup, Button } from "react-bootstrap";
 function BillTable() {
   const [bills, setBills] = useState([]);
   const backend = import.meta.env.VITE_BACKEND;
+  const [billdetails, setBillDetails] = useState([]);
+  const [error, setError] = useState(null);
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+
+  const handleShow = async (billNumber) => {
+    setShow(true);
+    try {
+      const response = await fetch(
+        `${backend}/biller/getBillbyBillNum?billNumber=${billNumber}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem("tkn")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("No bills found");
+      }
+
+      const data = await response.json(); // Await the JSON parsing
+      console.log("data from fetch", data);
+      setBillDetails(data);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
   useEffect(() => {
     const fetchBills = async () => {
@@ -76,15 +104,12 @@ function BillTable() {
     {
       name: "Action",
       cell: (row) => (
-        <div>
-          <Link
-            to={`/billing-details/${row.billNumber}`}
-            className="btn btn-success btn-sm me-2"
-            onClick={() => handleAction(row)}
-          >
-            Full Bill
-          </Link>
-        </div>
+        <button
+          className="btn btn-success btn-sm me-2"
+          onClick={() => handleShow(row.billNumber)}
+        >
+          Full Bill
+        </button>
       ),
 
       sortable: true,
@@ -145,6 +170,7 @@ function BillTable() {
       },
     },
   };
+
   return (
     <div className="container-fluid">
       <DataTable
@@ -158,6 +184,82 @@ function BillTable() {
         highlightOnHover
         noDataComponent={<div>No data available</div>}
       />
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Billing Statement</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {billdetails.length > 0 ? (
+            billdetails.map((bill) => (
+              <div key={bill._id} className="mb-4">
+                <h5 className="mb-3 text-dark">Bill Summary</h5>
+                <ListGroup variant="flush">
+                  <ListGroup.Item>
+                    <strong>Bill Number:</strong> {bill.billNumber}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Account Name:</strong> {bill.accountName}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Reading Date:</strong>{" "}
+                    {formatDate(bill.reading_date)}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Due Date:</strong> {formatDate(bill.due_date)}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Amount Due:</strong>{" "}
+                    <span className="text-danger">
+                      ₱ {bill.totalDue.toFixed(2)}
+                    </span>
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Payment Status:</strong>{" "}
+                    <span
+                      className={
+                        bill.payment_status === "Paid"
+                          ? "text-success"
+                          : "text-warning"
+                      }
+                    >
+                      {bill.payment_status}
+                    </span>
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Remarks:</strong> <span> {bill.remarks}</span>
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Amount Paid:</strong>{" "}
+                    <span> {bill.paymentAmount}</span>
+                  </ListGroup.Item>
+                </ListGroup>
+                <hr className="my-4" />
+                <h6 className="text-muted">
+                  Please ensure payment is made by the due date to avoid
+                  additional charges.
+                </h6>
+              </div>
+            ))
+          ) : (
+            <p className="text-muted">
+              No billing information is available at this time.
+            </p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleClose}>
+            Acknowledge
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

@@ -3,7 +3,7 @@ import Sidebar from "../../components/Sidebar.jsx";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import DataTable, { defaultThemes } from "react-data-table-component";
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function Userlist() {
@@ -12,6 +12,15 @@ function Userlist() {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [showEdit, setEdit] = useState(false);
+
+  const [showArchive, setArchive] = useState(false);
+  const [account, setAccount] = useState([]);
+  const handleCloseArchive = () => setArchive(false);
+  const handleShowArchive = (data) => {
+    setAccount({ ...data });
+    setArchive(true);
+  };
+
   const handleEditClose = () => {
     setEdit(false);
   };
@@ -19,6 +28,8 @@ function Userlist() {
   const token = localStorage.getItem("type");
   const usertype = token;
   const [users, setUsers] = useState([]);
+  const [filterUser, setFilteredUsers] = useState([]);
+  const [selectedRole, setSelectedRole] = useState("");
   const [editAccount, setEditCustomer] = useState({
     _id: "",
     name: "",
@@ -143,10 +154,23 @@ function Userlist() {
       }
     } catch {}
   };
+  const handleStatusChange = (event) => {
+    setSelectedRole(event.target.value);
+  };
 
-  const filterUsers = users.filter((users) => {
-    return users.username.toLowerCase().includes(search.toLowerCase());
-  });
+  useEffect(() => {
+    // Filter users based on role and search term
+    const filtered = users.filter((user) => {
+      console.log("USERS", user);
+      const matchesRole = selectedRole === "" || user.usertype === selectedRole;
+      const matchesSearch =
+        search === "" || user.name.toLowerCase().includes(search.toLowerCase());
+      return matchesRole && matchesSearch;
+    });
+
+    setFilteredUsers(filtered);
+  }, [selectedRole, search, users]);
+
   const customStyles = {
     table: {
       style: {
@@ -274,6 +298,7 @@ function Userlist() {
           ></i>
           <i
             className="bi bi-x-square-fill text-danger"
+            onClick={() => handleShowArchive(row)} // Pass the current row data
             style={{ fontSize: "20px", cursor: "pointer", marginRight: "10px" }}
           ></i>
         </div>
@@ -291,7 +316,6 @@ function Userlist() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("FORMDATA", formData);
     // Determine the endpoint based on the selected role
     let endpoint;
     switch (formData.role) {
@@ -331,6 +355,25 @@ function Userlist() {
       toast.error("An error occurred. Please try again.");
     }
   };
+  const handleArchive = async () => {
+    const toArchive = {
+      _id: account._id,
+      usertype: account.usertype,
+      status: account.status,
+    };
+    const response = await fetch(`${backend}/admin/archiveAccount`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(toArchive),
+    });
+    if (response.ok && response.success) {
+      toast.success("Account Archive Successfully", {
+        onClose: () => {
+          window.location.reload();
+        },
+      });
+    }
+  };
 
   return (
     <div
@@ -347,10 +390,31 @@ function Userlist() {
           <h1 className="h2">Manage Accounts</h1>
         </div>
         <div className="row">
+          <div className="mb-3 col-2">
+            <select
+              value={selectedRole}
+              onChange={handleStatusChange}
+              className="form-control"
+              style={{
+                border: "1px solid #ced4da", // Default border color
+                borderRadius: "4px",
+                outline: "none",
+                transition: "border-color 0.3s ease",
+              }}
+              onFocus={(e) => (e.target.style.borderColor = "#61b390")} // Highlight color on focus
+              onBlur={(e) => (e.target.style.borderColor = "#ced4da")} // Revert color on blur
+            >
+              <option value="">Filter by Role</option>
+              <option value="admin">Admin</option>
+              <option value="users">User</option>
+              <option value="billmngr">Biller</option>
+            </select>
+          </div>
+
           <div className="mb-3 col-3">
             <input
               type="text"
-              placeholder="Search..."
+              placeholder="Search by name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="form-control"
@@ -364,7 +428,8 @@ function Userlist() {
               onBlur={(e) => (e.target.style.borderColor = "#ced4da")} // Revert color on blur
             />
           </div>
-          <div className="col d-flex justify-content-end mb-2">
+
+          <div className="col-7 d-flex justify-content-end mb-2">
             <button
               className="btn btn-primary btn-sm mx-3"
               onClick={handleShow}
@@ -373,18 +438,20 @@ function Userlist() {
             </button>
           </div>
         </div>
+
         <DataTable
           customStyles={customStyles}
           pagination
           fixedHeaderScrollHeight="550px"
           columns={columns}
-          data={filterUsers}
+          data={filterUser}
           responsive
           fixedHeader
           highlightOnHover
           noDataComponent={<div>Loading</div>}
         />
       </main>
+      {/* TODO: ADD ACCOUNT MODAL */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Add New Account</Modal.Title>
@@ -593,7 +660,6 @@ function Userlist() {
                 </Form.Group>
               </Col>
             </Row>
-
             <Modal.Footer>
               <Button variant="secondary" onClick={handleEditClose}>
                 Close
@@ -605,6 +671,26 @@ function Userlist() {
           </Form>
         </Modal.Body>
       </Modal>
+
+      <Modal show={showArchive} onHide={handleCloseArchive}>
+        <Modal.Header closeButton>
+          <Modal.Title>Achive Account</Modal.Title>
+        </Modal.Header>
+        <Form onSubmit={handleArchive}>
+          <Modal.Body>
+            Are your sure do you want to archive {account.name}?
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" onClick={handleClose}>
+              Yes
+            </Button>
+          </Modal.Footer>
+        </Form>
+      </Modal>
+
       <ToastContainer
         position="top-right"
         autoClose={1000}

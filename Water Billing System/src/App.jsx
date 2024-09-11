@@ -30,8 +30,9 @@ import BillRecords from "./pages/BillMngr/BillRecords.jsx";
 import Bills from "./pages/BillMngr/ListBills.jsx";
 import ListClient from "./pages/BillMngr/ListClient.jsx";
 import ReceivePayments from "./pages/BillMngr/PaymentHistory.jsx";
-import Reports from "./pages/BillMngr/Reports.jsx";
+import DailyReport from "./pages/BillMngr/DTransacReport.jsx";
 import BillerDash from "./pages/BillMngr/BillerDash.jsx";
+import MonthlyReport from "./pages/BillMngr/MonthlyReport.jsx";
 
 //TODO: Admin Pages
 import AdminDash from "./pages/Admin/AdminDash.jsx";
@@ -94,8 +95,11 @@ const router = createBrowserRouter(
       <Route path="receive-payments/:acc_num" element={<BillerLayout />}>
         <Route index element={<ReceivePayments />} />
       </Route>
-      <Route path="bill-reports" element={<BillerLayout />}>
-        <Route index element={<Reports />} />
+      <Route path="dailyReport" element={<BillerLayout />}>
+        <Route index element={<DailyReport />} />
+      </Route>
+      <Route path="monthly-report" element={<BillerLayout />}>
+        <Route index element={<MonthlyReport />} />
       </Route>
       //TODO: Admin ROUTES
       <Route path="admin-dashboard" element={<AdminLayout />}>
