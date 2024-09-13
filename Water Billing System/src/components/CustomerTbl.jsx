@@ -624,9 +624,8 @@ const CustomerTbl = () => {
                     <option value="" disabled>
                       Select pipe size
                     </option>
-                    <option value="1/2 inch">1/2 inch</option>
-                    <option value="1 inch">1 inch</option>
-                    <option value="2 inch">2 inch</option>
+                    <option value="1/2">1/2 inch</option>
+                    <option value="3/4">3/4 inch</option>
                   </select>
                 </div>
               </div>

@@ -197,7 +197,7 @@ function BillTable() {
           {billdetails.length > 0 ? (
             billdetails.map((bill) => (
               <div key={bill._id} className="mb-4">
-                <h5 className="mb-3 text-dark">Bill Summary</h5>
+                <h5 className="mb-3  text-center text-primary"></h5>
                 <ListGroup variant="flush">
                   <ListGroup.Item>
                     <strong>Bill Number:</strong> {bill.billNumber}
@@ -206,11 +206,22 @@ function BillTable() {
                     <strong>Account Name:</strong> {bill.accountName}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    <strong>Reading Date:</strong>{" "}
-                    {formatDate(bill.reading_date)}
+                    <strong>Present Reading:</strong> {bill.present_read}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    <strong>Due Date:</strong> {formatDate(bill.due_date)}
+                    <strong>Previous Reading:</strong> {bill.prev_read}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Consumtion:</strong> {bill.consumption}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Bill Amount:</strong> {bill.currentBill}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Arrears:</strong> {bill.arrears}
+                  </ListGroup.Item>
+                  <ListGroup.Item>
+                    <strong>Penalty Charge:</strong> {bill.p_charge}
                   </ListGroup.Item>
                   <ListGroup.Item>
                     <strong>Amount Due:</strong>{" "}
@@ -233,16 +244,7 @@ function BillTable() {
                   <ListGroup.Item>
                     <strong>Remarks:</strong> <span> {bill.remarks}</span>
                   </ListGroup.Item>
-                  <ListGroup.Item>
-                    <strong>Amount Paid:</strong>{" "}
-                    <span> {bill.paymentAmount}</span>
-                  </ListGroup.Item>
                 </ListGroup>
-                <hr className="my-4" />
-                <h6 className="text-muted">
-                  Please ensure payment is made by the due date to avoid
-                  additional charges.
-                </h6>
               </div>
             ))
           ) : (

@@ -25,14 +25,14 @@ import Profile from "./pages/Client/Profile.jsx";
 import PaymentHisto from "./pages/Client/PaymentHisto.jsx";
 
 // TODO: Imported Page for Bill MNGR
+import BillerDash from "./pages/BillMngr/BillerDash.jsx";
 import BillingDetails from "./pages/BillMngr/BillingDetails.jsx";
 import BillRecords from "./pages/BillMngr/BillRecords.jsx";
 import Bills from "./pages/BillMngr/ListBills.jsx";
 import ListClient from "./pages/BillMngr/ListClient.jsx";
 import ReceivePayments from "./pages/BillMngr/PaymentHistory.jsx";
-import DailyReport from "./pages/BillMngr/DTransacReport.jsx";
-import BillerDash from "./pages/BillMngr/BillerDash.jsx";
-import MonthlyReport from "./pages/BillMngr/MonthlyReport.jsx";
+import Balance from "./pages/BillMngr/Balance.jsx";
+import ForDC from "./pages/BillMngr/ForDisconnect.jsx";
 
 //TODO: Admin Pages
 import AdminDash from "./pages/Admin/AdminDash.jsx";
@@ -43,7 +43,7 @@ import CustomersProfile from "./pages/Admin/CustomerProf.jsx";
 import Customers from "./pages/Admin/Customers.jsx";
 import CusReport from "./pages/Admin/customerReports.jsx";
 import ConsumptionReport from "./pages/Admin/Consumptions.jsx";
-import PaymentsReport from "./pages/Admin/PaymentReps.jsx";
+import Collections from "./pages/Admin/Collections.jsx";
 import BillSummary from "./pages/Admin/BillsSummary.jsx";
 
 const router = createBrowserRouter(
@@ -95,11 +95,11 @@ const router = createBrowserRouter(
       <Route path="receive-payments/:acc_num" element={<BillerLayout />}>
         <Route index element={<ReceivePayments />} />
       </Route>
-      <Route path="dailyReport" element={<BillerLayout />}>
-        <Route index element={<DailyReport />} />
+      <Route path="balances" element={<BillerLayout />}>
+        <Route index element={<Balance />} />
       </Route>
-      <Route path="monthly-report" element={<BillerLayout />}>
-        <Route index element={<MonthlyReport />} />
+      <Route path="disconnection" element={<BillerLayout />}>
+        <Route index element={<ForDC />} />
       </Route>
       //TODO: Admin ROUTES
       <Route path="admin-dashboard" element={<AdminLayout />}>
@@ -126,8 +126,8 @@ const router = createBrowserRouter(
       <Route path="bill-summary" element={<AdminLayout />}>
         <Route index element={<BillSummary />} />
       </Route>
-      <Route path="payment_rep" element={<AdminLayout />}>
-        <Route index element={<PaymentsReport />} />
+      <Route path="collections" element={<AdminLayout />}>
+        <Route index element={<Collections />} />
       </Route>
       <Route path="customers" element={<AdminLayout />}>
         <Route index element={<Customers />} />

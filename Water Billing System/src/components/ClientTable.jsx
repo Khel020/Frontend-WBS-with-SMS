@@ -180,7 +180,10 @@ const Table = () => {
       toast.warn("Please enter a valid payment amount.");
       return;
     }
-
+    if (balance <= 0) {
+      toast.warn("No outstanding balance.");
+      return;
+    }
     const newPayment = {
       billNo,
       acc_num,

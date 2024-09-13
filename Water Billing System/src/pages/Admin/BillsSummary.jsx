@@ -28,55 +28,58 @@ function BillsSummary() {
   }
   const columns = [
     {
-      name: "Name",
-      selector: (row) => row.acc_num,
+      name: "Month",
+      selector: (row) => row.month,
       sortable: true,
-      width: "150px", // Adjust width as needed
+      width: "100px", // Reduced width
     },
     {
-      name: "Total Bills Generated",
-      selector: (row) => row.accountName,
+      name: "Total Bills",
+      selector: (row) => row.totalBillsGenerated,
       sortable: true,
-      width: "200px", // Adjust width as needed
+      width: "150px", // Reduced width
     },
     {
-      name: "Total  Billed",
-      selector: (row) => row.client_type,
+      name: "Total Billed",
+      selector: (row) => row.totalBilledAmount,
       sortable: true,
-      width: "150px", // Adjust width as needed
+      width: "130px", // Reduced width
     },
     {
-      name: "Total  Paid",
-      selector: (row) =>
-        row.c_address.house_num +
-        " Purok " +
-        row.c_address.purok +
-        " " +
-        row.c_address.brgy,
+      name: "Total Paid",
+      selector: (row) => row.totalPaidAmount,
       sortable: true,
-      width: "200px", // Adjust width as needed
+      width: "150px", // Reduced width
     },
     {
-      name: "Last Bill Date",
-      selector: (row) =>
-        row.c_address.house_num +
-        " Purok " +
-        row.c_address.purok +
-        " " +
-        row.c_address.brgy,
+      name: "Penalties",
+      selector: (row) => row.penalties,
       sortable: true,
-      width: "200px", // Adjust width as needed
+      width: "120px", // Reduced width
     },
     {
-      name: "Last Payment Date",
-      selector: (row) =>
-        row.c_address.house_num +
-        " Purok " +
-        row.c_address.purok +
-        " " +
-        row.c_address.brgy,
+      name: "Adjustments",
+      selector: (row) => row.adjustments,
       sortable: true,
-      width: "200px", // Adjust width as needed
+      width: "120px", // Reduced width
+    },
+    {
+      name: "Res Bills",
+      selector: (row) => row.residentialBills,
+      sortable: true,
+      width: "120px", // Reduced width
+    },
+    {
+      name: "Com Bills",
+      selector: (row) => row.commercialBills,
+      sortable: true,
+      width: "120px", // Reduced width
+    },
+    {
+      name: "Ind Bills",
+      selector: (row) => row.industrialBills,
+      sortable: true,
+      width: "120px", // Reduced width
     },
   ];
 
@@ -95,6 +98,8 @@ function BillsSummary() {
   }
 
   const customStyles = {
+    tableLayout: "auto", // This makes the table layout more flexible
+    overflowX: "auto", // Enable horizontal scrolling
     table: {
       style: {
         border: "1px solid #ddd", // Border around the entire table
@@ -161,7 +166,7 @@ function BillsSummary() {
       <Sidebar role={usertype} />
       <main className="col-md-9 ms-sm-auto col-lg-10 px-md-3">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded ">
-          <h1 className="h2">Customer Bills Summary</h1>
+          <h1 className="h2">Summary of Bills</h1>
         </div>
         <div className="row">
           <div className="mb-3 col-3">
@@ -176,7 +181,6 @@ function BillsSummary() {
         <DataTable
           columns={columns}
           data={records}
-          selectableRows
           fixedHeader
           pagination
           customStyles={customStyles}

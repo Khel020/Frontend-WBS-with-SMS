@@ -175,7 +175,7 @@ function Rtable() {
       <Sidebar role={usertype} />
       <main className="col-md-9 ms-sm-auto col-lg-10 px-md-3">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded">
-          <h1 className="h2">Payment Records</h1>
+          <h1 className="h2">Summary of Collection</h1>
         </div>
         <div className="row">
           <div className="mb-3 col-2">

@@ -113,25 +113,19 @@ const Sidebar = ({ role }) => {
               </Link>
               <ul className="dropdown-menu" aria-labelledby="reportsDropdown">
                 <li>
-                  <Link to="/dailyReport" className="dropdown-item">
-                    Daily Transactions
+                  <Link to="/balances" className="dropdown-item">
+                    Outstanding Balance
                   </Link>
                 </li>
                 <li>
-                  <Link to="/monthly-report" className="dropdown-item">
-                    Monthly Summary
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/outstanding-bills" className="dropdown-item">
-                    Outstanding Bills
+                  <Link to="/disconnection" className="dropdown-item">
+                    For Disconnection
                   </Link>
                 </li>
               </ul>
             </li>
           </>
         )}
-
         {role === "admin" && (
           <>
             <li className="nav-item">
@@ -200,10 +194,14 @@ const Sidebar = ({ role }) => {
                         Customer Reports
                       </Link>
                     </li>
-
+                    <li>
+                      <Link to="/collections" className="dropdown-item">
+                        Summary of Collection
+                      </Link>
+                    </li>
                     <li>
                       <Link to="/payment_rep" className="dropdown-item">
-                        Payment Reports
+                        Disconnection Report
                       </Link>
                     </li>
                   </ul>
