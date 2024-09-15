@@ -11,7 +11,6 @@ const CustomerProf = () => {
     acc_num: "",
     meter_num: "",
     contact: "",
-    status: "",
     client_type: "",
     email: "",
     install_date: "",
@@ -147,13 +146,7 @@ const CustomerProf = () => {
                     />
                     <h5 class="card-title">{customer.accountName}</h5>
                     <p class="card-text">{customer.email}</p>
-                    <p class="card-text">
-                      {customer.c_address.house_num +
-                        ", Purok " +
-                        customer.c_address.purok +
-                        ", " +
-                        customer.c_address.brgy}
-                    </p>
+                    <p class="card-text">{customer.c_address}</p>
                     <p class="card-text">{customer.contact}</p>
                     <button
                       type="button"

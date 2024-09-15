@@ -3,11 +3,14 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import { Modal, ListGroup, Button } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 function BillTable() {
   const [bills, setBills] = useState([]);
   const backend = import.meta.env.VITE_BACKEND;
   const [billdetails, setBillDetails] = useState([]);
   const [error, setError] = useState(null);
+  const [startDate, setStartDate] = useState(new Date());
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -172,7 +175,25 @@ function BillTable() {
   };
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid" style={{ overflow: "visible" }}>
+      <div className="row mb-3">
+        <div className="col-9 d-flex align-items-center">
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            dateFormat="MMMM yyyy"
+            showMonthYearPicker
+            className="form-control"
+            calendarClassName="custom-datepicker"
+          />
+        </div>
+        <div className="col-3 d-flex justify-content-end">
+          <button className="btn btn-primary">
+            <i className="bi bi-file-earmark-arrow-down-fill mx-1"></i>
+            Export to Excel
+          </button>
+        </div>
+      </div>
       <DataTable
         customStyles={customStyles}
         pagination
@@ -180,7 +201,6 @@ function BillTable() {
         columns={columns}
         data={bills}
         responsive
-        fixedHeader
         highlightOnHover
         noDataComponent={<div>No data available</div>}
       />
@@ -212,7 +232,7 @@ function BillTable() {
                     <strong>Previous Reading:</strong> {bill.prev_read}
                   </ListGroup.Item>
                   <ListGroup.Item>
-                    <strong>Consumtion:</strong> {bill.consumption}
+                    <strong>Consumption:</strong> {bill.consumption}
                   </ListGroup.Item>
                   <ListGroup.Item>
                     <strong>Bill Amount:</strong> {bill.currentBill}

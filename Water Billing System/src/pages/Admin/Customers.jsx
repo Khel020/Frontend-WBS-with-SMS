@@ -21,7 +21,7 @@ const Customers = () => {
   const [showAcc, setActivation] = useState(false);
   //FIX THIS
   const [forActivation, setforActivation] = useState([]);
-
+  const [status, setStatus] = useState(forActivation.status); // Example state to hold the status
   const handleCloseAccModal = () => setActivation(false);
   const handleShowAccs = () => {
     setActivation(true);
@@ -98,7 +98,7 @@ const Customers = () => {
                   </div>
                   <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
                     99+
-                    <span class="visually-hidden">unread messages</span>
+                    <span class="visually-hidden">For Activation</span>
                   </span>
                   <Link
                     className=" mt-auto mb-0 text-end"
@@ -151,8 +151,9 @@ const Customers = () => {
                   <th scope="col">ID</th>
                   <th scope="col">Account Name</th>
                   <th scope="col">Account No.</th>
+                  <th scope="col">Status</th>
                   <th scope="col">Activation in</th>
-                  <th scope="col">Activation Date</th>
+                  <th scope="col">Action</th>
                 </tr>
               </thead>
               {forActivation.map((accs, index) => (
@@ -161,8 +162,9 @@ const Customers = () => {
                     <th scope="row" key={index}>
                       {index}
                     </th>
-                    <td>{accs.accountName}</td>
                     <td>{accs.acc_num}</td>
+                    <td>{accs.accountName}</td>
+                    <td>{accs.status}</td>
                     <td>
                       <Countdown
                         date={new Date(accs.activation_date).getTime()}
@@ -174,8 +176,38 @@ const Customers = () => {
                           completed,
                         }) => {
                           if (completed) {
+                            // Check if the current status is not "Active"
+                            if (status !== "Active") {
+                              // Update the status to "Active"
+                              setStatus("Active");
+
+                              // Send a POST request to update the status on the server
+                              fetch(`${backend}/admin/updateStatus`, {
+                                method: "POST",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                },
+                                body: JSON.stringify({
+                                  acc_num: forActivation.acc_num,
+                                  status: "Active",
+                                }),
+                              })
+                                .then((response) => response.json())
+                                .then((data) => {
+                                  console.log("Status updated:", data);
+                                  // Optionally, update any UI elements or trigger additional actions here
+                                })
+                                .catch((error) => {
+                                  console.error(
+                                    "Error updating status:",
+                                    error
+                                  );
+                                  // Optionally, handle errors here, like showing an error message to the user
+                                });
+                            }
                             return <span>Activated</span>;
                           } else {
+                            // Return the countdown display if not completed
                             return (
                               <span>
                                 {days}d {hours}h {minutes}m {seconds}s
@@ -185,7 +217,7 @@ const Customers = () => {
                         }}
                       />
                     </td>
-                    <td>{formatDate(accs.activation_date)}</td>
+                    <td>Action</td>
                   </tr>
                 </tbody>
               ))}

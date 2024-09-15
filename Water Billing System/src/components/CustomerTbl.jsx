@@ -19,24 +19,18 @@ const CustomerTbl = () => {
   const [accountName, setAccName] = useState("");
   const [acc_num, setAccNum] = useState("");
   const [meter_num, setMeterNum] = useState("");
-  const [status, setStatus] = useState("");
+  const [contact, setContact] = useState("");
   const [pipe_size, setPipe] = useState("");
   const [client_type, setType] = useState("");
   const [initial_read, setInitial] = useState("");
   const [install_date, setInstallDate] = useState("");
   const [installation_fee, setInstallationFee] = useState("");
-  const [connection_fee, setConnectionFee] = useState("");
   const [meter_installer, setMeterInstaller] = useState("");
   const [zone, setZone] = useState("");
   const [seq_num, setSeqNum] = useState("");
   const [book, setBook] = useState("");
-  const [address, setAddress] = useState({
-    house_num: "",
-    purok: "",
-    brgy: "",
-  });
-
-  const [brand_num, setBrandNum] = useState("");
+  const [address, setAddress] = useState("");
+  const [meterBrand, setMeterBrand] = useState("");
   const [search, setSearch] = useState("");
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -75,15 +69,14 @@ const CustomerTbl = () => {
         accountName,
         meter_num,
         pipe_size,
+        contact,
         initial_read,
-        status,
         address,
         client_type,
         install_date,
         activationDate,
-        brand_num,
+        meterBrand,
         installation_fee,
-        connection_fee,
         meter_installer,
         zone,
         seq_num,
@@ -101,13 +94,6 @@ const CustomerTbl = () => {
       }
     }
   };
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setAddress((prevAddress) => ({
-      ...prevAddress,
-      [id]: value,
-    }));
-  };
 
   // Handle installation date change and compute activation date
   const handleInstallDateChange = (e) => {
@@ -116,27 +102,27 @@ const CustomerTbl = () => {
     let activationDate;
 
     if (day >= 1 && day <= 15) {
-      // If installation date is between 1-15, activation date is the next month
+      // If installation date is between 1-15, activation date is the 1st of the next month
       activationDate = new Date(
         installDate.getFullYear(),
         installDate.getMonth() + 1, // Next month
-        2
+        day
       );
     } else if (day >= 16) {
-      // If installation date is between 16-30, activation date is the month after next
+      // If installation date is between 16-30, activation date is the 1st of the month after next
       activationDate = new Date(
         installDate.getFullYear(),
         installDate.getMonth() + 2, // Month after next
-        2
+        day
       );
     }
-
     // Convert the activation date to a string in YYYY-MM-DD format
     const activationDateString = activationDate.toISOString().split("T")[0];
 
     // Update the state
     setActivationDate(activationDateString);
   };
+
   useEffect(() => {
     const fetchData = async () => {
       if (zone && client_type) {
@@ -186,10 +172,12 @@ const CustomerTbl = () => {
           {row.status && (
             <span
               className={`badge border mx-2 rounded-pill ${
-                row.status === "Active"
+                row.status === "active"
                   ? "bg-success-subtle border-success-subtle text-success-emphasis"
-                  : row.status === "Inactive"
+                  : row.status === "inactive"
                   ? "bg-danger-subtle border-danger-subtle text-danger-emphasis"
+                  : row.status === "pending"
+                  ? "bg-warning-subtle border-warning-subtle text-warning-emphasis"
                   : "bg-secondary"
               }`}
             >
@@ -204,12 +192,8 @@ const CustomerTbl = () => {
     },
     {
       name: "Address",
-      selector: (row) => {
-        const address = row.c_address || {};
-        return `${address.house_num || "N/A"}, Purok ${
-          address.purok || "N/A"
-        }, ${address.brgy || "N/A"}`;
-      },
+      selector: (row) => row.c_address,
+
       sortable: true,
       width: "250px", // Adjust width as needed
     },
@@ -343,6 +327,7 @@ const CustomerTbl = () => {
             <option value="">Filter by status</option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
+            <option value="Pending">Pending</option>
           </select>
         </div>
         <div className="col-7 d-flex justify-content-end">
@@ -368,13 +353,14 @@ const CustomerTbl = () => {
 
       <Modal show={show} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Add Client</Modal.Title>
+          <Modal.Title>Add New Customer</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <div className="px-3">
-            <form className="row g-3" onSubmit={handleSubmit}>
+        <form className="row g-3" onSubmit={handleSubmit}>
+          <Modal.Body>
+            <div className="px-3">
               <div className="row mt-2">
                 {/* Account Name */}
+
                 <div className="col-md-4 mb-3">
                   <label htmlFor="accountName" className="form-label fw-bold">
                     Account Name
@@ -403,74 +389,23 @@ const CustomerTbl = () => {
                     value={acc_num}
                   />
                 </div>
-
-                {/* Status */}
                 <div className="col-md-4 mb-3">
-                  <label htmlFor="status" className="form-label fw-bold">
-                    Status
-                  </label>
-                  <select
-                    className="form-select"
-                    id="status"
-                    required
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                  >
-                    <option value="" disabled>
-                      Select a status
-                    </option>
-                    <option value="Active">Active</option>
-                    <option value="Inactive">Inactive</option>
-                  </select>
-                </div>
-
-                {/* House Number */}
-                <div className="col-md-4 mb-3">
-                  <label htmlFor="house_num" className="form-label fw-bold">
-                    House Number
+                  <label htmlFor="address" className="form-label fw-bold">
+                    Address
                   </label>
                   <input
                     type="text"
                     className="form-control"
-                    id="house_num"
-                    placeholder="130"
+                    id="address"
+                    placeholder="130, Purok 4, Barangay Timbayog"
                     required
-                    value={address.house_num}
-                    onChange={handleInputChange}
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
                   />
                 </div>
-
-                {/* Purok */}
-                <div className="col-md-4 mb-3">
-                  <label htmlFor="purok" className="form-label fw-bold">
-                    Purok
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="purok"
-                    placeholder="4"
-                    required
-                    value={address.purok}
-                    onChange={handleInputChange}
-                  />
-                </div>
-
-                {/* Barangay */}
-                <div className="col-md-4 mb-3">
-                  <label htmlFor="barangay" className="form-label fw-bold">
-                    Barangay
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="brgy"
-                    placeholder="Timbayog"
-                    required
-                    value={address.brgy}
-                    onChange={handleInputChange}
-                  />
-                </div>
+              </div>
+              <div className="row">
+                {/* Address */}
 
                 {/* Client Type */}
                 <div className="col-md-4 mb-3">
@@ -519,7 +454,19 @@ const CustomerTbl = () => {
                   </select>
                 </div>
 
-                {/* Book */}
+                <div className="col-md-4 mb-3">
+                  <label htmlFor="contact" className="form-label fw-bold">
+                    Contact No.
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="contact"
+                    required
+                    value={contact}
+                    onChange={(e) => setContact(e.target.value)}
+                  />
+                </div>
               </div>
 
               {/* Installation Details */}
@@ -578,16 +525,16 @@ const CustomerTbl = () => {
 
                 {/* Brand Number */}
                 <div className="col-md-6 col-lg-4 mb-3">
-                  <label htmlFor="brand_num" className="form-label fw-bold">
-                    Brand Number
+                  <label htmlFor="meterBrand" className="form-label fw-bold">
+                    Meter Brand
                   </label>
                   <input
-                    type="number"
+                    type="text"
                     className="form-control"
-                    id="brand_num"
+                    id="meterBrand"
                     required
-                    value={brand_num}
-                    onChange={(e) => setBrandNum(e.target.value)}
+                    value={meterBrand}
+                    onChange={(e) => setMeterBrand(e.target.value)}
                   />
                 </div>
 
@@ -634,59 +581,48 @@ const CustomerTbl = () => {
               <hr />
 
               {/* Fees */}
-              <div className="col-12 mt-3"></div>
-              <div className="col-md-4">
-                <label
-                  htmlFor="installation_fee"
-                  className="form-label fw-bold"
-                >
-                  Installation Fee
-                </label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="installation_fee"
-                  required
-                  value={installation_fee}
-                  onChange={(e) => setInstallationFee(e.target.value)}
-                />
+              <div className="row">
+                <div className="col-md-4">
+                  <label
+                    htmlFor="installation_fee"
+                    className="form-label fw-bold"
+                  >
+                    Installation Fee
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="installation_fee"
+                    required
+                    value={installation_fee}
+                    onChange={(e) => setInstallationFee(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-4">
+                  <label
+                    htmlFor="meter_installer"
+                    className="form-label fw-bold"
+                  >
+                    Meter Installer
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="meter_installer"
+                    required
+                    value={meter_installer}
+                    onChange={(e) => setMeterInstaller(e.target.value)}
+                  />
+                </div>
               </div>
-              <div className="col-md-4">
-                <label htmlFor="connection_fee" className="form-label fw-bold">
-                  Connection Fee
-                </label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="connection_fee"
-                  required
-                  value={connection_fee}
-                  onChange={(e) => setConnectionFee(e.target.value)}
-                />
-              </div>
-
-              <div className="col-md-4 mt-3">
-                <label htmlFor="meter_installer" className="form-label fw-bold">
-                  Meter Installer
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="meter_installer"
-                  required
-                  value={meter_installer}
-                  onChange={(e) => setMeterInstaller(e.target.value)}
-                />
-              </div>
-
-              <div className="col-12 mt-3">
-                <button type="submit" className="btn btn-primary">
-                  Add Client
-                </button>
-              </div>
-            </form>
-          </div>
-        </Modal.Body>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <button type="submit" className="btn btn-primary">
+              Add Client
+            </button>
+          </Modal.Footer>
+        </form>
       </Modal>
     </>
   );

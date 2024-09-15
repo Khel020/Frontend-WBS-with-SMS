@@ -11,6 +11,7 @@ function ListBills() {
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
+
   const [billStatus, setBillStatus] = useState({
     totalBills: 0,
     unpaidBills: 0,

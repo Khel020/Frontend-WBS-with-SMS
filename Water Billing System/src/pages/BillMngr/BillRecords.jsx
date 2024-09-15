@@ -2,16 +2,25 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar.jsx";
 import { Link, useParams } from "react-router-dom";
 import DataTable, { defaultThemes } from "react-data-table-component";
-import { Popover, OverlayTrigger } from "react-bootstrap";
-import { FaEllipsisV } from "react-icons/fa"; // Import the ellipsis icon
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Button } from "@mui/material";
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 const BillRecords = () => {
   const { accountName } = useParams();
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   const [bills, setBills] = useState([]);
+  const [currentBill, setCurrentBill] = useState("");
+  const [amountPaid, setAmountPaid] = useState("");
+  const [arrears, setArrears] = useState("");
+  const [pCharge, setPCharge] = useState("");
+  const [remarks, setRemarks] = useState("");
+  const [others, setOthers] = useState("");
   const { acc_number } = useParams();
   useEffect(() => {
     const fetchBillByAccNum = async () => {
@@ -28,6 +37,17 @@ const BillRecords = () => {
 
     fetchBillByAccNum();
   }, [acc_number]);
+  const handleSaveChanges = () => {
+    handleSave({
+      currentBill,
+      amountPaid,
+      arrears,
+      pCharge,
+      remarks,
+      others,
+    });
+    handleClose();
+  };
 
   function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -78,48 +98,20 @@ const BillRecords = () => {
     {
       name: "Action",
       cell: (row) => (
-        <div>
-          <OverlayTrigger
-            trigger="click"
-            placement="bottom"
-            overlay={
-              <Popover id="popover-basic">
-                <Popover.Header as="h3">Actions</Popover.Header>
-                <Popover.Body>
-                  <Link
-                    to={`/billing-records/${row.acc_num}/${row.accountName}`}
-                    className="d-block mb-2"
-                  >
-                    View Bills
-                  </Link>
-                  <Link
-                    to={`/billing-records/${row.acc_num}/${row.accountName}/adjustments`}
-                    className="d-block mb-2"
-                  >
-                    Adjustments
-                  </Link>
-                  <Link
-                    to={`/billing-records/${row.acc_num}/${row.accountName}/full-bill`}
-                    className="d-block mb-2"
-                  >
-                    View Full Bill
-                  </Link>
-                  <a
-                    href={`/billing-records/${row.acc_num}/${row.accountName}/print-bill`}
-                    className="d-block mb-2"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Print Bill
-                  </a>
-                </Popover.Body>
-              </Popover>
-            }
-          >
-            <button className="btn btn-link p-0">
-              <FaEllipsisV size={20} /> {/* Adjust size as needed */}
-            </button>
-          </OverlayTrigger>
+        <div style={{ display: "inline-block", padding: "8px" }}>
+          <i
+            className="bi bi-pencil-square"
+            style={{
+              fontSize: "22px",
+              color: "#555", // Subtle business-like color
+              cursor: "pointer",
+              transition: "color 0.2s ease-in-out",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#007bff")} // Subtle hover effect
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#555")} // Restore color on hover out
+            title="Adjustment" // Tooltip
+            onClick={() => handleShow(row.billNumber)}
+          ></i>
         </div>
       ),
       width: "100px", // Adjust width as needed
@@ -196,17 +188,7 @@ const BillRecords = () => {
           <h1 className="h2">{accountName} Billing Record</h1>
         </div>
         <div className="row mb-3">
-          <div className="col">
-            <Link to="/listclient">
-              <Button
-                variant="outlined"
-                startIcon={<ArrowBackIcon />}
-                size="small"
-              >
-                Back
-              </Button>
-            </Link>
-          </div>
+          <div className="col">{/* <Link to="/listclient"></Link> */}</div>
           <div className="col text-end">
             <Link to={`/receive-payments/${acc_number}`}>
               <button className="btn btn-primary">Receive Payments</button>
@@ -228,6 +210,95 @@ const BillRecords = () => {
             </div>
           }
         />
+        <Modal show={show} onHide={handleClose} centered>
+          <Modal.Header closeButton className="bg-light border-bottom">
+            <Modal.Title>Adjust Bill</Modal.Title>
+          </Modal.Header>
+          <Modal.Body className="p-3">
+            <Form>
+              <Row className="g-3">
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label className="fw-bold">
+                      Current Bill Amount
+                    </Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={currentBill}
+                      onChange={(e) => setCurrentBill(e.target.value)}
+                      placeholder="Current Bill Amount"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label className="fw-bold">Amount Paid</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={amountPaid}
+                      onChange={(e) => setAmountPaid(e.target.value)}
+                      placeholder="Amount Paid"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label className="fw-bold">Arrears</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={arrears}
+                      onChange={(e) => setArrears(e.target.value)}
+                      placeholder="Arrears"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label className="fw-bold">Penalty Charge</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={pCharge}
+                      onChange={(e) => setPCharge(e.target.value)}
+                      placeholder="Penalty Charge"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={12}>
+                  <Form.Group>
+                    <Form.Label className="fw-bold">Remarks</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={2}
+                      value={remarks}
+                      onChange={(e) => setRemarks(e.target.value)}
+                      placeholder="Remarks"
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={12}>
+                  <Form.Group>
+                    <Form.Label className="fw-bold">Other Details</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={2}
+                      value={others}
+                      onChange={(e) => setOthers(e.target.value)}
+                      placeholder="Additional Details"
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer className="border-top">
+            <Button variant="outline-secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={handleSaveChanges}>
+              Save Changes
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </main>
     </div>
   );

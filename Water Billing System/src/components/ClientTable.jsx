@@ -292,12 +292,7 @@ const Table = () => {
     },
     {
       name: "Address",
-      selector: (row) =>
-        row.c_address.house_num +
-        ", Purok " +
-        row.c_address.purok +
-        ", " +
-        row.c_address.brgy,
+      selector: (row) => row.c_address,
       sortable: true,
       width: "200px", // Adjust width as needed
     },
