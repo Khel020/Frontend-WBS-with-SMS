@@ -172,11 +172,11 @@ const CustomerTbl = () => {
           {row.status && (
             <span
               className={`badge border mx-2 rounded-pill ${
-                row.status === "active"
+                row.status === "Active"
                   ? "bg-success-subtle border-success-subtle text-success-emphasis"
-                  : row.status === "inactive"
+                  : row.status === "Inactive"
                   ? "bg-danger-subtle border-danger-subtle text-danger-emphasis"
-                  : row.status === "pending"
+                  : row.status === "Pending"
                   ? "bg-warning-subtle border-warning-subtle text-warning-emphasis"
                   : "bg-secondary"
               }`}
@@ -200,7 +200,7 @@ const CustomerTbl = () => {
     {
       name: "Last Bill Date",
       selector: (row) =>
-        row.last_billDate ? formatDate(row.last_billDate) : "For Activation",
+        row.last_billDate ? formatDate(row.last_billDate) : "Bill Not Issued",
       sortable: true,
       width: "200px", // Adjust width as needed
     },

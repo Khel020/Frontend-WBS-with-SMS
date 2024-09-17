@@ -3,6 +3,8 @@ import axios from "axios";
 import { useState, useEffect, useRef } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
+import { AiFillFileText } from "react-icons/ai"; // Ant Design Icons
+import { BsFilePlus } from "react-icons/bs"; // Bootstrap Icons
 import DataTable, { defaultThemes } from "react-data-table-component";
 import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,7 +16,10 @@ import ReceiptComponent from "./receipt"; // Import the receipt component
 const Table = () => {
   //State for storing data
   const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    window.location.reload(); // This will refresh the page
+  };
   const handleShow = () => setShow(true);
   //TODO: GET ALL Consumers
   const backend = import.meta.env.VITE_BACKEND;
@@ -304,12 +309,15 @@ const Table = () => {
     {
       name: "Action",
       cell: (row) => (
-        <div>
+        <div className="d-flex">
           <Link to={`/billing-records/${row.acc_num}/${row.accountName}`}>
-            <button className="btn btn-info btn-sm">
-              <span>View Bills</span>
+            <button className="btn btn-outline-primary btn-sm">
+              <AiFillFileText style={{ fontSize: "20px" }} />
             </button>
           </Link>
+          <button className="btn btn-outline-success btn-sm ms-2">
+            <BsFilePlus style={{ fontSize: "20px" }} />
+          </button>
         </div>
       ),
 

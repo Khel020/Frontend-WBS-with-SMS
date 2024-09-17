@@ -21,7 +21,41 @@ const Customers = () => {
   const [showAcc, setActivation] = useState(false);
   //FIX THIS
   const [forActivation, setforActivation] = useState([]);
-  const [status, setStatus] = useState(forActivation.status); // Example state to hold the status
+
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [show, setShow] = useState(false);
+  const handleShow = (account) => {
+    setSelectedAccount(account);
+    setShow(true);
+  };
+  const handleClose = () => setShow(false);
+  const confirmActivation = () => {
+    if (selectedAccount) {
+      const updatePending = {
+        acc_num: selectedAccount.acc_num,
+        status: "Active",
+      };
+
+      fetch(`${backend}/admin/update_pendingStatus`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatePending),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Status updated:", data);
+          // Optionally, update any UI elements or trigger additional actions here
+        })
+        .catch((error) => {
+          console.error("Error updating status:", error);
+          // Optionally, handle errors here, like showing an error message to the user
+        });
+
+      handleClose();
+    }
+  };
   const handleCloseAccModal = () => setActivation(false);
   const handleShowAccs = () => {
     setActivation(true);
@@ -145,23 +179,20 @@ const Customers = () => {
             <Modal.Title>Consumer Activation Details </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <table class="table">
+            <table className="table">
               <thead>
                 <tr>
                   <th scope="col">ID</th>
-                  <th scope="col">Account Name</th>
                   <th scope="col">Account No.</th>
+                  <th scope="col">Account Name</th>
                   <th scope="col">Status</th>
                   <th scope="col">Activation in</th>
-                  <th scope="col">Action</th>
                 </tr>
               </thead>
-              {forActivation.map((accs, index) => (
-                <tbody>
-                  <tr>
-                    <th scope="row" key={index}>
-                      {index}
-                    </th>
+              <tbody>
+                {forActivation.map((accs, index) => (
+                  <tr key={index}>
+                    <th scope="row">{index}</th>
                     <td>{accs.acc_num}</td>
                     <td>{accs.accountName}</td>
                     <td>{accs.status}</td>
@@ -176,38 +207,18 @@ const Customers = () => {
                           completed,
                         }) => {
                           if (completed) {
-                            // Check if the current status is not "Active"
-                            if (status !== "Active") {
-                              // Update the status to "Active"
-                              setStatus("Active");
-
-                              // Send a POST request to update the status on the server
-                              fetch(`${backend}/admin/updateStatus`, {
-                                method: "POST",
-                                headers: {
-                                  "Content-Type": "application/json",
-                                },
-                                body: JSON.stringify({
-                                  acc_num: forActivation.acc_num,
-                                  status: "Active",
-                                }),
-                              })
-                                .then((response) => response.json())
-                                .then((data) => {
-                                  console.log("Status updated:", data);
-                                  // Optionally, update any UI elements or trigger additional actions here
-                                })
-                                .catch((error) => {
-                                  console.error(
-                                    "Error updating status:",
-                                    error
-                                  );
-                                  // Optionally, handle errors here, like showing an error message to the user
-                                });
-                            }
-                            return <span>Activated</span>;
+                            return (
+                              <span>
+                                <Button
+                                  variant="primary"
+                                  onClick={() => handleShow(accs)}
+                                  className="btn-sm"
+                                >
+                                  Activate Now
+                                </Button>
+                              </span>
+                            );
                           } else {
-                            // Return the countdown display if not completed
                             return (
                               <span>
                                 {days}d {hours}h {minutes}m {seconds}s
@@ -217,12 +228,33 @@ const Customers = () => {
                         }}
                       />
                     </td>
-                    <td>Action</td>
                   </tr>
-                </tbody>
-              ))}
+                ))}
+              </tbody>
             </table>
           </Modal.Body>
+        </Modal>
+        <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Confirm Activation</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Are you sure you want to activate the account?</p>
+            <p>
+              <strong>Account No:</strong> {selectedAccount?.acc_num}
+            </p>
+            <p>
+              <strong>Account Name:</strong> {selectedAccount?.accountName}
+            </p>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleClose}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={confirmActivation}>
+              Confirm Activation
+            </Button>
+          </Modal.Footer>
         </Modal>
       </main>
     </div>

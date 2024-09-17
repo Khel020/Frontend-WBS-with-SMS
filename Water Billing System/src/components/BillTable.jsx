@@ -7,11 +7,14 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 function BillTable() {
   const [bills, setBills] = useState([]);
+  const [filteredBills, setFilteredBills] = useState([]);
   const backend = import.meta.env.VITE_BACKEND;
   const [billdetails, setBillDetails] = useState([]);
   const [error, setError] = useState(null);
   const [startDate, setStartDate] = useState(new Date());
   const [show, setShow] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
 
   const handleClose = () => setShow(false);
 
@@ -57,6 +60,29 @@ function BillTable() {
     };
     fetchBills();
   }, []);
+
+  useEffect(() => {
+    const filterBills = () => {
+      let filtered = bills;
+
+      // Filter by month
+      if (startDate) {
+        const startMonth = new Date(startDate).getMonth();
+        const startYear = new Date(startDate).getFullYear();
+        filtered = filtered.filter((bill) => {
+          const billDate = new Date(bill.reading_date);
+          return (
+            billDate.getMonth() === startMonth &&
+            billDate.getFullYear() === startYear
+          );
+        });
+      }
+
+      setFilteredBills(filtered);
+    };
+
+    filterBills();
+  }, [bills, startDate]);
 
   if (!bills) {
     return <div>Loading...</div>;
@@ -199,7 +225,7 @@ function BillTable() {
         pagination
         fixedHeaderScrollHeight="520px"
         columns={columns}
-        data={bills}
+        data={filteredBills}
         responsive
         highlightOnHover
         noDataComponent={<div>No data available</div>}

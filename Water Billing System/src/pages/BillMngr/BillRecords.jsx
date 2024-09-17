@@ -3,6 +3,9 @@ import Sidebar from "../../components/Sidebar.jsx";
 import { Link, useParams } from "react-router-dom";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css"; // Add this line to import styles
+
 const BillRecords = () => {
   const { accountName } = useParams();
   const backend = import.meta.env.VITE_BACKEND;
@@ -10,18 +13,25 @@ const BillRecords = () => {
   const usertype = token;
 
   const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
   const [bills, setBills] = useState([]);
+  const [filteredBills, setFilteredBills] = useState([]);
   const [currentBill, setCurrentBill] = useState("");
   const [amountPaid, setAmountPaid] = useState("");
   const [arrears, setArrears] = useState("");
   const [pCharge, setPCharge] = useState("");
   const [remarks, setRemarks] = useState("");
   const [others, setOthers] = useState("");
+  const [adjustment, setAdjustment] = useState({
+    currentBill: "",
+    amountPaid: "",
+    arrears: "",
+    p_charge: "",
+    remarks: "",
+    others: "",
+  });
+  const [startDate, setStartDate] = useState(null);
   const { acc_number } = useParams();
+
   useEffect(() => {
     const fetchBillByAccNum = async () => {
       const response = await fetch(
@@ -30,13 +40,43 @@ const BillRecords = () => {
       if (!response.ok) {
         return { err: "Failed No Response" };
       }
-
       const data = await response.json();
       setBills(data);
+      setFilteredBills(data); // Initialize filteredBills with fetched data
+    };
+    fetchBillByAccNum();
+  }, [acc_number, backend]);
+
+  useEffect(() => {
+    const filterBills = () => {
+      let filtered = bills;
+
+      // Filter by month
+      if (startDate) {
+        const startMonth = new Date(startDate).getMonth();
+        const startYear = new Date(startDate).getFullYear();
+        filtered = filtered.filter((bill) => {
+          const billDate = new Date(bill.reading_date);
+          return (
+            billDate.getMonth() === startMonth &&
+            billDate.getFullYear() === startYear
+          );
+        });
+      }
+
+      setFilteredBills(filtered);
     };
 
-    fetchBillByAccNum();
-  }, [acc_number]);
+    filterBills();
+  }, [bills, startDate]);
+
+  const handleShow = (data) => {
+    setAdjustment({ ...data });
+    setShow(true);
+  };
+
+  const handleClose = () => setShow(false);
+
   const handleSaveChanges = () => {
     handleSave({
       currentBill,
@@ -49,6 +89,10 @@ const BillRecords = () => {
     handleClose();
   };
 
+  const handlePrint = (row) => {
+    // Implement print functionality
+  };
+
   function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -56,6 +100,7 @@ const BillRecords = () => {
       day: "numeric",
     });
   }
+
   const columns = [
     {
       name: "Bill No.",
@@ -87,7 +132,17 @@ const BillRecords = () => {
     },
     {
       name: "Total Due",
-      selector: (row) => `₱${row.totalDue.toFixed(2)}`, // Format amount with peso sign and two decimal places
+      selector: (row) => {
+        // Convert the string values to numbers
+        const currentBill = parseFloat(row.currentBill) || 0;
+        const arrears = parseFloat(row.arrears) || 0;
+
+        // Perform the addition
+        const total = currentBill + arrears;
+
+        // Format the result as a currency string
+        return `₱${total.toFixed(2)}`;
+      },
       sortable: true,
     },
     {
@@ -98,9 +153,23 @@ const BillRecords = () => {
     {
       name: "Action",
       cell: (row) => (
-        <div style={{ display: "inline-block", padding: "8px" }}>
+        <div style={{ display: "flex", padding: "8px" }}>
           <i
             className="bi bi-pencil-square"
+            style={{
+              fontSize: "22px",
+              color: "#555", // Subtle business-like color
+              cursor: "pointer",
+              transition: "color 0.2s ease-in-out",
+              marginRight: "10px", // Space between icons
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#007bff")} // Subtle hover effect
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#555")} // Restore color on hover out
+            title="Adjustment" // Tooltip
+            onClick={() => handleShow(row)}
+          ></i>
+          <i
+            className="bi bi-printer"
             style={{
               fontSize: "22px",
               color: "#555", // Subtle business-like color
@@ -109,14 +178,15 @@ const BillRecords = () => {
             }}
             onMouseEnter={(e) => (e.currentTarget.style.color = "#007bff")} // Subtle hover effect
             onMouseLeave={(e) => (e.currentTarget.style.color = "#555")} // Restore color on hover out
-            title="Adjustment" // Tooltip
-            onClick={() => handleShow(row.billNumber)}
+            title="Print" // Tooltip
+            onClick={() => handlePrint(row)} // Function to handle print action
           ></i>
         </div>
       ),
       width: "100px", // Adjust width as needed
     },
   ];
+
   const customStyles = {
     table: {
       style: {
@@ -188,7 +258,18 @@ const BillRecords = () => {
           <h1 className="h2">{accountName} Billing Record</h1>
         </div>
         <div className="row mb-3">
-          <div className="col">{/* <Link to="/listclient"></Link> */}</div>
+          <div className="col mx-1">
+            <Form.Group>
+              <Form.Label className="fw-bold mx-2">Select Month</Form.Label>
+              <DatePicker
+                selected={startDate}
+                onChange={(date) => setStartDate(date)}
+                dateFormat="MMMM yyyy"
+                showMonthYearPicker
+                className="form-control"
+              />
+            </Form.Group>
+          </div>
           <div className="col text-end">
             <Link to={`/receive-payments/${acc_number}`}>
               <button className="btn btn-primary">Receive Payments</button>
@@ -200,9 +281,8 @@ const BillRecords = () => {
           pagination
           fixedHeaderScrollHeight="520px"
           columns={columns}
-          data={bills}
+          data={filteredBills} // Use filtered data
           responsive
-          fixedHeader
           highlightOnHover
           noDataComponent={
             <div className="text-danger">
@@ -224,7 +304,7 @@ const BillRecords = () => {
                     </Form.Label>
                     <Form.Control
                       type="number"
-                      value={currentBill}
+                      value={adjustment.currentBill}
                       onChange={(e) => setCurrentBill(e.target.value)}
                       placeholder="Current Bill Amount"
                     />
@@ -235,7 +315,7 @@ const BillRecords = () => {
                     <Form.Label className="fw-bold">Amount Paid</Form.Label>
                     <Form.Control
                       type="number"
-                      value={amountPaid}
+                      value={adjustment.amountPaid}
                       onChange={(e) => setAmountPaid(e.target.value)}
                       placeholder="Amount Paid"
                     />
@@ -246,7 +326,7 @@ const BillRecords = () => {
                     <Form.Label className="fw-bold">Arrears</Form.Label>
                     <Form.Control
                       type="number"
-                      value={arrears}
+                      value={adjustment.arrears}
                       onChange={(e) => setArrears(e.target.value)}
                       placeholder="Arrears"
                     />
@@ -257,7 +337,7 @@ const BillRecords = () => {
                     <Form.Label className="fw-bold">Penalty Charge</Form.Label>
                     <Form.Control
                       type="number"
-                      value={pCharge}
+                      value={adjustment.p_charge}
                       onChange={(e) => setPCharge(e.target.value)}
                       placeholder="Penalty Charge"
                     />
@@ -303,4 +383,5 @@ const BillRecords = () => {
     </div>
   );
 };
+
 export default BillRecords;
