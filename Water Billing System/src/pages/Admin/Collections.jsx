@@ -2,81 +2,98 @@ import React, { useEffect, useState } from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import Sidebar from "../../components/Sidebar";
 import * as XLSX from "xlsx";
-
+import DatePicker from "react-datepicker";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 function Rtable() {
-  const [records, setRecords] = useState([]);
   const [filteredRecords, setFilteredRecords] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState("");
+
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
 
   useEffect(() => {
-    const fetchCustomers = async () => {
-      const response = await fetch(`${backend}/admin/getAllPayments`);
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setRecords(data.data);
-        setFilteredRecords(data.data); // Initially, show all records
-      }
-    };
-    fetchCustomers();
-  }, [backend]);
+    if (selectedMonth) {
+      // Calculate the start and end of the month
+      const startOfMonth = new Date(
+        selectedMonth.getFullYear(),
+        selectedMonth.getMonth(),
+        1
+      ).toISOString();
+      const endOfMonth = new Date(
+        selectedMonth.getFullYear(),
+        selectedMonth.getMonth() + 1,
+        0
+      ).toISOString();
 
-  const handleMonthChange = (event) => {
-    const month = event.target.value;
-    setSelectedMonth(month);
-    if (month === "") {
-      setFilteredRecords(records); // If no month selected, show all records
-    } else {
-      const filtered = records.filter((record) => {
-        const paymentMonth = new Date(record.paymentDate).getMonth() + 1;
-        return paymentMonth === parseInt(month);
-      });
-      setFilteredRecords(filtered);
+      const fetchCustomers = async () => {
+        const response = await fetch(
+          `${backend}/admin/collectionSummary?startDate=${encodeURIComponent(
+            startOfMonth
+          )}&endDate=${encodeURIComponent(endOfMonth)}`
+        );
+        const data = await response.json();
+
+        if (response.ok) {
+          setFilteredRecords(data); // Initially, show all records
+        }
+      };
+      fetchCustomers();
     }
-  };
+  }, [backend]);
 
   const columns = [
     {
-      name: "OR_Num",
-      selector: (row) => row.OR_NUM,
+      name: "Pay Date", // Shortened label
+      selector: (row) => row.lastPaymentDate,
       sortable: true,
-      width: "120px",
+      width: "120px", // Reduced width for better fit
     },
     {
-      name: "Payment Date",
-      selector: (row) => formatDate(row.paymentDate),
-      sortable: true,
-      width: "160px",
-    },
-    {
-      name: "Name",
+      name: "Acct Name", // Shortened label
       selector: (row) => row.accountName,
       sortable: true,
-      width: "220px",
+      width: "160px", // Reduced width for better fit
     },
     {
       name: "Acct No.",
       selector: (row) => row.acc_num,
       sortable: true,
-      width: "150px",
+      width: "130px", // Same as before
     },
     {
-      name: "Tendered",
-      selector: (row) => row.tendered,
+      name: "Total Billed", // Billed amount in pesos
+      selector: (row) => row.totalBilled,
       sortable: true,
-      width: "190px",
+      width: "140px", // Shortened label and adjusted width
     },
     {
-      name: "Bill No.",
-      selector: (row) => row.billNo,
+      name: "Collected", // Total collected amount
+      selector: (row) => row.Collected,
       sortable: true,
-      width: "130px",
+      width: "140px",
     },
     {
-      name: "Balance",
-      selector: (row) => row.balance,
+      name: "Outstanding", // Remaining balance
+      selector: (row) => row.Balances,
+      sortable: true,
+      width: "140px",
+    },
+    {
+      name: "Penalties", // Penalty charges if any
+      selector: (row) => row.penaltyCharge,
       sortable: true,
       width: "130px",
     },
@@ -179,25 +196,14 @@ function Rtable() {
         </div>
         <div className="row">
           <div className="mb-3 col-2">
-            <select
-              className="form-select"
-              value={selectedMonth}
-              onChange={handleMonthChange}
-            >
-              <option value="">Filter by month</option>
-              <option value="1">January</option>
-              <option value="2">February</option>
-              <option value="3">March</option>
-              <option value="4">April</option>
-              <option value="5">May</option>
-              <option value="6">June</option>
-              <option value="7">July</option>
-              <option value="8">August</option>
-              <option value="9">September</option>
-              <option value="10">October</option>
-              <option value="11">November</option>
-              <option value="12">December</option>
-            </select>
+            <DatePicker
+              selected={selectedMonth}
+              onChange={(date) => setSelectedMonth(date)}
+              dateFormat="MMMM yyyy"
+              showMonthYearPicker // Limit selection to month and year
+              placeholderText="Select Month"
+              className="date-input"
+            />
           </div>
           <div className="mb-3 col-5">
             <input
@@ -213,12 +219,12 @@ function Rtable() {
             </button>
           </div>
         </div>
+
         <DataTable
           columns={columns}
           data={filteredRecords} // Use filteredRecords here
-          fixedHeader
+          responsive
           pagination
-          customStyles={customStyles}
         />
       </main>
     </div>

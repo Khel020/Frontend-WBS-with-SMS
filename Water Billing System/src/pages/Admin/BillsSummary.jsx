@@ -1,24 +1,18 @@
 import React, { useEffect, useState } from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import Sidebar from "../../components/Sidebar";
-
+import DatePicker from "react-datepicker";
 function BillsSummary() {
   // Define the columns for the DataTable
-  const [records, setRecords] = useState([]);
+  const [Summary, setSummary] = useState([]);
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
 
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      const response = await fetch(`${backend}/admin/customers`);
-      if (response) {
-        const data = await response.json();
-        setRecords(data);
-      }
-    };
-    fetchCustomers();
-  }, [backend]);
   function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -26,76 +20,93 @@ function BillsSummary() {
       day: "numeric",
     });
   }
+  useEffect(() => {
+    const getBills = async () => {
+      if (selectedMonth) {
+        // Calculate the start and end of the month
+        const startOfMonth = new Date(
+          selectedMonth.getFullYear(),
+          selectedMonth.getMonth(),
+          1
+        ).toISOString();
+        const endOfMonth = new Date(
+          selectedMonth.getFullYear(),
+          selectedMonth.getMonth() + 1,
+          0
+        ).toISOString();
+
+        console.log("startOfMonth", startOfMonth);
+        console.log("endOfMonth", endOfMonth);
+
+        try {
+          const response = await fetch(
+            `${backend}/admin/billSummary?startDate=${encodeURIComponent(
+              startOfMonth
+            )}&endDate=${encodeURIComponent(endOfMonth)}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${localStorage.getItem("tkn")}`,
+              },
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          const data = await response.json();
+          console.log("RESPONSE", data);
+          setSummary(data.summary); // Ensure `data.summary` matches your expected format
+        } catch (error) {
+          console.error("Error fetching bill summary:", error);
+        }
+      }
+    };
+
+    getBills();
+  }, [selectedMonth]);
+
   const columns = [
     {
-      name: "Month",
-      selector: (row) => row.month,
-      sortable: true,
-      width: "100px", // Reduced width
-    },
-    {
-      name: "Total Bills",
-      selector: (row) => row.totalBillsGenerated,
+      name: "Category",
+      selector: (row) => row.category,
       sortable: true,
       width: "150px", // Reduced width
     },
     {
-      name: "Total Billed",
-      selector: (row) => row.totalBilledAmount,
-      sortable: true,
-      width: "130px", // Reduced width
-    },
-    {
-      name: "Total Paid",
-      selector: (row) => row.totalPaidAmount,
+      name: "No. of Bills",
+      selector: (row) => row.totalBills,
       sortable: true,
       width: "150px", // Reduced width
     },
     {
-      name: "Penalties",
-      selector: (row) => row.penalties,
+      name: "Total Consumption",
+      selector: (row) => row.totalConsumption,
       sortable: true,
-      width: "120px", // Reduced width
+      width: "200px", // Reduced width
+      cell: (row) => `${row.totalConsumption} m³`,
     },
     {
-      name: "Adjustments",
-      selector: (row) => row.adjustments,
+      name: "Total Amount Billed ",
+      selector: (row) => parseFloat(row.totalBilled).toFixed(2),
       sortable: true,
-      width: "120px", // Reduced width
+      width: "200px", // Reduced width
     },
     {
-      name: "Res Bills",
-      selector: (row) => row.residentialBills,
+      name: "Total Amount Paid",
+      selector: (row) => row.totalAmountPaid,
       sortable: true,
-      width: "120px", // Reduced width
+      width: "200px", // Reduced width
     },
     {
-      name: "Com Bills",
-      selector: (row) => row.commercialBills,
+      name: "Total Penalties",
+      selector: (row) => row.totalPenalties,
       sortable: true,
-      width: "120px", // Reduced width
-    },
-    {
-      name: "Ind Bills",
-      selector: (row) => row.industrialBills,
-      sortable: true,
-      width: "120px", // Reduced width
+      width: "200px", // Reduced width
     },
   ];
-
-  function handleFilter(event) {
-    const value = event.target.value.toLowerCase();
-    const filteredData = records.filter((row) => {
-      return (
-        row.name.toLowerCase().includes(value) ||
-        row.water.toString().toLowerCase().includes(value) ||
-        row.present.toString().toLowerCase().includes(value) ||
-        row.previous.toString().toLowerCase().includes(value) ||
-        row.total.toString().toLowerCase().includes(value)
-      );
-    });
-    setRecords(filteredData);
-  }
 
   const customStyles = {
     tableLayout: "auto", // This makes the table layout more flexible
@@ -168,23 +179,32 @@ function BillsSummary() {
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded ">
           <h1 className="h2">Summary of Bills</h1>
         </div>
-        <div className="row">
-          <div className="mb-3 col-3">
-            <input
-              type="text"
-              placeholder="Filter by name"
-              onChange={handleFilter}
-              className="form-control d-inline-block w-auto"
-            />
+        <div className="d-flex align-items-center justify-content-between me-2 mb-3">
+          {/* Billing Period Section */}
+          <div className="d-flex align-items-center">
+            <label className="mx-2">Billing Period:</label>
+            <div className="d-flex align-items-center">
+              <DatePicker
+                selected={selectedMonth}
+                onChange={(date) => setSelectedMonth(date)}
+                dateFormat="MMMM yyyy"
+                showMonthYearPicker // Limit selection to month and year
+                placeholderText="Select Month"
+                className="date-input"
+              />
+            </div>
+          </div>
+
+          {/* Export Button Section */}
+          <div className="d-flex align-items-center">
+            <button className="btn btn-primary d-flex align-items-center h-100">
+              <i className="bi bi-file-earmark-arrow-down-fill mx-1"></i>
+              Export to Excel
+            </button>
           </div>
         </div>
-        <DataTable
-          columns={columns}
-          data={records}
-          fixedHeader
-          pagination
-          customStyles={customStyles}
-        />
+
+        <DataTable columns={columns} data={Summary} responsive pagination />
       </main>
     </div>
   );

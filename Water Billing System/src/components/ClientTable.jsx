@@ -276,6 +276,8 @@ const Table = () => {
                   ? "bg-success-subtle border-success-subtle text-success-emphasis "
                   : row.status === "Inactive"
                   ? "bg-danger-subtle border-danger-subtle text-danger-emphasis "
+                  : row.status === "Pending"
+                  ? "bg-warning-subtle border-warning-subtle text-warning-emphasis "
                   : "bg-secondary"
               }`}
             >

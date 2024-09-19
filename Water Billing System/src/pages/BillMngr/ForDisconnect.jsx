@@ -1,61 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Button, Table, Card } from "react-bootstrap";
 import Sidebar from "../../components/Sidebar";
 import DataTable, { defaultThemes } from "react-data-table-component";
-const MonthlySummaryReport = () => {
+import axios from "axios"; // Assuming you'll fetch data using axios
+
+const ForDisconnection = () => {
+  const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
   const [startDate, setStartDate] = useState(new Date());
+  const [disconnectionAccounts, setDisconnectionAccounts] = useState([]);
+
+  // Columns for disconnection accounts table
   const columns = [
     {
-      name: "Transac Date",
-      sortable: true,
-      width: "120px",
-    },
-    {
-      name: "ID",
-      sortable: true,
-      width: "160px",
-    },
-    {
-      name: "Account Name",
-
-      sortable: true,
-      width: "220px",
-    },
-    {
-      name: "Acct No.",
-
+      name: "Account No.",
+      selector: (row) => row.acc_num,
       sortable: true,
       width: "150px",
     },
     {
-      name: "Amount Paid",
-
+      name: "Account Name",
+      selector: (row) => row.accountName,
       sortable: true,
-      width: "190px",
+      width: "200px",
     },
     {
-      name: "Balance",
-
+      name: "Last Bill Date",
+      selector: (row) => row.last_billDate,
       sortable: true,
-      width: "130px",
+      width: "200px",
     },
     {
       name: "Status",
-
+      selector: (row) => row.disconnection_status,
       sortable: true,
-      width: "130px",
+      width: "200px",
     },
     {
-      name: "Remarks",
-
+      name: "Total Balance",
+      selector: (row) => row.totalBalance,
       sortable: true,
-      width: "130px",
+      width: "200px",
+    },
+    {
+      name: "Penalties",
+      selector: (row) => row.penalties,
+      sortable: true,
+      width: "200px",
     },
   ];
+
+  const ExpandableRowComponent = ({ data }) => (
+    <div style={{ padding: "10px", backgroundColor: "#f9f9f9" }}>
+      <p>
+        <strong>Address:</strong> {data.c_address}
+      </p>
+      <p>
+        <strong>Contact No.:</strong> {data.contact}
+      </p>
+      <p>
+        <strong>Meter No.:</strong> {data.meter_num}
+      </p>
+    </div>
+  );
+
   const customStyles = {
     table: {
       style: {
@@ -109,8 +120,26 @@ const MonthlySummaryReport = () => {
       },
     },
   };
+
+  // Fetch disconnection accounts from backend
+  useEffect(() => {
+    const fetchDisconnectionAccounts = async () => {
+      try {
+        const response = await fetch(`${backend}/biller/ForDisconnect`);
+        const data = await response.json();
+        console.log("Response", data);
+        setDisconnectionAccounts(data);
+      } catch (error) {
+        console.error("Error fetching disconnection accounts:", error);
+      }
+    };
+
+    fetchDisconnectionAccounts();
+  }, [backend]);
+
   const handleExport = () => {
-    // Logic for exporting to Excel
+    // Logic for exporting disconnection list to Excel
+    console.log("Export to Excel clicked");
   };
 
   return (
@@ -123,40 +152,11 @@ const MonthlySummaryReport = () => {
         overflow: "hidden",
       }}
     >
-      {" "}
       <Sidebar role={usertype} />
       <main className="col-md-9 ms-sm-auto col-lg-10 p-2">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
           <h1 className="h2">For Disconnection</h1>
         </div>
-        <section className="mb-4">
-          <div className="d-flex justify-content-between">
-            <Card className="p-3" style={{ width: "18rem" }}>
-              <Card.Body>
-                <Card.Title>Total Revenue</Card.Title>
-                <Card.Text>₱[Amount]</Card.Text>
-              </Card.Body>
-            </Card>
-            <Card className="p-3" style={{ width: "18rem" }}>
-              <Card.Body>
-                <Card.Title>Total Bills Issued</Card.Title>
-                <Card.Text>[Number]</Card.Text>
-              </Card.Body>
-            </Card>
-            <Card className="p-3" style={{ width: "18rem" }}>
-              <Card.Body>
-                <Card.Title>Total Payments Received</Card.Title>
-                <Card.Text>₱[Amount]</Card.Text>
-              </Card.Body>
-            </Card>
-            <Card className="p-3" style={{ width: "18rem" }}>
-              <Card.Body>
-                <Card.Title>Total Outstanding Amount</Card.Title>
-                <Card.Text>₱[Amount]</Card.Text>
-              </Card.Body>
-            </Card>
-          </div>
-        </section>
         <div className="row mb-3">
           <div className="col-9 d-flex align-items-center">
             <DatePicker
@@ -168,18 +168,23 @@ const MonthlySummaryReport = () => {
             />
           </div>
           <div className="col-3 d-flex justify-content-end">
-            <button className="btn btn-primary">
+            <button className="btn btn-primary" onClick={handleExport}>
               <i className="bi bi-file-earmark-arrow-down-fill mx-1"></i>
               Export to Excel
             </button>
           </div>
         </div>
+
         <DataTable
           columns={columns}
-          fixedHeader
+          data={disconnectionAccounts}
+          expandableRows
+          expandableRowsComponent={ExpandableRowComponent} // Ensure this is a valid component
           pagination
+          striped
           customStyles={customStyles}
         />
+
         <section className="mb-4">
           <div className="d-flex justify-content-between">
             <div className="chart-container"></div>
@@ -191,4 +196,4 @@ const MonthlySummaryReport = () => {
   );
 };
 
-export default MonthlySummaryReport;
+export default ForDisconnection;

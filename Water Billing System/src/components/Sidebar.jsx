@@ -200,11 +200,6 @@ const Sidebar = ({ role }) => {
                         Summary of Collection
                       </Link>
                     </li>
-                    <li>
-                      <Link to="/payment_rep" className="dropdown-item">
-                        Disconnection Report
-                      </Link>
-                    </li>
                   </ul>
                 </li>
                 {/* Other navigation links */}
