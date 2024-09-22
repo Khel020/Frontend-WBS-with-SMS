@@ -25,8 +25,9 @@ function Rtable() {
   const usertype = token;
 
   useEffect(() => {
+    // Check if selectedMonth is available
     if (selectedMonth) {
-      // Calculate the start and end of the month
+      // Calculate the start and end of the month based on selectedMonth
       const startOfMonth = new Date(
         selectedMonth.getFullYear(),
         selectedMonth.getMonth(),
@@ -38,26 +39,46 @@ function Rtable() {
         0
       ).toISOString();
 
+      // Define the async function to fetch data
       const fetchCustomers = async () => {
-        const response = await fetch(
-          `${backend}/admin/collectionSummary?startDate=${encodeURIComponent(
-            startOfMonth
-          )}&endDate=${encodeURIComponent(endOfMonth)}`
-        );
-        const data = await response.json();
+        try {
+          // Fetch data from the backend
+          const response = await fetch(
+            `${backend}/admin/collectionSummary?startDate=${encodeURIComponent(
+              startOfMonth
+            )}&endDate=${encodeURIComponent(endOfMonth)}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${localStorage.getItem("tkn")}`, // Authorization header
+              },
+            }
+          );
 
-        if (response.ok) {
-          setFilteredRecords(data); // Initially, show all records
+          // Handle non-OK responses
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+
+          // Parse the response data
+          const data = await response.json();
+          console.log("RESPONSE", data);
+          setFilteredRecords(data); // Update state with the fetched data
+        } catch (error) {
+          console.error("Error fetching collection summary:", error);
         }
       };
+
+      // Call the fetch function
       fetchCustomers();
     }
-  }, [backend]);
+  }, [selectedMonth, backend]); // Dependency array
 
   const columns = [
     {
       name: "Pay Date", // Shortened label
-      selector: (row) => row.lastPaymentDate,
+      selector: (row) => formatDate(row.lastPaymentDate),
       sortable: true,
       width: "120px", // Reduced width for better fit
     },
@@ -65,13 +86,13 @@ function Rtable() {
       name: "Acct Name", // Shortened label
       selector: (row) => row.accountName,
       sortable: true,
-      width: "160px", // Reduced width for better fit
+      width: "200px", // Reduced width for better fit
     },
     {
       name: "Acct No.",
       selector: (row) => row.acc_num,
       sortable: true,
-      width: "130px", // Same as before
+      width: "150px", // Same as before
     },
     {
       name: "Total Billed", // Billed amount in pesos
@@ -81,21 +102,21 @@ function Rtable() {
     },
     {
       name: "Collected", // Total collected amount
-      selector: (row) => row.Collected,
+      selector: (row) => row.totalCollected,
       sortable: true,
       width: "140px",
     },
     {
       name: "Outstanding", // Remaining balance
-      selector: (row) => row.Balances,
+      selector: (row) => row.outstanding,
       sortable: true,
       width: "140px",
     },
     {
       name: "Penalties", // Penalty charges if any
-      selector: (row) => row.penaltyCharge,
+      selector: (row) => row.p_charge,
       sortable: true,
-      width: "130px",
+      width: "140px",
     },
   ];
 
@@ -162,21 +183,29 @@ function Rtable() {
   };
 
   const exportToExcel = () => {
+    // Format the records for Excel export
     const formattedRecords = filteredRecords.map((record) => ({
-      "OR Number": record.OR_NUM,
-      "Payment Date": formatDate(record.paymentDate),
-      Name: record.accountName,
-      "Account Number": record.acc_num,
-      "Payment Amount": record.tendered,
-      "Bill Number": record.billNo,
-      Balance: record.balance,
+      "Account Number": record.acc_num, // Account number
+      "Account Name": record.accountName, // Name of the account holder
+      "Total Billed": record.totalBilled, // Total billed amount
+      "Total Collected": record.totalCollected, // Total amount collected
+      "Outstanding Balance": record.outstanding, // Outstanding balance
+      "Last Payment Date": formatDate(record.lastPaymentDate), // Most recent payment date
     }));
 
+    // Create a worksheet from the formatted records
     const worksheet = XLSX.utils.json_to_sheet(formattedRecords);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Payment Report");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Collection Summary");
 
-    const fileName = `Payment_Report_${new Date().toLocaleDateString()}.xlsx`;
+    // Generate file name based on the selected month
+    const monthName = selectedMonth.toLocaleString("default", {
+      month: "long",
+    });
+    const year = selectedMonth.getFullYear();
+    const fileName = `Collection_Summary_${monthName}_${year}.xlsx`;
+
+    // Write the workbook to a file
     XLSX.writeFile(workbook, fileName);
   };
 

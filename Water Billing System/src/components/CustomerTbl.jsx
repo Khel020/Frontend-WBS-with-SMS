@@ -205,11 +205,12 @@ const CustomerTbl = () => {
       width: "200px", // Adjust width as needed
     },
     {
-      name: "Total Balance",
-      selector: (row) => row.totalBalance || 0,
+      name: "Total Balance", // Column name
+      selector: (row) => `₱${parseFloat(row.totalBalance || 0).toFixed(2)}`, // Format with peso sign and two decimal places
       sortable: true,
       width: "200px", // Adjust width as needed
     },
+
     {
       name: "Action",
       cell: (row) => (

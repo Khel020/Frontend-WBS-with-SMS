@@ -2,8 +2,18 @@ import React, { useEffect, useState } from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import Sidebar from "../../components/Sidebar";
 import DatePicker from "react-datepicker";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
+
 function BillsSummary() {
-  // Define the columns for the DataTable
   const [Summary, setSummary] = useState([]);
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
@@ -20,10 +30,10 @@ function BillsSummary() {
       day: "numeric",
     });
   }
+
   useEffect(() => {
     const getBills = async () => {
       if (selectedMonth) {
-        // Calculate the start and end of the month
         const startOfMonth = new Date(
           selectedMonth.getFullYear(),
           selectedMonth.getMonth(),
@@ -34,9 +44,6 @@ function BillsSummary() {
           selectedMonth.getMonth() + 1,
           0
         ).toISOString();
-
-        console.log("startOfMonth", startOfMonth);
-        console.log("endOfMonth", endOfMonth);
 
         try {
           const response = await fetch(
@@ -57,7 +64,6 @@ function BillsSummary() {
           }
 
           const data = await response.json();
-          console.log("RESPONSE", data);
           setSummary(data.summary); // Ensure `data.summary` matches your expected format
         } catch (error) {
           console.error("Error fetching bill summary:", error);
@@ -69,110 +75,57 @@ function BillsSummary() {
   }, [selectedMonth]);
 
   const columns = [
-    {
-      name: "Category",
-      selector: (row) => row.category,
-      sortable: true,
-      width: "150px", // Reduced width
-    },
-    {
-      name: "No. of Bills",
-      selector: (row) => row.totalBills,
-      sortable: true,
-      width: "150px", // Reduced width
-    },
+    { name: "Category", selector: (row) => row.category, sortable: true },
+    { name: "No. of Bills", selector: (row) => row.totalBills, sortable: true },
     {
       name: "Total Consumption",
       selector: (row) => row.totalConsumption,
       sortable: true,
-      width: "200px", // Reduced width
       cell: (row) => `${row.totalConsumption} m³`,
     },
     {
       name: "Total Amount Billed ",
       selector: (row) => parseFloat(row.totalBilled).toFixed(2),
       sortable: true,
-      width: "200px", // Reduced width
     },
     {
       name: "Total Amount Paid",
       selector: (row) => row.totalAmountPaid,
       sortable: true,
-      width: "200px", // Reduced width
     },
     {
       name: "Total Penalties",
       selector: (row) => row.totalPenalties,
       sortable: true,
-      width: "200px", // Reduced width
     },
   ];
 
   const customStyles = {
-    tableLayout: "auto", // This makes the table layout more flexible
-    overflowX: "auto", // Enable horizontal scrolling
     table: {
-      style: {
-        border: "1px solid #ddd", // Border around the entire table
-      },
+      style: { border: "1px solid #ddd" },
     },
     headCells: {
       style: {
         fontWeight: "bold",
         backgroundColor: "#61b390",
-        color: "dark",
         fontSize: "10px",
       },
     },
     rows: {
       style: {
-        minHeight: "45px", // override the row height
-        "&:hover": {
-          backgroundColor: "#f1f1f1",
-        },
+        minHeight: "45px",
+        "&:hover": { backgroundColor: "#f1f1f1" },
       },
     },
-
     pagination: {
-      style: {
-        border: "none",
-        fontSize: "13px",
-        color: defaultThemes.default.text.primary,
-        backgroundColor: "#f7f7f7",
-        minHeight: "50px",
-      },
-      pageButtonsStyle: {
-        borderRadius: "50%",
-        height: "40px",
-        width: "40px",
-        padding: "8px",
-        margin: "0px 5px",
-        cursor: "pointer",
-        transition: "0.4s",
-        color: defaultThemes.default.text.primary,
-        fill: defaultThemes.default.text.primary,
-        backgroundColor: "#fff",
-        "&:hover:not(:disabled)": {
-          backgroundColor: defaultThemes.default.text.primary,
-          fill: "#fff",
-        },
-        "&:focus": {
-          outline: "none",
-          backgroundColor: defaultThemes.default.text.primary,
-          fill: "#fff",
-        },
-      },
+      style: { backgroundColor: "#f7f7f7", fontSize: "13px" },
     },
   };
 
   return (
     <div
       className="userlist d-flex flex-column flex-md-row"
-      style={{
-        backgroundColor: "white",
-        height: "100vh",
-        maxHeight: "100vh",
-      }}
+      style={{ backgroundColor: "white", height: "100vh", maxHeight: "100vh" }}
     >
       <Sidebar role={usertype} />
       <main className="col-md-9 ms-sm-auto col-lg-10 px-md-3">
@@ -180,31 +133,48 @@ function BillsSummary() {
           <h1 className="h2">Summary of Bills</h1>
         </div>
         <div className="d-flex align-items-center justify-content-between me-2 mb-3">
-          {/* Billing Period Section */}
           <div className="d-flex align-items-center">
             <label className="mx-2">Billing Period:</label>
-            <div className="d-flex align-items-center">
-              <DatePicker
-                selected={selectedMonth}
-                onChange={(date) => setSelectedMonth(date)}
-                dateFormat="MMMM yyyy"
-                showMonthYearPicker // Limit selection to month and year
-                placeholderText="Select Month"
-                className="date-input"
-              />
-            </div>
+            <DatePicker
+              selected={selectedMonth}
+              onChange={(date) => setSelectedMonth(date)}
+              dateFormat="MMMM yyyy"
+              showMonthYearPicker
+              placeholderText="Select Month"
+              className="date-input"
+            />
           </div>
-
-          {/* Export Button Section */}
-          <div className="d-flex align-items-center">
-            <button className="btn btn-primary d-flex align-items-center h-100">
-              <i className="bi bi-file-earmark-arrow-down-fill mx-1"></i>
-              Export to Excel
-            </button>
-          </div>
+          <button className="btn btn-primary d-flex align-items-center h-100">
+            <i className="bi bi-file-earmark-arrow-down-fill mx-1"></i>
+            Export to Excel
+          </button>
         </div>
 
-        <DataTable columns={columns} data={Summary} responsive pagination />
+        {/* DataTable */}
+        <DataTable
+          columns={columns}
+          data={Summary}
+          responsive
+          pagination
+          customStyles={customStyles}
+        />
+        {/* BarChart for visualizing total billed per category */}
+        <h2 className="mt-4">Total Billed by Category</h2>
+        <div style={{ width: "100%", height: 250, overflow: "auto" }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={Summary}
+              margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="category" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="totalBilled" fill="#8884d8" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </main>
     </div>
   );
