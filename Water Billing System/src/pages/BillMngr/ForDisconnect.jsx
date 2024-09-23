@@ -5,13 +5,34 @@ import { Button, Table, Card } from "react-bootstrap";
 import Sidebar from "../../components/Sidebar";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import axios from "axios"; // Assuming you'll fetch data using axios
-
+import { Link } from "react-router-dom";
 const ForDisconnection = () => {
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
   const [startDate, setStartDate] = useState(new Date());
   const [disconnectionAccounts, setDisconnectionAccounts] = useState([]);
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const month = monthNames[d.getMonth()]; // Get month name
+    const day = String(d.getDate()).padStart(2, "0"); // Pad the day to 2 digits
+    return `${month} ${day}, ${year}`;
+  };
 
   // Columns for disconnection accounts table
   const columns = [
@@ -29,7 +50,7 @@ const ForDisconnection = () => {
     },
     {
       name: "Last Bill Date",
-      selector: (row) => row.last_billDate,
+      selector: (row) => formatDate(row.last_billDate),
       sortable: true,
       width: "200px",
     },
@@ -46,26 +67,17 @@ const ForDisconnection = () => {
       width: "200px",
     },
     {
-      name: "Penalties",
-      selector: (row) => row.penalties,
-      sortable: true,
-      width: "200px",
+      name: "Action",
+      cell: (row) => (
+        <div className="d-flex">
+          <button className="btn btn-outline-success btn-sm ms-2">
+            View Details
+          </button>
+        </div>
+      ),
+      width: "150px",
     },
   ];
-
-  const ExpandableRowComponent = ({ data }) => (
-    <div style={{ padding: "10px", backgroundColor: "#f9f9f9" }}>
-      <p>
-        <strong>Address:</strong> {data.c_address}
-      </p>
-      <p>
-        <strong>Contact No.:</strong> {data.contact}
-      </p>
-      <p>
-        <strong>Meter No.:</strong> {data.meter_num}
-      </p>
-    </div>
-  );
 
   const customStyles = {
     table: {
@@ -178,8 +190,6 @@ const ForDisconnection = () => {
         <DataTable
           columns={columns}
           data={disconnectionAccounts}
-          expandableRows
-          expandableRowsComponent={ExpandableRowComponent} // Ensure this is a valid component
           pagination
           striped
           customStyles={customStyles}

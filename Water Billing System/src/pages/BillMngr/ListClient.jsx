@@ -3,7 +3,6 @@ import Sidebar from "../../components/Sidebar.jsx";
 import ClientTable from "../../components/ClientTable.jsx";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Link } from "react-router-dom";
 
 const Lit = () => {
   const backend = import.meta.env.VITE_BACKEND;
@@ -56,10 +55,9 @@ const Lit = () => {
         }}
       >
         <Sidebar role={usertype} />
-        <main className="col-md-9 ms-sm-auto col-lg-10 px-md-2">
+        <main className="col-md-9 ms-sm-auto col-lg-10 p-2">
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
             <h1 className="h2">List Of Consumers</h1>
-            <div className="d-flex justify-content-end"></div>
           </div>
           <div className="row mt-3 mb-4">
             <div className="col">

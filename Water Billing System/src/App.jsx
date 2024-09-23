@@ -45,7 +45,7 @@ import CusReport from "./pages/Admin/customerReports.jsx";
 import ConsumptionReport from "./pages/Admin/Consumptions.jsx";
 import Collections from "./pages/Admin/Collections.jsx";
 import BillSummary from "./pages/Admin/BillsSummary.jsx";
-
+import Logs from "./pages/Admin/Logs.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -134,6 +134,9 @@ const router = createBrowserRouter(
       </Route>
       <Route path="customer/:acc_number/:accountName" element={<AdminLayout />}>
         <Route index element={<CustomersProfile />} />
+      </Route>
+      <Route path="logs" element={<AdminLayout />}>
+        <Route index element={<Logs />} />
       </Route>
       <Route path="*" element={<div>Page is not available</div>} />
     </>

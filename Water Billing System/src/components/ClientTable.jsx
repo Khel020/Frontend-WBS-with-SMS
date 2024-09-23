@@ -505,48 +505,47 @@ const Table = () => {
   };
   return (
     <div>
-      <div className="container-fluid">
-        <div className="row">
-          <div className="mb-3 col-3">
-            <input
-              type="text"
-              placeholder="Search..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="form-control"
-              style={{
-                border: "1px solid #ced4da", // Default border color
-                borderRadius: "4px",
-                outline: "none",
-                transition: "border-color 0.3s ease",
-              }}
-              onFocus={(e) => (e.target.style.borderColor = "#61b390")} // Highlight color on focus
-              onBlur={(e) => (e.target.style.borderColor = "#ced4da")} // Revert color on blur
-            />
-          </div>
-          <div className="col justify-content-end mb-2 text-end">
-            <button
-              className="btn btn-success justify-content-end mx-3"
-              onClick={handleShow}
-              type="button"
-            >
-              Proceed to Payment
-            </button>
-          </div>
+      <div className="row">
+        <div className="mb-3 col-3">
+          <input
+            type="text"
+            placeholder="Search..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="form-control"
+            style={{
+              border: "1px solid #ced4da", // Default border color
+              borderRadius: "4px",
+              outline: "none",
+              transition: "border-color 0.3s ease",
+            }}
+            onFocus={(e) => (e.target.style.borderColor = "#61b390")} // Highlight color on focus
+            onBlur={(e) => (e.target.style.borderColor = "#ced4da")} // Revert color on blur
+          />
         </div>
-
-        <DataTable
-          customStyles={customStyles}
-          pagination
-          fixedHeaderScrollHeight="520px"
-          columns={columns}
-          data={filteredClients}
-          responsive
-          fixedHeader
-          highlightOnHover
-          noDataComponent={<div>Loading</div>}
-        />
+        <div className="col justify-content-end mb-2 text-end">
+          <button
+            className="btn btn-success justify-content-end mx-3"
+            onClick={handleShow}
+            type="button"
+          >
+            Proceed to Payment
+          </button>
+        </div>
       </div>
+
+      <DataTable
+        customStyles={customStyles}
+        pagination
+        fixedHeaderScrollHeight="520px"
+        columns={columns}
+        data={filteredClients}
+        responsive
+        fixedHeader
+        highlightOnHover
+        noDataComponent={<div>Loading</div>}
+      />
+
       <Modal
         show={show}
         onHide={handleClose}

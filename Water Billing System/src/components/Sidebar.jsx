@@ -95,6 +95,19 @@ const Sidebar = ({ role }) => {
                 Billing
               </Link>
             </li>
+            <li className="nav-item">
+              <Link
+                to="/disconnection"
+                style={linkStyle("/disconnection")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-slash-circle"
+                  style={iconStyle("/disconnection")}
+                ></i>
+                Disconnection
+              </Link>
+            </li>
 
             <li className="nav-item dropdown">
               <Link
@@ -116,11 +129,6 @@ const Sidebar = ({ role }) => {
                 <li>
                   <Link to="/balances" className="dropdown-item">
                     Outstanding Balance
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/disconnection" className="dropdown-item">
-                    For Disconnection
                   </Link>
                 </li>
               </ul>
