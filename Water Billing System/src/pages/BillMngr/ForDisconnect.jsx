@@ -156,7 +156,7 @@ const ForDisconnection = () => {
 
   return (
     <div
-      className="userlist d-flex flex-column flex-md-row"
+      className="d-flex flex-column flex-md-row"
       style={{
         backgroundColor: "white",
         height: "100vh",
@@ -165,7 +165,7 @@ const ForDisconnection = () => {
       }}
     >
       <Sidebar role={usertype} />
-      <main className="col-md-9 ms-sm-auto col-lg-10 p-2">
+      <main className="flex-grow-1 ms-sm-auto px-md-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
           <h1 className="h2">For Disconnection</h1>
         </div>

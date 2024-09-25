@@ -12,6 +12,7 @@ const PaymentHistory = () => {
   const usertype = token;
   const [payments, setPayments] = useState("");
   const { acc_num } = useParams();
+  const { accountName } = useParams();
   const [acc_name, setName] = useState("");
   useEffect(() => {
     const fetchPayment = async () => {
@@ -181,9 +182,9 @@ const PaymentHistory = () => {
       <Sidebar role={usertype} />
       <main className="flex-grow-1 ms-sm-auto px-md-4">
         <div className="d-flex align-items-center pt-3 pb-2 mb-3 border-bottom">
-          <h1 className="h2 me-3">Payments of Consumer</h1>
+          <h1 className="h2 me-3">Payments of {accountName}</h1>
         </div>
-        <Link to="/billing-records/:acc_number/:accountName">
+        <Link to={`/billing-records/${acc_num}/${accountName}`}>
           <Button
             variant="outlined"
             startIcon={<ArrowBackIcon />}

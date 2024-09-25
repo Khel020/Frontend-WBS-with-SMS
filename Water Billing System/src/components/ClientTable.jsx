@@ -1,10 +1,13 @@
 import React from "react";
-import axios from "axios";
+import io from "socket.io-client";
 import { useState, useEffect, useRef } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
-import { AiFillFileText } from "react-icons/ai"; // Ant Design Icons
-import { BsFilePlus } from "react-icons/bs"; // Bootstrap Icons
+import {
+  AiFillFileText,
+  AiFillDollarCircle,
+  AiOutlineFileAdd,
+} from "react-icons/ai"; // Ant Design Icons
 import DataTable, { defaultThemes } from "react-data-table-component";
 import { Link } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,8 +16,11 @@ import "../styles/clientTBL.css";
 import { useReactToPrint } from "react-to-print";
 import ReceiptComponent from "./receipt"; // Import the receipt component
 
+const socket = io("http://localhost:1020");
+
 const Table = () => {
   //State for storing data
+
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
@@ -109,18 +115,9 @@ const Table = () => {
 
   const filteredClients = clients.filter((client) => {
     return (
-      client.acc_num.toLowerCase().includes(search.toLowerCase()) ||
+      client.acc_num.includes(search.toLowerCase()) ||
       client.accountName.toLowerCase().includes(search.toLowerCase()) ||
-      client.client_type.toLowerCase().includes(search.toLowerCase()) ||
-      (
-        client.c_address.house_num +
-        ", Purok " +
-        client.c_address.purok +
-        ", " +
-        client.c_address.brgy
-      )
-        .toLowerCase()
-        .includes(search.toLowerCase())
+      client.client_type.toLowerCase().includes(search.toLowerCase())
     );
   });
 
@@ -252,10 +249,10 @@ const Table = () => {
           authorization: `Bearer ${localStorage.getItem("tkn")}`,
         },
       });
-
       if (!response.ok) {
         console.log({ error: "Invalid Credentials" });
       }
+
       const data = await response.json();
       setClients(data);
     };
@@ -367,7 +364,12 @@ const Table = () => {
     const result = await response.json();
 
     if (result.success) {
-      handleClose(true);
+      toast.success(result.message || "Bill successful save", {
+        autoClose: 1000, // Auto close after 1 second
+      });
+      setTimeout(() => {
+        handleClose(true);
+      }, 1000);
     }
   };
 
@@ -437,15 +439,23 @@ const Table = () => {
               <AiFillFileText style={{ fontSize: "20px" }} />
             </button>
           </Link>
+
+          {/* Updated Add Bill button with a new icon */}
           <button
             className="btn btn-outline-success btn-sm ms-2"
             onClick={() => handleShowAddBill(row)}
           >
-            <BsFilePlus style={{ fontSize: "20px" }} />
+            <AiOutlineFileAdd style={{ fontSize: "20px" }} />
+          </button>
+
+          <button
+            className="btn btn-outline-warning btn-sm ms-2"
+            onClick={() => handleDeposit(row)}
+          >
+            <AiFillDollarCircle style={{ fontSize: "20px" }} />
           </button>
         </div>
       ),
-
       sortable: true,
     },
   ];
@@ -537,7 +547,7 @@ const Table = () => {
       <DataTable
         customStyles={customStyles}
         pagination
-        fixedHeaderScrollHeight="520px"
+        fixedHeaderScrollHeight="400px"
         columns={columns}
         data={filteredClients}
         responsive
@@ -673,7 +683,7 @@ const Table = () => {
           <hr />
 
           <div className="row">
-            <div className="col-4">
+            <div className="col-6">
               <Form.Group controlId="totalChange">
                 <Form.Label>Total Change:</Form.Label>
                 <Form.Control

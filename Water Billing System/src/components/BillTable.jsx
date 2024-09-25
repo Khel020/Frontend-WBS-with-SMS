@@ -5,6 +5,8 @@ import DataTable, { defaultThemes } from "react-data-table-component";
 import { Modal, ListGroup, Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import * as XLSX from "xlsx";
+
 function BillTable() {
   const [bills, setBills] = useState([]);
   const [filteredBills, setFilteredBills] = useState([]);
@@ -84,6 +86,33 @@ function BillTable() {
     filterBills();
   }, [bills, startDate]);
 
+  const exportToExcel = () => {
+    // Format the records for Excel export
+    const formattedBills = filteredBills.map((record) => ({
+      "Bill No.": record.billNumber,
+      "Reading Date": record.reading_date,
+      "Due Date": record.due_date,
+      "Account Name": record.accountName,
+      "Payment Status": record.payment_status,
+      "Total Amount Due": record.totalDue,
+    }));
+
+    // Create a worksheet from the formatted records
+    const worksheet = XLSX.utils.json_to_sheet(formattedBills);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Collection Summary");
+
+    // Generate file name based on the selected month
+    const monthName = selectedMonth.toLocaleString("default", {
+      month: "long",
+    });
+    const year = selectedMonth.getFullYear();
+    const fileName = `Bill_Record_${monthName}_${year}.xlsx`;
+
+    // Write the workbook to a file
+    XLSX.writeFile(workbook, fileName);
+  };
+
   if (!bills) {
     return <div>Loading...</div>;
   }
@@ -114,7 +143,7 @@ function BillTable() {
       width: "150px", // Adjust width as needed
     },
     {
-      name: "Name",
+      name: "Account Name",
       selector: (row) => row.accountName,
       sortable: true,
       width: "200px", // Adjust width as needed
@@ -123,12 +152,13 @@ function BillTable() {
       name: "Status",
       selector: (row) => row.payment_status,
       sortable: true,
-      width: "150x", // Adjust width as needed
+      width: "150px", // Adjust width as needed
     },
     {
-      name: "Total Amount",
+      name: "Total Amount Due",
       selector: (row) => "₱ " + row.totalDue.toFixed(2),
       sortable: true,
+      width: "160", // Adjust width as needed
     },
     {
       name: "Action",
@@ -140,7 +170,7 @@ function BillTable() {
           Full Bill
         </button>
       ),
-
+      width: "150px", // Adjust width as needed
       sortable: true,
     },
   ];
@@ -201,7 +231,7 @@ function BillTable() {
   };
 
   return (
-    <div className="container-fluid" style={{ overflow: "visible" }}>
+    <div style={{ overflow: "visible" }}>
       <div className="row mb-3">
         <div className="col-9 d-flex align-items-center">
           <DatePicker
@@ -214,9 +244,13 @@ function BillTable() {
           />
         </div>
         <div className="col-3 d-flex justify-content-end">
-          <button className="btn btn-primary">
-            <i className="bi bi-file-earmark-arrow-down-fill mx-1"></i>
-            Export to Excel
+          <button
+            className="btn btn-primary d-flex align-items-center shadow-sm"
+            style={{ borderRadius: "5px" }}
+            onClick={exportToExcel}
+          >
+            <i class="bi bi-download mx-1"></i>
+            <span className="ms-1">Export</span>
           </button>
         </div>
       </div>

@@ -57,20 +57,8 @@ function ListBills() {
         <main className="flex-grow-1 ms-sm-auto px-md-4">
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
             <h1 className="h2">Billing Monitoring</h1>
-
-            <form className="d-flex mt-3 mt-lg-0" role="search">
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search Client..."
-                aria-label="Search"
-              />
-              <button className="btn btn-primary" type="submit">
-                Search
-              </button>
-            </form>
           </div>
-          <div className="row mt-3 mb-4 mx-1">
+          <div className="row mt-3 mb-4">
             <div className="col">
               <div
                 className="card total-user"

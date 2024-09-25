@@ -92,7 +92,10 @@ const router = createBrowserRouter(
         <Route index element={<BillingDetails />} />
         <Route path="billing-details" element={<BillingDetails />} />
       </Route>
-      <Route path="receive-payments/:acc_num" element={<BillerLayout />}>
+      <Route
+        path="receive-payments/:acc_num/:accountName"
+        element={<BillerLayout />}
+      >
         <Route index element={<ReceivePayments />} />
       </Route>
       <Route path="balances" element={<BillerLayout />}>

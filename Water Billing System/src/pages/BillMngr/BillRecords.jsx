@@ -271,7 +271,7 @@ const BillRecords = () => {
             </Form.Group>
           </div>
           <div className="col text-end">
-            <Link to={`/receive-payments/${acc_number}`}>
+            <Link to={`/receive-payments/${acc_number}/${accountName}`}>
               <button className="btn btn-primary">Receive Payments</button>
             </Link>
           </div>

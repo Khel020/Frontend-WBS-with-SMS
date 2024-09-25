@@ -11,7 +11,6 @@ const ReceiptComponent = React.forwardRef((props, ref) => {
     OR_NUM,
     address,
   } = props.details || {}; // Use props.details for better compatibility
-  const { purok, house_num, brgy } = address || {}; // Destructure the address object
   return (
     <div ref={ref} style={styles.container}>
       <header style={styles.header}>
@@ -26,9 +25,7 @@ const ReceiptComponent = React.forwardRef((props, ref) => {
       <div style={styles.infoSection}>
         <p style={styles.infoItem}>Acct No. {acc_number}</p>
         <p style={styles.infoItem}>Name: {name}</p>
-        <p style={styles.infoItem}>
-          Address: {house_num}, Purok {purok}, {brgy}
-        </p>
+        <p style={styles.infoItem}>Address: {address}</p>
         <p style={styles.infoItem}>Balance: {balance}</p>
         <p style={styles.infoItem}>Paid: {amountpaid}</p>
         <p style={styles.infoItem}>Date: {paymentDate}</p>

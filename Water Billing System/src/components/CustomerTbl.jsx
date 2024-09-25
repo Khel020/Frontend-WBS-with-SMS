@@ -2,13 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import { Container, Button, Modal } from "react-bootstrap";
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
-import Card from "react-bootstrap/Card";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Sidebar from "../components/Sidebar";
+
 const CustomerTbl = () => {
   const [clients, setClients] = useState([]);
   const backend = import.meta.env.VITE_BACKEND;
@@ -87,10 +83,21 @@ const CustomerTbl = () => {
           `${backend}/admin/newclient/`,
           newClient
         );
-        console.log(response.data);
-        window.location.reload();
+
+        // Access response.data directly
+        const data = response.data;
+
+        if (data.success) {
+          toast.success(data.message || "Bill successfully saved", {
+            autoClose: 1000, // Auto close after 1 second
+          });
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }
       } catch (err) {
         console.error(err);
+        toast.error("Error saving the client"); // Optional: Show an error message
       }
     }
   };
@@ -188,27 +195,38 @@ const CustomerTbl = () => {
         </div>
       ),
       sortable: true,
-      width: "300px", // Adjust width as needed
+      width: "250px", // Adjust width as needed
     },
     {
-      name: "Address",
-      selector: (row) => row.c_address,
-
+      name: "Acct. No.",
+      selector: (row) => row.acc_num,
       sortable: true,
-      width: "250px", // Adjust width as needed
+      width: "150px", // Adjust width as needed
+    },
+    {
+      name: "Contact", // Column name
+      selector: (row) => row.contact,
+      sortable: true,
+      width: "140px", // Adjust width as needed
     },
     {
       name: "Last Bill Date",
       selector: (row) =>
         row.last_billDate ? formatDate(row.last_billDate) : "Bill Not Issued",
       sortable: true,
-      width: "200px", // Adjust width as needed
+      width: "150px", // Adjust width as needed
     },
     {
-      name: "Total Balance", // Column name
+      name: "Balance", // Column name
       selector: (row) => `₱${parseFloat(row.totalBalance || 0).toFixed(2)}`, // Format with peso sign and two decimal places
       sortable: true,
-      width: "200px", // Adjust width as needed
+      width: "140px", // Adjust width as needed
+    },
+    {
+      name: "Deposit",
+      selector: (row) => `₱${parseFloat(row.advancePayment || 0).toFixed(2)}`,
+      sortable: true,
+      width: "130px", // Adjust width as needed
     },
 
     {
@@ -223,10 +241,11 @@ const CustomerTbl = () => {
             to={`/customer/${row.acc_num}/${row.accountName}`}
             className="mx-1"
           >
-            View Details
+            View Profile
           </Button>
         </div>
       ),
+      width: "150px", // Adjust width as needed
     },
   ];
   const customStyles = {
@@ -342,7 +361,7 @@ const CustomerTbl = () => {
         <DataTable
           customStyles={customStyles}
           pagination
-          fixedHeaderScrollHeight="520px"
+          fixedHeaderScrollHeight="400px"
           columns={columns}
           data={filterUsers}
           responsive
@@ -625,6 +644,7 @@ const CustomerTbl = () => {
           </Modal.Footer>
         </form>
       </Modal>
+      <ToastContainer />
     </>
   );
 };

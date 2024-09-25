@@ -3,9 +3,16 @@ import Sidebar from "../../components/Sidebar.jsx";
 import ClientTable from "../../components/ClientTable.jsx";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Dropdown from "react-bootstrap/Dropdown";
+import { Link, useNavigate } from "react-router-dom";
 
 const Lit = () => {
   const backend = import.meta.env.VITE_BACKEND;
+  const navigate = useNavigate();
+  const handleLogOut = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
 
   const [clientStats, setClientStats] = useState({
     totalClients: 0,
@@ -55,9 +62,42 @@ const Lit = () => {
         }}
       >
         <Sidebar role={usertype} />
-        <main className="col-md-9 ms-sm-auto col-lg-10 p-2">
+        <main className="flex-grow-1 ms-sm-auto px-md-4">
           <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
             <h1 className="h2">List Of Consumers</h1>
+
+            <div className="ms-auto d-flex align-items-center">
+              <i
+                className="bi bi-bell"
+                style={{
+                  fontSize: "20px",
+                  cursor: "pointer",
+                }}
+              ></i>
+              <Dropdown align="end">
+                <Dropdown.Toggle
+                  id="dropdown-basic"
+                  className="d-flex align-items-center bg-transparent border-0"
+                  style={{ color: "dark" }}
+                >
+                  <img
+                    src="https://github.com/mdo.png"
+                    alt="User profile picture"
+                    width="32"
+                    height="32"
+                    className="rounded-circle me-2"
+                  />
+                </Dropdown.Toggle>
+
+                <Dropdown.Menu align="end">
+                  <Dropdown.Item href="#/profile">Profile</Dropdown.Item>
+                  <Dropdown.Item href="#/settings">Settings</Dropdown.Item>
+                  <Dropdown.Item href="#/help">Help</Dropdown.Item>
+                  <Dropdown.Divider />
+                  <Dropdown.Item onClick={handleLogOut}>Log Out</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
           </div>
           <div className="row mt-3 mb-4">
             <div className="col">
