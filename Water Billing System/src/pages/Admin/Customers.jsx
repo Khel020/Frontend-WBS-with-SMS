@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import CusTable from "../../components/CustomerTbl";
 import { Container, Button, Modal } from "react-bootstrap";
-import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 import Card from "react-bootstrap/Card";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -23,13 +23,8 @@ const Customers = () => {
   const [forActivation, setforActivation] = useState([]);
 
   const [selectedAccount, setSelectedAccount] = useState(null);
-  const [show, setShow] = useState(false);
-  const handleShow = (account) => {
-    setSelectedAccount(account);
-    setShow(true);
-  };
-  const handleClose = () => setShow(false);
-  const confirmActivation = () => {
+
+  useEffect(() => {
     if (selectedAccount) {
       const updatePending = {
         acc_num: selectedAccount.acc_num,
@@ -46,16 +41,25 @@ const Customers = () => {
         .then((response) => response.json())
         .then((data) => {
           console.log("Status updated:", data);
-          // Optionally, update any UI elements or trigger additional actions here
+          // Show a success toast notification
+          toast.success(
+            `Consumer ${selectedAccount.acc_num} activated successfully!`,
+            {
+              autoClose: 1000, // Auto close after 1 second
+            }
+          );
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
         })
         .catch((error) => {
           console.error("Error updating status:", error);
-          // Optionally, handle errors here, like showing an error message to the user
+          // Show an error toast notification
+          toast.error("Failed to activate consumer. Please try again.");
         });
-
-      handleClose();
     }
-  };
+  }, [selectedAccount, backend]); // Dependencies to trigger the effect when values change
+
   const handleCloseAccModal = () => setActivation(false);
   const handleShowAccs = () => {
     setActivation(true);
@@ -190,71 +194,57 @@ const Customers = () => {
                 </tr>
               </thead>
               <tbody>
-                {forActivation.map((accs, index) => (
-                  <tr key={index}>
-                    <th scope="row">{index}</th>
-                    <td>{accs.acc_num}</td>
-                    <td>{accs.accountName}</td>
-                    <td>{accs.status}</td>
-                    <td>
-                      <Countdown
-                        date={new Date(accs.activation_date).getTime()}
-                        renderer={({
-                          days,
-                          hours,
-                          minutes,
-                          seconds,
-                          completed,
-                        }) => {
-                          if (completed) {
-                            return (
-                              <span>
-                                <Button
-                                  variant="primary"
-                                  onClick={() => handleShow(accs)}
-                                  className="btn-sm"
-                                >
-                                  Activate Now
-                                </Button>
-                              </span>
-                            );
-                          } else {
-                            return (
-                              <span>
-                                {days}d {hours}h {minutes}m {seconds}s
-                              </span>
-                            );
-                          }
-                        }}
-                      />
+                {forActivation && forActivation.length > 0 ? (
+                  forActivation.map((accs, index) => (
+                    <tr key={index}>
+                      <th scope="row">{index}</th>
+                      <td>{accs.acc_num}</td>
+                      <td>{accs.accountName}</td>
+                      <td>{accs.status}</td>
+                      <td>
+                        <Countdown
+                          date={new Date(accs.activation_date).getTime()}
+                          renderer={({
+                            days,
+                            hours,
+                            minutes,
+                            seconds,
+                            completed,
+                          }) => {
+                            if (completed) {
+                              return (
+                                <span>
+                                  <Button
+                                    variant="primary"
+                                    onClick={() => setSelectedAccount(accs)}
+                                    className="btn-sm"
+                                  >
+                                    Activate Now
+                                  </Button>
+                                </span>
+                              );
+                            } else {
+                              return (
+                                <span>
+                                  {days}d {hours}h {minutes}m {seconds}s
+                                </span>
+                              );
+                            }
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="text-center">
+                      No Record Yet
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </Modal.Body>
-        </Modal>
-        <Modal show={show} onHide={handleClose}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirm Activation</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <p>Are you sure you want to activate the account?</p>
-            <p>
-              <strong>Account No:</strong> {selectedAccount?.acc_num}
-            </p>
-            <p>
-              <strong>Account Name:</strong> {selectedAccount?.accountName}
-            </p>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Cancel
-            </Button>
-            <Button variant="primary" onClick={confirmActivation}>
-              Confirm Activation
-            </Button>
-          </Modal.Footer>
         </Modal>
       </main>
     </div>

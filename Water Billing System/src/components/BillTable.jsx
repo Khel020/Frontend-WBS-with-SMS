@@ -6,6 +6,7 @@ import { Modal, ListGroup, Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import * as XLSX from "xlsx";
+import { AiFillEye, AiOutlineEdit, AiFillFilePdf } from "react-icons/ai";
 
 function BillTable() {
   const [bills, setBills] = useState([]);
@@ -137,8 +138,19 @@ function BillTable() {
       width: "150px", // Adjust width as needed
     },
     {
-      name: " Due Date",
-      selector: (row) => formatDate(row.due_date),
+      name: "Due Date",
+      cell: (row) => {
+        return (
+          <span
+            style={{
+              color: row.dayPastDueDate > 5 ? "red" : "black",
+              fontWeight: row.dayPastDueDate > 5 ? "bold" : "normal",
+            }}
+          >
+            {formatDate(row.due_date)}
+          </span>
+        );
+      },
       sortable: true,
       width: "150px", // Adjust width as needed
     },
@@ -163,14 +175,34 @@ function BillTable() {
     {
       name: "Action",
       cell: (row) => (
-        <button
-          className="btn btn-success btn-sm me-2"
-          onClick={() => handleShow(row.billNumber)}
-        >
-          Full Bill
-        </button>
+        <div className="d-flex">
+          <button
+            className="btn btn-outline-primary btn-sm"
+            title="View Bill"
+            onClick={() => handleShow(row.billNumber)}
+          >
+            <AiFillEye style={{ fontSize: "20px" }} />
+          </button>
+
+          {/* Button to Edit Bill */}
+          <button
+            className="btn btn-outline-warning btn-sm ms-2"
+            onClick={() => handleEdit(row)}
+            title="Edit Bill"
+          >
+            <AiOutlineEdit style={{ fontSize: "20px" }} />
+          </button>
+
+          {/* Button to Download Bill */}
+          <button
+            className="btn btn-outline-success btn-sm ms-2"
+            onClick={() => handleDownload(row)}
+            title="Download Bill"
+          >
+            <AiFillFilePdf style={{ fontSize: "20px" }} />
+          </button>
+        </div>
       ),
-      width: "150px", // Adjust width as needed
       sortable: true,
     },
   ];

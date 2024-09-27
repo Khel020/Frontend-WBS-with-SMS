@@ -108,33 +108,19 @@ const Sidebar = ({ role }) => {
                 Disconnection
               </Link>
             </li>
-
-            <li className="nav-item dropdown">
+            <li className="nav-item">
               <Link
-                to="#"
-                className="nav-link dropdown-toggle"
-                id="reportsDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                style={linkStyle("/generateReports")}
+                to="/balances"
+                style={linkStyle("/balances")}
+                className="nav-link"
               >
-                <i
-                  className="bi bi-bar-chart"
-                  style={iconStyle("/generateReports")}
-                ></i>
-                Reports
+                <i className="bi bi-wallet2" style={iconStyle("/balances")}></i>
+                Outstanding Balance
               </Link>
-              <ul className="dropdown-menu" aria-labelledby="reportsDropdown">
-                <li>
-                  <Link to="/balances" className="dropdown-item">
-                    Outstanding Balance
-                  </Link>
-                </li>
-              </ul>
             </li>
           </>
         )}
+
         {role === "admin" && (
           <>
             <li className="nav-item">

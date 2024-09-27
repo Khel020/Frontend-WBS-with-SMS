@@ -1,69 +1,161 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css"; // Import the CSS for the date picker
 import DataTable, { defaultThemes } from "react-data-table-component";
+import * as XLSX from "xlsx";
 const DTransacReport = () => {
-  const [records, setRecords] = useState([]);
   const [filteredRecords, setFilteredRecords] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState("");
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(null);
+  const [records, setRecords] = useState([]);
+  const [selectedOption, setSelectedOption] = useState("");
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
+
+  useEffect(() => {
+    const fetchRecords = async () => {
+      try {
+        const response = await fetch(`${backend}/biller/withBalance`);
+        const data = await response.json();
+        setRecords(data.withBalance || []);
+        setFilteredRecords(data.withBalance || []);
+      } catch (error) {
+        console.error("Error fetching outstanding balance records:", error);
+      }
+    };
+
+    fetchRecords();
+  }, [backend]);
+
+  // Add this useEffect to filter records based on selected option and search term
+  useEffect(() => {
+    console.log("Filtering records...");
+    console.log("Selected Option:", selectedOption);
+    console.log("Search Term:", searchTerm);
+
+    const filtered = records.filter((record) => {
+      const matchesCategory =
+        selectedOption === "" ||
+        (selectedOption.startsWith("Commercial")
+          ? record.client_type === "Commercial" &&
+            record.sub_category === selectedOption
+          : record.client_type === selectedOption);
+      const matchesSearch =
+        record.accountName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        record.acc_num.toLowerCase().includes(searchTerm.toLowerCase());
+
+      return matchesCategory && matchesSearch;
+    });
+
+    console.log("Filtered Records:", filtered);
+    setFilteredRecords(filtered);
+  }, [selectedOption, searchTerm, records]);
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const month = monthNames[d.getMonth()];
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${month} ${day}, ${year}`;
+  };
+
+  const handleOptionChange = (e) => {
+    const option = e.target.value;
+    setSelectedOption(option);
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+  };
+
+  const exportToExcel = () => {
+    // Format the records for Excel export
+    const formattedRecords = filteredRecords.map((record) => ({
+      "Account Number": record.acc_num, // Account number
+      "Account Name": record.accountName, // Name of the account holder
+      "Contact Number": record.contact, // Contact information
+      Group: record.client_type, // Client type (Residential, Government, etc.)
+      "Last Bill Date": formatDate(record.last_billDate), // Most recent bill date
+      "Total Balance": record.totalBalance, // Total balance amount
+      Status: record.status, // Current status
+    }));
+
+    // Create a worksheet from the formatted records
+    const worksheet = XLSX.utils.json_to_sheet(formattedRecords);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Outstanding Balances");
+
+    // Generate file name
+    const fileName = `Outstanding_Balances_Report.xlsx`;
+
+    // Write the workbook to a file
+    XLSX.writeFile(workbook, fileName);
+  };
+
   const columns = [
     {
-      name: "Transac Date",
-      sortable: true,
-      width: "120px",
-    },
-    {
-      name: "ID",
-      sortable: true,
-      width: "160px",
-    },
-    {
       name: "Account Name",
-
+      selector: (row) => row.accountName,
       sortable: true,
       width: "220px",
     },
     {
       name: "Acct No.",
-
+      selector: (row) => row.acc_num,
       sortable: true,
       width: "150px",
     },
     {
-      name: "Amount Paid",
-
-      sortable: true,
-      width: "190px",
-    },
-    {
-      name: "Balance",
-
+      name: "Contact",
+      selector: (row) => row.contact,
       sortable: true,
       width: "130px",
+    },
+    {
+      name: "Group",
+      selector: (row) => row.client_type,
+      sortable: true,
+      width: "130px",
+    },
+    {
+      name: "Last Bill Date",
+      selector: (row) => formatDate(row.last_billDate),
+      sortable: true,
+      width: "150px",
+    },
+    {
+      name: "Total Balance",
+      selector: (row) =>
+        row.totalBalance ? `₱${row.totalBalance.toFixed(2)}` : "₱0.00",
+      sortable: true,
+      width: "200px",
     },
     {
       name: "Status",
-
+      selector: (row) => row.status,
       sortable: true,
-      width: "130px",
-    },
-    {
-      name: "Remarks",
-
-      sortable: true,
-      width: "130px",
+      width: "150px",
     },
   ];
+
   const customStyles = {
     table: {
       style: {
-        border: "1px solid #ddd",
+        border: "1px solid #ddd", // Border around the entire table
       },
     },
     headCells: {
@@ -76,12 +168,13 @@ const DTransacReport = () => {
     },
     rows: {
       style: {
-        minHeight: "45px",
+        minHeight: "45px", // override the row height
         "&:hover": {
           backgroundColor: "#f1f1f1",
         },
       },
     },
+
     pagination: {
       style: {
         border: "none",
@@ -113,9 +206,30 @@ const DTransacReport = () => {
       },
     },
   };
+
+  const renderOptions = () => {
+    if (selectedOption.startsWith("Commercial")) {
+      return (
+        <>
+          <option value="Commercial A">Commercial A</option>
+          <option value="Commercial B">Commercial B</option>
+          <option value="Commercial C">Commercial C</option>
+        </>
+      );
+    }
+    return (
+      <>
+        <option value="Residential">Residential</option>
+        <option value="Government">Government</option>
+        <option value="Commercial">Commercial</option>
+        <option value="Industrial">Industrial</option>
+      </>
+    );
+  };
+
   return (
     <div
-      className="userlist d-flex flex-column flex-md-row"
+      className="d-flex flex-column flex-md-row"
       style={{
         backgroundColor: "white",
         height: "100vh",
@@ -124,42 +238,20 @@ const DTransacReport = () => {
       }}
     >
       <Sidebar role={usertype} />
-      <main className="col-md-9 ms-sm-auto col-lg-10">
+      <main className="flex-grow-1 ms-sm-auto px-md-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
-          <h1 className="h2">Record of Outstanding Balances</h1>
+          <h1 className="h2">For Disconnection</h1>
         </div>
         <div className="row mb-3">
           <div className="col-9 d-flex align-items-center">
-            <div className="d-flex align-items-center me-2">
-              <label>Date Range:</label>
-              <div className="d-flex align-items-center">
-                <DatePicker
-                  selected={startDate}
-                  onChange={(date) => setStartDate(date)}
-                  selectsStart
-                  startDate={startDate}
-                  endDate={endDate}
-                  placeholderText="Start Date"
-                  className="date-input me-1"
-                />
-                <span className="mx-2">–</span>
-                <DatePicker
-                  selected={endDate}
-                  onChange={(date) => setEndDate(date)}
-                  selectsEnd
-                  startDate={startDate}
-                  endDate={endDate}
-                  placeholderText="End Date"
-                  className="date-input"
-                />
-              </div>
-            </div>
             <div className="me-2">
-              <select className="form-select">
-                <option value="">Filter by Status</option>
-                <option value="1">Unpaid</option>
-                <option value="2">Paid</option>
-                <option value="3">Overdue</option>
+              <select
+                className="form-select"
+                value={selectedOption}
+                onChange={handleOptionChange}
+              >
+                <option value="">Filter by Category</option>
+                {renderOptions()}
               </select>
             </div>
             <div>
@@ -167,21 +259,23 @@ const DTransacReport = () => {
                 type="text"
                 placeholder="Search consumer"
                 className="form-control"
+                value={searchTerm}
+                onChange={handleSearchChange}
               />
             </div>
           </div>
           <div className="col-3 d-flex justify-content-end">
-            <button className="btn btn-primary">
+            <button onClick={exportToExcel} className="btn btn-primary">
               <i className="bi bi-file-earmark-arrow-down-fill mx-1"></i>
               Export to Excel
             </button>
           </div>
         </div>
-
         <DataTable
           columns={columns}
-          data={filteredRecords} // Use filteredRecords here
+          data={filteredRecords}
           fixedHeader
+          responsive
           pagination
           customStyles={customStyles}
         />

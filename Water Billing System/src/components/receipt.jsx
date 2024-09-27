@@ -4,85 +4,184 @@ const ReceiptComponent = React.forwardRef((props, ref) => {
   const {
     acc_number,
     name,
-    balance,
-    amountpaid,
-    paymentDate,
-    change,
-    OR_NUM,
     address,
-  } = props.details || {}; // Use props.details for better compatibility
+    currentBillAmount,
+    arrears,
+    others,
+    pca,
+    fca,
+    lca,
+    amountpaid,
+    change,
+    balance,
+    billerName,
+    paymentDate,
+    scDiscount,
+    tendered,
+  } = props.details || {};
+
   return (
-    <div ref={ref} style={styles.container}>
-      <header style={styles.header}>
-        <p style={styles.subtitle}>Republic of the Philippines</p>
-        <h1 style={styles.title}>CASIGURAN WATER DISTRICT</h1>
-        <p style={styles.subtitle}>Central Casiguran Sorsogon</p>
-        <p style={styles.subtitle}>Non-VAT Req. TIN 004-202-667-00000</p>
-        <p style={styles.title} className="text-danger">
-          OFFICIAL RECEIPT NO. {OR_NUM}
-        </p>
-      </header>
-      <div style={styles.infoSection}>
-        <p style={styles.infoItem}>Acct No. {acc_number}</p>
-        <p style={styles.infoItem}>Name: {name}</p>
-        <p style={styles.infoItem}>Address: {address}</p>
-        <p style={styles.infoItem}>Balance: {balance}</p>
-        <p style={styles.infoItem}>Paid: {amountpaid}</p>
-        <p style={styles.infoItem}>Date: {paymentDate}</p>
-        <p style={styles.infoItem}>Change: {change}</p>
-      </div>
-      <footer style={styles.footer}>
-        <p style={styles.footerText}>
-          For inquiries, contact us at [Your Contact Information].
-        </p>
-      </footer>
+    <div ref={ref} className="receipt-container">
+      <style>{`
+        .receipt-container {
+          width: 100%;
+          height: auto;
+          position: relative;
+          font-family: 'Courier New', Courier, monospace;
+          font-size: 12px;
+          margin-top: 50px;
+          padding: 40px;
+        }
+        .dynamic {
+          position: absolute;
+        }
+        /* Header Section */
+        .name {
+          top: 10mm;
+          left: 10mm;
+          margin-bottom: 5mm;
+        }
+        .acc-number {
+          top: 10mm;
+          right: 10mm;
+          position: absolute;
+          margin-bottom: 5mm;
+        }
+        .address {
+          top: 18mm;
+          left: 10mm;
+          margin-bottom: 5mm;
+        }
+
+        /* Payment Breakdown Section */
+        .breakdown-title {
+          top: 35mm;
+          left: 10mm;
+          margin-bottom: 3mm;
+        }
+        .current, .arrears, .others, .pca, .fca, .lca {
+          margin-bottom: 3mm;
+        }
+        .current {
+          top: 40mm;
+          left: 10mm;
+        }
+        .arrears {
+          top: 47mm;
+          left: 10mm;
+        }
+        .others {
+          top: 54mm;
+          left: 10mm;
+        }
+        .pca {
+          top: 61mm;
+          left: 10mm;
+        }
+        .fca {
+          top: 68mm;
+          left: 10mm;
+        }
+        .lca {
+          top: 75mm;
+          left: 10mm;
+        }
+
+        /* Amount Due Section */
+        .amount-due-title {
+          top: 35mm;
+          right: 50mm;
+          position: absolute;
+          margin-bottom: 15mm;
+        }
+        .amount {
+          right: 10mm;
+          position: absolute;
+
+        }
+        .sc-discount {
+          top: 47mm;
+          right: 50mm;
+        }
+        .tendered {
+            top: 54mm;
+          right: 50mm;
+        }
+        .paid {
+          top: 61mm;
+          right: 50mm;
+        }
+        .change {
+          top: 68mm;
+          right: 50mm;
+        }
+        .balance {
+          top: 75mm;
+          right: 50mm;
+        }
+
+        /* Footer Section */
+        .biller-name {
+          top: 90mm;
+          left: 10mm;
+          margin-top: 10mm;
+        }
+        .payment-date {
+          top: 90mm;
+          right: 10mm;
+          position: absolute;
+          margin-top: 10mm;
+        }
+      `}</style>
+
+      {/* Header */}
+      <p className="dynamic name"> {name}</p>
+      <p className="dynamic acc-number">{acc_number}</p>
+      <p className="dynamic address"> {address}</p>
+      {/* Payment Breakdown */}
+      <p className="dynamic breakdown-title">Payment Breakdown:</p>
+      <p className="dynamic current">
+        Current Amount: <span className="amount">{currentBillAmount}</span>
+      </p>
+      <p className="dynamic arrears">
+        Arrears: <span className="amount">{arrears}</span>
+      </p>
+      <p className="dynamic others">
+        Others: <span className="amount">{others}</span>
+      </p>
+      <p className="dynamic pca">
+        PCA: <span className="amount">{pca}</span>
+      </p>
+      <p className="dynamic fca">
+        FCA: <span className="amount">{fca}</span>
+      </p>
+      <p className="dynamic lca">
+        LCA: <span className="amount">{lca}</span>
+      </p>
+
+      {/* Amount Due */}
+      <p className="dynamic amount-due-title">Amount Due:</p>
+      <p className="dynamic sc-discount">
+        SC Discount: <span className="amount">{scDiscount}</span>
+      </p>
+      <p className="dynamic tendered">
+        Tendered: <span className="amount">{tendered}</span>
+      </p>
+      <p className="dynamic paid">
+        Paid: <span className="amount">{amountpaid}</span>
+      </p>
+      <p className="dynamic change">
+        Change: <span className="amount">{change}</span>
+      </p>
+      <p className="dynamic balance">
+        Balance: <span className="amount">{balance}</span>
+      </p>
+
+      {/* Footer */}
+      <p className="dynamic biller-name">Biller Name: {billerName}</p>
+      <p className="dynamic payment-date">Payment Date: {paymentDate}</p>
     </div>
   );
 });
-
-const styles = {
-  container: {
-    padding: "5px",
-    border: "none",
-    borderRadius: "0",
-    width: "100mm", // Adjust width for continuous form paper
-    margin: "0 auto",
-    fontFamily: "'Courier New', Courier, monospace", // Better font for dot matrix printing
-    fontSize: "10px",
-  },
-  header: {
-    paddingBottom: "5px",
-    marginBottom: "5px",
-    textAlign: "center",
-  },
-  title: {
-    fontSize: "12px",
-    margin: "0",
-    fontWeight: "bold",
-  },
-  subtitle: {
-    fontSize: "8px",
-    margin: "2px 0 0",
-    color: "#555",
-  },
-  infoSection: {
-    margin: "5px 0",
-    border: "1px solid",
-  },
-  infoItem: {
-    marginBottom: "3px",
-    fontSize: "10px",
-  },
-  footer: {
-    paddingTop: "5px",
-    marginTop: "5px",
-    textAlign: "center",
-    fontSize: "8px",
-    color: "#555",
-  },
-  footerText: {
-    margin: "0",
-  },
-};
 
 export default ReceiptComponent;

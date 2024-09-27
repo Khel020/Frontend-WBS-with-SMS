@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Button, Table, Card } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import Sidebar from "../../components/Sidebar";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import axios from "axios"; // Assuming you'll fetch data using axios
-import { Link } from "react-router-dom";
+import * as XLSX from "xlsx";
+
 const ForDisconnection = () => {
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
   const [startDate, setStartDate] = useState(new Date());
   const [disconnectionAccounts, setDisconnectionAccounts] = useState([]);
+
   const formatDate = (date) => {
     const d = new Date(date);
     const year = d.getFullYear();
@@ -62,7 +64,8 @@ const ForDisconnection = () => {
     },
     {
       name: "Total Balance",
-      selector: (row) => row.totalBalance,
+      selector: (row) =>
+        row.totalBalance ? `₱${row.totalBalance.toFixed(2)}` : "₱0.00",
       sortable: true,
       width: "200px",
     },
@@ -75,14 +78,14 @@ const ForDisconnection = () => {
           </button>
         </div>
       ),
-      width: "150px",
+      width: "180px",
     },
   ];
 
   const customStyles = {
     table: {
       style: {
-        border: "1px solid #ddd",
+        border: "1px solid #ddd", // Border around the entire table
       },
     },
     headCells: {
@@ -95,12 +98,13 @@ const ForDisconnection = () => {
     },
     rows: {
       style: {
-        minHeight: "45px",
+        minHeight: "45px", // override the row height
         "&:hover": {
           backgroundColor: "#f1f1f1",
         },
       },
     },
+
     pagination: {
       style: {
         border: "none",
@@ -150,8 +154,27 @@ const ForDisconnection = () => {
   }, [backend]);
 
   const handleExport = () => {
-    // Logic for exporting disconnection list to Excel
-    console.log("Export to Excel clicked");
+    // Format the records for Excel export
+    const formattedRecords = disconnectionAccounts.map((account) => ({
+      "Account No.": account.acc_num,
+      "Account Name": account.accountName,
+      "Last Bill Date": formatDate(account.last_billDate),
+      Status: account.disconnection_status,
+      "Total Balance": account.totalBalance
+        ? `₱${account.totalBalance.toFixed(2)}`
+        : "₱0.00",
+    }));
+
+    // Create a worksheet from the formatted records
+    const worksheet = XLSX.utils.json_to_sheet(formattedRecords);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Disconnection Accounts");
+
+    // Generate file name
+    const fileName = `Disconnection_Accounts_Report.xlsx`;
+
+    // Write the workbook to a file
+    XLSX.writeFile(workbook, fileName);
   };
 
   return (

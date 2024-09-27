@@ -16,15 +16,10 @@ import "../styles/clientTBL.css";
 import { useReactToPrint } from "react-to-print";
 import ReceiptComponent from "./receipt"; // Import the receipt component
 
-const socket = io("http://localhost:1020");
-
 const Table = () => {
-  //State for storing data
-
   const [show, setShow] = useState(false);
   const handleClose = () => {
     setShow(false);
-    window.location.reload(); // This will refresh the page
   };
   const handleShow = () => setShow(true);
   //TODO: GET ALL Consumers
@@ -38,8 +33,11 @@ const Table = () => {
   const [acc_num, setAccNum] = useState("");
   const [account, setAccounts] = useState("");
   const [billNo, setBillNo] = useState("");
+  const [arrears, setArrears] = useState("");
+  const [billAmount, setBillAmount] = useState("");
   const [penaltyCharge, setTotalPenalty] = useState("");
   const [balance, setTotalBalance] = useState("");
+
   const [paymentAmount, setPayment] = useState("");
   const [p_date, setPdate] = useState("");
   const [address, setAddress] = useState("");
@@ -80,9 +78,14 @@ const Table = () => {
 
     const latestBill = await response.json();
     console.log("data", latestBill); // Check the full structure
+    console.log("latestBill.prev_reading", latestBill.prev_reading);
 
-    if (latestBill && latestBill.latestBill) {
+    if (
+      (latestBill && latestBill.latestBill) ||
+      (latestBill && latestBill.prev_reading)
+    ) {
       const billData = latestBill.latestBill; // Access the nested latestBill
+
       setPreviousReading(latestBill.prev_reading || 0); // Set default value
       setBillData({
         ...billData,
@@ -148,23 +151,32 @@ const Table = () => {
 
         // Parse the response JSON
         const data = await response.json();
-        console.log("Data", data);
+        if (data.status === "Paid") {
+          toast.warn("The account has been successfully settled.", {
+            autoClose: 1000,
+          });
+          setAccName(data.consumerName);
+          setAccNum(data.accountNum);
+        } else {
+          setBillNo(data.billNo);
+          setAccName(data.consumerName);
+          setAccNum(data.accountNum);
+          setAddress(data.address);
+          setTotalPenalty(data.totalPenalty);
+          setArrears(data.arrears);
+          setBillAmount(data.billAmount);
+          setTotalBalance(
+            data.totalAmountDue && data.totalBalance
+              ? parseFloat(data.totalAmountDue) + parseFloat(data.totalPenalty)
+              : data.totalAmountDue
+          );
+        }
 
         if (data.error) {
-          toast.warn(data.error, {
+          toast.danger(data.error, {
             autoClose: 1000, // Auto close after 1 second
           });
         }
-        setBillNo(data.billNo);
-        setAccName(data.consumerName);
-        setAccNum(data.accountNum);
-        setAddress(data.address);
-        setTotalPenalty(data.totalPenalty);
-        setTotalBalance(
-          data.totalAmountDue && data.totalBalance
-            ? parseFloat(data.totalAmountDue) + parseFloat(data.totalPenalty)
-            : data.totalAmountDue
-        );
       } catch (error) {
         console.error("Error fetching data:", error);
         setAccName("");
@@ -282,8 +294,6 @@ const Table = () => {
       advTotalAmount,
       totalChange,
     };
-
-    console.log("Data for payments", newPayment);
 
     try {
       const response = await fetch(`${backend}/biller/newPayment`, {
@@ -562,8 +572,17 @@ const Table = () => {
         backdrop="static"
         keyboard={false}
       >
-        <Modal.Header closeButton>
-          <Modal.Title>Let's Settle Your Bill</Modal.Title>
+        <Modal.Header closeButton style={{ backgroundColor: "#1F316F" }}>
+          <Modal.Title className="text-white">
+            Let's Settle Your Bill
+          </Modal.Title>
+          <style>
+            {`
+        .modal-header .btn-close {
+          color: white !important; /* Ensure the close button is white */
+        }
+      `}
+          </style>
         </Modal.Header>
         <Modal.Body>
           <div className="row">
@@ -589,71 +608,109 @@ const Table = () => {
 
           <div className="row">
             <div className="col">
-              <Form.Label>Account Number:</Form.Label>
+              <Form.Label className="fw-bold">Account Number:</Form.Label>
               <Form.Control
                 type="text"
                 value={acc_num}
                 placeholder="Account Number"
                 disabled
-                style={{ fontWeight: "bold", color: "#333", width: "100%" }}
+                style={{ color: "#333", width: "100%" }} // Removed fontWeight
               />
             </div>
             <div className="col">
-              <Form.Label>Account Name:</Form.Label>
+              <Form.Label className="fw-bold">Account Name:</Form.Label>
               <Form.Control
                 type="text"
                 value={acc_name}
                 placeholder="Account Name"
                 disabled
-                style={{ fontWeight: "bold", color: "#333", width: "100%" }}
+                style={{ color: "#333", width: "100%" }} // Removed fontWeight
               />
             </div>
           </div>
 
           <hr />
-
+          <div className="row">
+            <div className="col-6 mb-1">
+              <Form.Label className="fw-bold">Arrears:</Form.Label>
+              <div className="input-group">
+                <span className="input-group-text">₱</span>
+                <Form.Control
+                  type="number"
+                  value={arrears}
+                  placeholder="0.00"
+                  onChange={(e) => setArrears(e.target.value)}
+                  style={{ color: "#333" }} // Removed fontWeight
+                  disabled
+                />
+              </div>
+            </div>
+            <div className="col-6">
+              <Form.Label className="fw-bold">Current Amount:</Form.Label>
+              <div className="input-group">
+                <span className="input-group-text">₱</span>
+                <Form.Control
+                  type="number"
+                  value={billAmount}
+                  placeholder="0.00"
+                  onChange={(e) => setBillAmount(e.target.value)}
+                  style={{ color: "#333" }} // Removed fontWeight
+                  disabled
+                />
+              </div>
+            </div>
+          </div>
           <div className="row">
             <div className="col">
-              <Form.Label>Penalty Charge:</Form.Label>
-              <Form.Control
-                type="number"
-                value={penaltyCharge}
-                placeholder="0.00"
-                disabled
-                style={{ width: "100%" }}
-              />
+              <Form.Label className="fw-bold">Penalty Charge:</Form.Label>
+              <div className="input-group">
+                <span className="input-group-text">₱</span>
+                <Form.Control
+                  type="number"
+                  value={penaltyCharge}
+                  placeholder="0.00"
+                  disabled
+                  style={{ color: "#333" }} // Removed fontWeight
+                />
+              </div>
             </div>
             <div className="col">
-              <Form.Label>Total Balance:</Form.Label>
-              <Form.Control
-                type="number"
-                value={balance}
-                placeholder="0.00"
-                disabled
-                style={{ width: "100%" }}
-              />
+              <Form.Label className="fw-bold"> Total Balance:</Form.Label>
+              <div className="input-group">
+                <span className="input-group-text">₱</span>
+                <Form.Control
+                  type="number"
+                  value={balance}
+                  placeholder="0.00"
+                  disabled
+                  style={{ color: "#333" }} // Removed fontWeight
+                />
+              </div>
             </div>
           </div>
-
           <hr />
+          {/* New Arrears Field */}
 
           <div className="row">
             <div className="col">
               <Form.Group controlId="amount">
-                <Form.Label>Amount to Pay:</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Enter amount"
-                  step="0.01"
-                  value={paymentAmount}
-                  onChange={handlePaymentAmountChange}
-                  style={{ fontWeight: "bold", color: "#333", width: "100%" }}
-                />
+                <Form.Label className="fw-bold">Amount to Pay:</Form.Label>
+                <div className="input-group">
+                  <span className="input-group-text">₱</span>
+                  <Form.Control
+                    type="number"
+                    placeholder="Enter amount"
+                    step="0.01"
+                    value={paymentAmount}
+                    onChange={handlePaymentAmountChange}
+                    style={{ color: "#333" }} // Removed fontWeight
+                  />
+                </div>
               </Form.Group>
             </div>
             <div className="col">
               <Form.Group controlId="paymentDate">
-                <Form.Label>Payment Date:</Form.Label>
+                <Form.Label className="fw-bold">Payment Date:</Form.Label>
                 <Form.Control
                   type="date"
                   value={p_date}
@@ -667,49 +724,53 @@ const Table = () => {
           <div className="row mt-2">
             <div className="col-6">
               <Form.Group controlId="advancePayment">
-                <Form.Label>Advance Payment (Optional):</Form.Label>
-                <Form.Control
-                  type="number"
-                  step="0.01"
-                  placeholder="0.00"
-                  value={advTotalAmount}
-                  onChange={handleAdvancePaymentChange}
-                  style={{ fontWeight: "bold", color: "#333", width: "100%" }}
-                />
+                <Form.Label className="fw-bold">
+                  Advance Payment (Optional):
+                </Form.Label>
+                <div className="input-group">
+                  <span className="input-group-text">₱</span>
+                  <Form.Control
+                    type="number"
+                    step="0.01"
+                    placeholder="0.00"
+                    value={advTotalAmount}
+                    onChange={handleAdvancePaymentChange}
+                  />
+                </div>
               </Form.Group>
             </div>
-          </div>
-
-          <hr />
-
-          <div className="row">
             <div className="col-6">
               <Form.Group controlId="totalChange">
-                <Form.Label>Total Change:</Form.Label>
-                <Form.Control
-                  type="number"
-                  disabled
-                  value={totalChange}
-                  placeholder="0.00"
-                  style={{ fontWeight: "bold", color: "#333", width: "100%" }}
-                />
+                <Form.Label className="fw-bold">Total Change:</Form.Label>
+                <div className="input-group">
+                  <span className="input-group-text">₱</span>
+                  <Form.Control
+                    type="number"
+                    disabled
+                    value={totalChange}
+                    placeholder="0.00"
+                  />
+                </div>
               </Form.Group>
             </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleSubmitPay}>
-            Submit Payment
+          <Button
+            variant="success"
+            onClick={handleSubmitPay}
+            className="col-12"
+          >
+            Proceed to payment <i className="bi bi-arrow-right"></i>
           </Button>
         </Modal.Footer>
       </Modal>
 
       <Modal show={showAddBill} onHide={handleClose} backdrop="static" centered>
-        <Modal.Header closeButton>
-          <Modal.Title style={{ fontWeight: "bold", fontSize: "1.5rem" }}>
+        <Modal.Header closeButton style={{ backgroundColor: "#1F316F" }}>
+          <Modal.Title
+            style={{ fontWeight: "bold", fontSize: "1.5rem", color: "white" }}
+          >
             Add New Bill
           </Modal.Title>
         </Modal.Header>
@@ -718,7 +779,7 @@ const Table = () => {
             <Row className="mb-3">
               <Col>
                 <Form.Group controlId="formAccNum">
-                  <Form.Label style={{ fontWeight: "500" }}>
+                  <Form.Label style={{ fontWeight: "bold" }}>
                     Account Number
                   </Form.Label>
                   <Form.Control
@@ -726,13 +787,17 @@ const Table = () => {
                     value={billData.acc_num}
                     disabled
                     placeholder="Account Number"
-                    style={{ padding: "0.75rem", borderRadius: "0.25rem" }}
+                    style={{
+                      padding: "0.75rem",
+                      borderRadius: "0.25rem",
+                      fontWeight: "normal",
+                    }}
                   />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group controlId="formAccountName">
-                  <Form.Label style={{ fontWeight: "500" }}>
+                  <Form.Label style={{ fontWeight: "bold" }}>
                     Account Name
                   </Form.Label>
                   <Form.Control
@@ -740,7 +805,11 @@ const Table = () => {
                     value={billData.accountName}
                     disabled
                     placeholder="Account Name"
-                    style={{ padding: "0.75rem", borderRadius: "0.25rem" }}
+                    style={{
+                      padding: "0.75rem",
+                      borderRadius: "0.25rem",
+                      fontWeight: "normal",
+                    }}
                   />
                 </Form.Group>
               </Col>
@@ -749,7 +818,7 @@ const Table = () => {
             <Row className="mb-3">
               <Col>
                 <Form.Group controlId="formPreviousRead">
-                  <Form.Label style={{ fontWeight: "500" }}>
+                  <Form.Label style={{ fontWeight: "bold" }}>
                     Previous Reading
                   </Form.Label>
                   <Form.Control
@@ -757,21 +826,29 @@ const Table = () => {
                     value={prev_reading || 0}
                     disabled
                     placeholder="Previous Reading"
-                    style={{ padding: "0.75rem", borderRadius: "0.25rem" }}
+                    style={{
+                      padding: "0.75rem",
+                      borderRadius: "0.25rem",
+                      fontWeight: "normal",
+                    }}
                   />
                 </Form.Group>
               </Col>
               <Col>
-                <Form.Group controlId="formPreviousRead">
-                  <Form.Label style={{ fontWeight: "500" }}>
+                <Form.Group controlId="formPresentRead">
+                  <Form.Label style={{ fontWeight: "bold" }}>
                     Present Reading
                   </Form.Label>
                   <Form.Control
                     type="number"
-                    value={newBill.present_read} // Default to 0 if undefined
+                    value={newBill.present_read}
                     onChange={handleChangePresentReading}
                     placeholder="Enter present reading"
-                    style={{ padding: "0.75rem", borderRadius: "0.25rem" }}
+                    style={{
+                      padding: "0.75rem",
+                      borderRadius: "0.25rem",
+                      fontWeight: "normal",
+                    }}
                   />
                 </Form.Group>
               </Col>
@@ -780,7 +857,7 @@ const Table = () => {
             <Row className="mb-3">
               <Col>
                 <Form.Group controlId="formReadingDate">
-                  <Form.Label style={{ fontWeight: "500" }}>
+                  <Form.Label style={{ fontWeight: "bold" }}>
                     Reading Date
                   </Form.Label>
                   <Form.Control
@@ -789,20 +866,28 @@ const Table = () => {
                     onChange={(e) =>
                       setNewBill({ ...newBill, reading_date: e.target.value })
                     }
-                    style={{ padding: "0.75rem", borderRadius: "0.25rem" }}
+                    style={{
+                      padding: "0.75rem",
+                      borderRadius: "0.25rem",
+                      fontWeight: "normal",
+                    }}
                   />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group controlId="formConsumption">
-                  <Form.Label style={{ fontWeight: "500" }}>
+                  <Form.Label style={{ fontWeight: "bold" }}>
                     Consumption
                   </Form.Label>
                   <Form.Control
                     type="number"
                     value={newBill.consumption}
                     disabled
-                    style={{ padding: "0.75rem", borderRadius: "0.25rem" }}
+                    style={{
+                      padding: "0.75rem",
+                      borderRadius: "0.25rem",
+                      fontWeight: "normal",
+                    }}
                   />
                 </Form.Group>
               </Col>
@@ -811,7 +896,7 @@ const Table = () => {
             <Row className="mb-3">
               <Col>
                 <Form.Group controlId="formCategory">
-                  <Form.Label style={{ fontWeight: "500" }}>
+                  <Form.Label style={{ fontWeight: "bold" }}>
                     Category
                   </Form.Label>
                   <Form.Control
@@ -819,13 +904,17 @@ const Table = () => {
                     onChange={(e) =>
                       setBillData({ ...billData, category: e.target.value })
                     }
-                    style={{ padding: "0.75rem", borderRadius: "0.25rem" }}
+                    style={{
+                      padding: "0.75rem",
+                      borderRadius: "0.25rem",
+                      fontWeight: "normal",
+                    }}
                   />
                 </Form.Group>
               </Col>
               <Col>
                 <Form.Group controlId="formOthers">
-                  <Form.Label style={{ fontWeight: "500" }}>
+                  <Form.Label style={{ fontWeight: "bold" }}>
                     Others (Optional)
                   </Form.Label>
                   <Form.Control
@@ -835,14 +924,18 @@ const Table = () => {
                       setNewBill({ ...newBill, others: e.target.value })
                     }
                     placeholder="Other details"
-                    style={{ padding: "0.75rem", borderRadius: "0.25rem" }}
+                    style={{
+                      padding: "0.75rem",
+                      borderRadius: "0.25rem",
+                      fontWeight: "normal",
+                    }}
                   />
                 </Form.Group>
               </Col>
             </Row>
 
             <Form.Group controlId="formRemarks" className="mb-4">
-              <Form.Label style={{ fontWeight: "500" }}>Remarks</Form.Label>
+              <Form.Label style={{ fontWeight: "bold" }}>Remarks</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={2}
@@ -851,24 +944,22 @@ const Table = () => {
                   setBillData({ ...billData, remarks: e.target.value })
                 }
                 placeholder="Enter remarks"
-                style={{ padding: "0.75rem", borderRadius: "0.25rem" }}
+                style={{
+                  padding: "0.75rem",
+                  borderRadius: "0.25rem",
+                  fontWeight: "normal",
+                }}
               />
             </Form.Group>
           </Modal.Body>
           <Modal.Footer style={{ padding: "1.5rem" }}>
             <Button
-              variant="secondary"
-              onClick={handleClose}
-              style={{ fontWeight: "500" }}
-            >
-              Cancel
-            </Button>
-            <Button
               variant="primary"
               type="submit"
               style={{ fontWeight: "500" }}
+              className="col-12"
             >
-              Save Bill
+              Add Bill
             </Button>
           </Modal.Footer>
         </Form>

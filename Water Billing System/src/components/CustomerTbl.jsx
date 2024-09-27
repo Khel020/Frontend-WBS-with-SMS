@@ -129,6 +129,19 @@ const CustomerTbl = () => {
     // Update the state
     setActivationDate(activationDateString);
   };
+  useEffect(() => {
+    // Automatically set pipe size based on client type
+    if (
+      client_type === "Residential" ||
+      client_type === "Commercial_A" ||
+      client_type === "Commercial_B" ||
+      client_type === "Commercial_C"
+    ) {
+      setPipe("1/2"); // Set to 1/2 inch
+    } else {
+      setPipe("3/4"); // Set to 3/4 inch
+    }
+  }, [client_type]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -324,7 +337,7 @@ const CustomerTbl = () => {
         <div className="col-3">
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search consumer"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="form-control"
@@ -443,13 +456,15 @@ const CustomerTbl = () => {
                       Select a type
                     </option>
                     <option value="Residential">Residential</option>
-                    <option value="Commercial">Commercial</option>
                     <option value="Government">Government</option>
+                    <option value="Industrial">Industrial</option>
+                    <option value="Commercial">Commercial</option>
+                    <option value="Commercial_A">Commercial A</option>
+                    <option value="Commercial_B">Commercial B</option>
+                    <option value="Commercial_C">Commercial C</option>
                   </select>
                 </div>
 
-                {/* Zone */}
-                {/* Zone */}
                 <div className="col-md-4 mb-3">
                   <label htmlFor="zone" className="form-label fw-bold">
                     Zone

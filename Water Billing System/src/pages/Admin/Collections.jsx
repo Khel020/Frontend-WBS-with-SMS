@@ -3,16 +3,7 @@ import DataTable, { defaultThemes } from "react-data-table-component";
 import Sidebar from "../../components/Sidebar";
 import * as XLSX from "xlsx";
 import DatePicker from "react-datepicker";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+
 function Rtable() {
   const [filteredRecords, setFilteredRecords] = useState([]);
 
@@ -129,55 +120,11 @@ function Rtable() {
   }
 
   const customStyles = {
-    table: {
-      style: {
-        border: "1px solid #ddd",
-      },
-    },
     headCells: {
       style: {
         fontWeight: "bold",
-        backgroundColor: "#61b390",
         color: "dark",
         fontSize: "10px",
-      },
-    },
-    rows: {
-      style: {
-        minHeight: "45px",
-        "&:hover": {
-          backgroundColor: "#f1f1f1",
-        },
-      },
-    },
-    pagination: {
-      style: {
-        border: "none",
-        fontSize: "13px",
-        color: defaultThemes.default.text.primary,
-        backgroundColor: "#f7f7f7",
-        minHeight: "50px",
-      },
-      pageButtonsStyle: {
-        borderRadius: "50%",
-        height: "40px",
-        width: "40px",
-        padding: "8px",
-        margin: "0px 5px",
-        cursor: "pointer",
-        transition: "0.4s",
-        color: defaultThemes.default.text.primary,
-        fill: defaultThemes.default.text.primary,
-        backgroundColor: "#fff",
-        "&:hover:not(:disabled)": {
-          backgroundColor: defaultThemes.default.text.primary,
-          fill: "#fff",
-        },
-        "&:focus": {
-          outline: "none",
-          backgroundColor: defaultThemes.default.text.primary,
-          fill: "#fff",
-        },
       },
     },
   };
@@ -250,6 +197,7 @@ function Rtable() {
         </div>
 
         <DataTable
+          customStyles={customStyles}
           columns={columns}
           data={filteredRecords} // Use filteredRecords here
           responsive
