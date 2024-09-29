@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import CusTable from "../../components/CustomerTbl";
-import { Container, Button, Modal } from "react-bootstrap";
+import {
+  Container,
+  Button,
+  Modal,
+  Row,
+  Col,
+  Card,
+  Badge,
+} from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
-import Card from "react-bootstrap/Card";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import { FaUserCheck, FaUserTimes, FaUserPlus } from "react-icons/fa"; // Import icons
 import { Link, useNavigate } from "react-router-dom";
 import Countdown from "react-countdown";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -42,12 +48,9 @@ const Customers = () => {
         .then((data) => {
           console.log("Status updated:", data);
           // Show a success toast notification
-          toast.success(
-            `Consumer ${selectedAccount.acc_num} activated successfully!`,
-            {
-              autoClose: 1000, // Auto close after 1 second
-            }
-          );
+          toast.success(`Consumer activated successfully!`, {
+            autoClose: 1000, // Auto close after 1 second
+          });
           setTimeout(() => {
             location.reload();
           }, 1000);
@@ -91,8 +94,8 @@ const Customers = () => {
       }}
     >
       <Sidebar role={usertype} />
-      <main className="col-md-9 ms-sm-auto col-lg-10">
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
+      <main className="flex-grow-1 ms-sm-auto px-md-4">
+        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded">
           <h1 className="h2">Customer List</h1>
           <div className="ms-auto d-flex align-items-center">
             <i
@@ -126,51 +129,72 @@ const Customers = () => {
           </div>
         </div>
 
-        <Container>
-          <Row>
-            <Col md={4} className="mb-4">
-              <Card className="dash-card pending-card">
-                <Card.Body className="dash-card-body d-flex flex-column">
-                  <div className="d-flex align-items-center mb-2">
-                    <span>Accounts for Activation</span>
-                  </div>
-                  <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    99+
-                    <span class="visually-hidden">For Activation</span>
-                  </span>
-                  <Link
-                    className=" mt-auto mb-0 text-end"
-                    onClick={handleShowAccs}
-                  >
-                    View Details
-                  </Link>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={4} className="mb-4">
-              <Card className="dash-card pending-card">
-                <Card.Body className="dash-card-body d-flex flex-column">
-                  <div className="d-flex align-items-center mb-2">
-                    <span>Active Consumers</span>
-                  </div>
+        <Row>
+          {/* Accounts for Activation Card */}
+          <Col md={4} className="mb-4">
+            <Card className="dash-card pending-card position-relative">
+              <Card.Body className="dash-card-body d-flex flex-column">
+                <div className="d-flex align-items-center mb-2">
+                  <FaUserPlus
+                    className="me-2"
+                    size={24}
+                    style={{ color: "#0d6efd" }} // Blue color for Activation Icon
+                  />
+                  <span>Accounts for Activation</span>
+                </div>
+                {/* Badge for accounts */}
+                <Badge
+                  className="position-absolute top-0 start-100 translate-middle bg-danger"
+                  style={{ fontSize: "0.75rem" }}
+                  pill
+                >
+                  99+
+                </Badge>
+                <Link
+                  className="mt-auto mb-0 text-end"
+                  onClick={handleShowAccs}
+                  style={{ textDecoration: "none", color: "#007bff" }}
+                >
+                  View Details
+                </Link>
+              </Card.Body>
+            </Card>
+          </Col>
 
-                  <p className="dash-card-value mt-auto mb-0 text-end">500</p>
-                </Card.Body>
-              </Card>
-            </Col>
-            <Col md={4} className="mb-4">
-              <Card className="dash-card pending-card">
-                <Card.Body className="dash-card-body d-flex flex-column">
-                  <div className="d-flex align-items-center mb-2">
-                    <span>Inactive Consumers</span>
-                  </div>
+          {/* Active Consumers Card */}
+          <Col md={4} className="mb-4">
+            <Card className="dash-card active-card">
+              <Card.Body className="dash-card-body d-flex flex-column">
+                <div className="d-flex align-items-center mb-2">
+                  <FaUserCheck
+                    className="me-2"
+                    size={24}
+                    style={{ color: "#28a745" }} // Green color for Active Icon
+                  />
+                  <span>Active Consumers</span>
+                </div>
+                <p className="dash-card-value mt-auto mb-0 text-end">500</p>
+              </Card.Body>
+            </Card>
+          </Col>
 
-                  <p className="dash-card-value mt-auto mb-0 text-end">1200</p>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Container>
+          {/* Inactive Consumers Card */}
+          <Col md={4} className="mb-4">
+            <Card className="dash-card inactive-card">
+              <Card.Body className="dash-card-body d-flex flex-column">
+                <div className="d-flex align-items-center mb-2">
+                  <FaUserTimes
+                    className="me-2"
+                    size={24}
+                    style={{ color: "#dc3545" }} // Red color for Inactive Icon
+                  />
+                  <span>Inactive Consumers</span>
+                </div>
+                <p className="dash-card-value mt-auto mb-0 text-end">1200</p>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
         <CusTable />
         <Modal
           show={showAcc}

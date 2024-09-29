@@ -3,7 +3,11 @@ import React, { useState, useEffect } from "react";
 import Container from "react-bootstrap/Container";
 
 import { toast, ToastContainer } from "react-toastify";
-
+import {
+  FaFileInvoiceDollar,
+  FaMoneyBillAlt,
+  FaFileInvoice,
+} from "react-icons/fa";
 import Bills from "../../components/BillTable.jsx";
 import Sidebar from "../../components/Sidebar.jsx";
 
@@ -59,6 +63,7 @@ function ListBills() {
             <h1 className="h2">Billing Monitoring</h1>
           </div>
           <div className="row mt-3 mb-4">
+            {/* Total Bills Card */}
             <div className="col">
               <div
                 className="card total-user"
@@ -69,14 +74,17 @@ function ListBills() {
                   borderRadius: "15px",
                 }}
               >
-                <div className="card-body d-flex justify-content-between align-items-end">
-                  <h5>
-                    <i
-                      className="bi bi-people-fill"
-                      style={{ fontSize: "20px" }}
-                    ></i>
-                    Total Bills
-                  </h5>
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <FaFileInvoiceDollar
+                      style={{
+                        fontSize: "24px", // Increased size for better visibility
+                        color: "#4CAF50", // Adjust color as needed
+                        marginRight: "10px",
+                      }}
+                    />
+                    <h5 style={{ margin: 0 }}>Total Bills</h5>
+                  </div>
                   <span
                     className="card-value"
                     style={{
@@ -90,6 +98,8 @@ function ListBills() {
                 </div>
               </div>
             </div>
+
+            {/* Unpaid Bills Card */}
             <div className="col">
               <div
                 className="card total-admin"
@@ -100,14 +110,17 @@ function ListBills() {
                   borderRadius: "15px",
                 }}
               >
-                <div className="card-body d-flex justify-content-between align-items-end">
-                  <h5>
-                    <i
-                      className="bi bi-person-fill-gear"
-                      style={{ fontSize: "20px" }}
-                    ></i>{" "}
-                    Unpaid
-                  </h5>
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <FaFileInvoice
+                      style={{
+                        fontSize: "24px", // Slightly larger icon size
+                        color: "#F44336", // Red color for unpaid bills
+                        marginRight: "10px",
+                      }}
+                    />
+                    <h5 style={{ margin: 0 }}>Unpaid</h5>
+                  </div>
                   <span
                     className="card-value"
                     style={{
@@ -121,6 +134,8 @@ function ListBills() {
                 </div>
               </div>
             </div>
+
+            {/* Paid Bills Card */}
             <div className="col">
               <div
                 className="card total-client"
@@ -131,14 +146,17 @@ function ListBills() {
                   borderRadius: "15px",
                 }}
               >
-                <div className="card-body d-flex justify-content-between align-items-end">
-                  <h5>
-                    <i
-                      className="bi bi-person-fill"
-                      style={{ fontSize: "20px" }}
-                    ></i>
-                    Paid
-                  </h5>
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <FaMoneyBillAlt
+                      style={{
+                        fontSize: "24px", // Icon size for paid bills
+                        color: "#4CAF50", // Green color for paid bills
+                        marginRight: "10px",
+                      }}
+                    />
+                    <h5 style={{ margin: 0 }}>Paid</h5>
+                  </div>
                   <span
                     className="card-value"
                     style={{

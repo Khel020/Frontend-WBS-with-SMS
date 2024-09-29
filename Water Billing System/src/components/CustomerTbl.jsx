@@ -88,7 +88,7 @@ const CustomerTbl = () => {
         const data = response.data;
 
         if (data.success) {
-          toast.success(data.message || "Bill successfully saved", {
+          toast.success(data.message, {
             autoClose: 1000, // Auto close after 1 second
           });
           setTimeout(() => {
@@ -133,6 +133,7 @@ const CustomerTbl = () => {
     // Automatically set pipe size based on client type
     if (
       client_type === "Residential" ||
+      client_type === "Commercial" ||
       client_type === "Commercial_A" ||
       client_type === "Commercial_B" ||
       client_type === "Commercial_C"
@@ -239,7 +240,7 @@ const CustomerTbl = () => {
       name: "Deposit",
       selector: (row) => `₱${parseFloat(row.advancePayment || 0).toFixed(2)}`,
       sortable: true,
-      width: "130px", // Adjust width as needed
+      width: "135px", // Adjust width as needed
     },
 
     {
@@ -264,56 +265,36 @@ const CustomerTbl = () => {
   const customStyles = {
     table: {
       style: {
-        border: "1px solid #ddd", // Border around the entire table
+        border: "1px solid #ddd",
+        borderRadius: "8px",
+        overflow: "hidden",
       },
     },
     headCells: {
       style: {
         fontWeight: "bold",
-        backgroundColor: "#61b390",
-        color: "dark",
-        fontSize: "10px",
+        backgroundColor: "#1F702C",
+        color: "white",
+        fontSize: "12px",
       },
     },
     rows: {
       style: {
-        minHeight: "45px", // override the row height
-        "&:hover": {
-          backgroundColor: "#f1f1f1",
-        },
+        minHeight: "45px",
+        "&:hover": { backgroundColor: "#f1f1f1" },
       },
     },
     pagination: {
       style: {
         border: "none",
-        fontSize: "13px",
-        color: defaultThemes.default.text.primary,
+        fontSize: "14px",
+        color: "#000",
         backgroundColor: "#f7f7f7",
         minHeight: "50px",
       },
-      pageButtonsStyle: {
-        borderRadius: "50%",
-        height: "40px",
-        width: "40px",
-        padding: "8px",
-        margin: "0px 5px",
-        cursor: "pointer",
-        transition: "0.4s",
-        color: defaultThemes.default.text.primary,
-        fill: defaultThemes.default.text.primary,
-        backgroundColor: "#fff",
-        "&:hover:not(:disabled)": {
-          backgroundColor: defaultThemes.default.text.primary,
-          fill: "#fff",
-        },
-        "&:focus": {
-          outline: "none",
-          backgroundColor: defaultThemes.default.text.primary,
-          fill: "#fff",
-        },
-      },
     },
   };
+
   const handleStatusChange = (event) => {
     setFilterStatus(event.target.value);
   };
@@ -333,7 +314,7 @@ const CustomerTbl = () => {
 
   return (
     <>
-      <div className="row mb-3 mx-1">
+      <div className="row mb-3 ">
         <div className="col-3">
           <input
             type="text"
@@ -370,7 +351,7 @@ const CustomerTbl = () => {
         </div>
       </div>
 
-      <div className="mx-2">
+      <div>
         <DataTable
           customStyles={customStyles}
           pagination
@@ -380,7 +361,7 @@ const CustomerTbl = () => {
           responsive
           fixedHeader
           highlightOnHover
-          noDataComponent={<div>No records found</div>}
+          noDataComponent={<div className="text-danger">No records found</div>}
         />
       </div>
 
@@ -457,6 +438,7 @@ const CustomerTbl = () => {
                     </option>
                     <option value="Residential">Residential</option>
                     <option value="Government">Government</option>
+                    <option value="Bulk">Bulk</option>
                     <option value="Industrial">Industrial</option>
                     <option value="Commercial">Commercial</option>
                     <option value="Commercial_A">Commercial A</option>

@@ -109,11 +109,55 @@ function Table() {
     switch (activeTab) {
       case "Account":
         return (
-          <div>
+          <div className="account-settings-wrapper">
             <h2>Account Settings</h2>
-            <p>Manage your account information here.</p>
+            <p className="subtitle">
+              Manage your personal details and update your password for a more
+              secure experience.
+            </p>
+
+            {/* Profile Information Section */}
+            <div className="section profile-info">
+              <h3>Profile Information</h3>
+              <p className="description">
+                Review and keep your account information up-to-date for seamless
+                communication.
+              </p>
+              <div className="profile-details">
+                <div className="info-row">
+                  <span className="label">Account Name:</span>
+                  <span className="value">John Doe</span>
+                </div>
+                <div className="info-row">
+                  <span className="label">Email Address:</span>
+                  <span className="value">johndoe@example.com</span>
+                </div>
+                <div className="info-row">
+                  <span className="label">Contact Number:</span>
+                  <span className="value">(123) 456-7890</span>
+                </div>
+                <div className="info-row">
+                  <span className="label">Mailing Address:</span>
+                  <span className="value">1234 Elm Street, Springfield</span>
+                </div>
+              </div>
+              <button className="btn btn-primary edit-btn">Edit Profile</button>
+            </div>
+
+            {/* Change Password Section */}
+            <div className="section change-password">
+              <h3>Change Password</h3>
+              <p className="description">
+                For enhanced security, it’s recommended to update your password
+                regularly.
+              </p>
+              <button className="btn btn-primary change-password-btn">
+                Update Password
+              </button>
+            </div>
           </div>
         );
+
       case "Messages":
         return (
           <div>

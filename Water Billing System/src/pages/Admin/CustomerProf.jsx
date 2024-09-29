@@ -129,7 +129,7 @@ const CustomerProf = () => {
       }}
     >
       <Sidebar role={usertype} />
-      <main className="col-md-9 ms-sm-auto col-lg-10 ">
+      <main className="flex-grow-1 ms-sm-auto px-md-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
           <h1 className="h2">Customer Profile</h1>
         </div>
@@ -147,7 +147,6 @@ const CustomerProf = () => {
                     <h5 class="card-title">{customer.accountName}</h5>
                     <p class="card-text">{customer.email}</p>
                     <p class="card-text">{customer.c_address}</p>
-                    <p class="card-text">{customer.contact}</p>
                     <button
                       type="button"
                       class="btn btn-link"
@@ -160,7 +159,7 @@ const CustomerProf = () => {
 
                 <div class="card">
                   <div class="card-body">
-                    <h5 class="card-title d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="card-title d-flex justify-content-between align-items-center mb-3 text-primary">
                       <strong>Account Information</strong>
                     </h5>
                     <p class="card-text">
@@ -218,57 +217,89 @@ const CustomerProf = () => {
 
                 <div class="row">
                   <div class="col-md-12">
-                    <div class="card mb-3">
+                    <div class="card mb-3 shadow-sm">
                       <div class="card-body">
-                        <h5 class="card-title">Account Summary</h5>
+                        <h6 class="card-title text-primary">Account Summary</h6>
+                        <hr />
                         <p class="card-text">
                           <strong>Account Balance:</strong>{" "}
-                          {customer.totalBalance ? customer.totalBalance : 0}
+                          {customer.totalBalance
+                            ? "₱ " + customer.totalBalance.toFixed(2)
+                            : "₱ 0.00"}
                         </p>
                         <p class="card-text">
-                          <strong>Account Deposit:</strong>
+                          <strong>Account Deposit:</strong>{" "}
                           {customer.advancePayment
-                            ? " ₱ " + customer.advancePayment
-                            : " ₱" + 0}
+                            ? "₱ " + customer.advancePayment.toFixed(2)
+                            : "₱ 0.00"}
                         </p>
                         <p class="card-text">
                           <strong>Last Payment Date:</strong>{" "}
-                          {formatDate(customer.last_billDate)}
+                          {customer.last_billDate
+                            ? formatDate(customer.last_billDate)
+                            : "N/A"}
                         </p>
                         <p class="card-text">
-                          {/* dapat nakadepende last duedate */}
-                          <strong>Next Payment Due:</strong> August 30, 2024
+                          {/* Dynamically display the next due date */}
+                          <strong>Next Payment Due:</strong>{" "}
+                          {customer.nextDueDate
+                            ? formatDate(customer.nextDueDate)
+                            : "August 30, 2024"}{" "}
+                          {/* Replace with dynamic value */}
                         </p>
                       </div>
                     </div>
                   </div>
                 </div>
+
                 <div class="row">
                   <div class="col-md-12">
-                    <div class="card mb-3" style={{ height: "250px" }}>
+                    <div
+                      class="card mb-3 shadow-sm"
+                      style={{ height: "230px", overflow: "hidden" }}
+                    >
                       <div class="card-body">
-                        <h5 class="card-title">Activities</h5>
+                        <h6 class="card-title text-primary">
+                          Recent Payment Transactions
+                        </h6>
+                        <hr />
                         <div style={{ maxHeight: "200px", overflowY: "auto" }}>
                           <ul class="list-unstyled">
-                            <li>
-                              <p class="card-text">
-                                <strong>Visit:</strong> Jan 12, 2020 - 2:32 PM
-                                PDT - F&M - New York, 340 5th Street - 32
-                                minutes
+                            <li class="mb-3">
+                              <p class="card-text mb-1">
+                                <strong>Date:</strong> Dec 20, 2023 - 10:45 AM
                               </p>
+                              <p class="card-text mb-1">
+                                <strong>Amount:</strong> ₱ 500.00
+                              </p>
+                              <p class="card-text mb-1">
+                                <strong>Method:</strong> Cash
+                              </p>
+                              <span class="badge bg-success">Completed</span>
                             </li>
-                            <li>
-                              <p class="card-text">
-                                <strong>Connection:</strong> Jan 12, 2020 - 2:35
-                                PM PDT - F&M - New York, 340 5th Street - 45
-                                minutes - 56 MB
+                            <li class="mb-3">
+                              <p class="card-text mb-1">
+                                <strong>Date:</strong> Nov 15, 2023 - 2:30 PM
                               </p>
+                              <p class="card-text mb-1">
+                                <strong>Amount:</strong> ₱ 600.00
+                              </p>
+                              <p class="card-text mb-1">
+                                <strong>Method:</strong> Credit Card
+                              </p>
+                              <span class="badge bg-success">Completed</span>
                             </li>
-                            <li>
-                              <p class="card-text">
-                                <strong>WiFi Sign-Up:</strong> Feb 09, 2020 -
-                                1:47 PM PDT - San Francisco, 120 Sutter Street
+                            <li class="mb-3">
+                              <p class="card-text mb-1">
+                                <strong>Date:</strong> Oct 10, 2023 - 9:15 AM
                               </p>
+                              <p class="card-text mb-1">
+                                <strong>Amount:</strong> ₱ 550.00
+                              </p>
+                              <p class="card-text mb-1">
+                                <strong>Method:</strong> Bank Transfer
+                              </p>
+                              <span class="badge bg-success">Completed</span>
                             </li>
                           </ul>
                         </div>

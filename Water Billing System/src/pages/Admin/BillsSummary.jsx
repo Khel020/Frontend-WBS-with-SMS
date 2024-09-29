@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import Sidebar from "../../components/Sidebar";
 import DatePicker from "react-datepicker";
+import { FaFileExport } from "react-icons/fa"; // Importing an icon for export button
 import {
   BarChart,
   Bar,
@@ -102,13 +103,18 @@ function BillsSummary() {
 
   const customStyles = {
     table: {
-      style: { border: "1px solid #ddd" },
+      style: {
+        border: "1px solid #ddd",
+        borderRadius: "8px",
+        overflow: "hidden",
+      },
     },
     headCells: {
       style: {
         fontWeight: "bold",
-        backgroundColor: "#61b390",
-        fontSize: "10px",
+        backgroundColor: "#1F702C",
+        color: "white",
+        fontSize: "12px",
       },
     },
     rows: {
@@ -118,7 +124,13 @@ function BillsSummary() {
       },
     },
     pagination: {
-      style: { backgroundColor: "#f7f7f7", fontSize: "13px" },
+      style: {
+        border: "none",
+        fontSize: "14px",
+        color: "#000",
+        backgroundColor: "#f7f7f7",
+        minHeight: "50px",
+      },
     },
   };
 
@@ -128,9 +140,12 @@ function BillsSummary() {
       style={{ backgroundColor: "white", height: "100vh", maxHeight: "100vh" }}
     >
       <Sidebar role={usertype} />
-      <main className="col-md-9 ms-sm-auto col-lg-10 px-md-3">
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded ">
+      <main className="flex-grow-1 ms-sm-auto px-md-4">
+        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
           <h1 className="h2">Summary of Bills</h1>
+          <button className="btn btn-success d-flex align-items-center">
+            <FaFileExport className="me-2" /> Export PDF
+          </button>
         </div>
         <div className="d-flex align-items-center justify-content-between me-2 mb-3">
           <div className="d-flex align-items-center">
@@ -141,13 +156,9 @@ function BillsSummary() {
               dateFormat="MMMM yyyy"
               showMonthYearPicker
               placeholderText="Select Month"
-              className="date-input"
+              className="form-control"
             />
           </div>
-          <button className="btn btn-primary d-flex align-items-center h-100">
-            <i className="bi bi-file-earmark-arrow-down-fill mx-1"></i>
-            Export to Excel
-          </button>
         </div>
 
         {/* DataTable */}
@@ -160,7 +171,7 @@ function BillsSummary() {
         />
         {/* BarChart for visualizing total billed per category */}
         <h2 className="mt-4">Total Billed by Category</h2>
-        <div style={{ width: "100%", height: 250, overflow: "auto" }}>
+        <div style={{ width: "100%", height: 210, overflow: "hidden" }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={Summary}
@@ -170,8 +181,7 @@ function BillsSummary() {
               <XAxis dataKey="category" />
               <YAxis />
               <Tooltip />
-              <Legend />
-              <Bar dataKey="totalBilled" fill="#8884d8" />
+              <Bar dataKey="totalBilled" fill="#7989C5" />
             </BarChart>
           </ResponsiveContainer>
         </div>

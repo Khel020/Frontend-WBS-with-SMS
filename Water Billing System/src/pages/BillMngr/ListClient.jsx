@@ -5,7 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Dropdown from "react-bootstrap/Dropdown";
 import { Link, useNavigate } from "react-router-dom";
-
+import { FaUsers, FaUserCheck, FaUserTimes } from "react-icons/fa";
 const Lit = () => {
   const backend = import.meta.env.VITE_BACKEND;
   const navigate = useNavigate();
@@ -110,14 +110,17 @@ const Lit = () => {
                   borderRadius: "15px",
                 }}
               >
-                <div className="card-body d-flex justify-content-between align-items-end">
-                  <h5>
-                    <i
-                      className="bi bi-people-fill"
-                      style={{ fontSize: "20px" }}
-                    ></i>
-                    Total Clients
-                  </h5>
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <FaUsers
+                      style={{
+                        fontSize: "24px", // Increased size for better visibility
+                        color: "#4CAF50", // Adjusting color for consistency
+                        marginRight: "10px",
+                      }}
+                    />
+                    <h5 style={{ margin: 0 }}>Total Clients</h5>
+                  </div>
                   <span
                     className="card-value"
                     style={{
@@ -131,6 +134,7 @@ const Lit = () => {
                 </div>
               </div>
             </div>
+
             <div className="col">
               <div
                 className="card total-admin"
@@ -141,14 +145,17 @@ const Lit = () => {
                   borderRadius: "15px",
                 }}
               >
-                <div className="card-body d-flex justify-content-between align-items-end">
-                  <h5>
-                    <i
-                      className="bi bi-person-fill-gear"
-                      style={{ fontSize: "20px" }}
-                    ></i>{" "}
-                    Active
-                  </h5>
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <FaUserCheck
+                      style={{
+                        fontSize: "24px", // Slightly larger icon size
+                        color: "#4CAF50",
+                        marginRight: "10px",
+                      }}
+                    />
+                    <h5 style={{ margin: 0 }}>Active</h5>
+                  </div>
                   <span
                     className="card-value"
                     style={{
@@ -162,6 +169,7 @@ const Lit = () => {
                 </div>
               </div>
             </div>
+
             <div className="col">
               <div
                 className="card total-client"
@@ -172,14 +180,17 @@ const Lit = () => {
                   borderRadius: "15px",
                 }}
               >
-                <div className="card-body d-flex justify-content-between align-items-end">
-                  <h5>
-                    <i
-                      className="bi bi-person-fill"
-                      style={{ fontSize: "20px" }}
-                    ></i>
-                    Inactive
-                  </h5>
+                <div className="card-body d-flex justify-content-between align-items-center">
+                  <div className="d-flex align-items-center">
+                    <FaUserTimes
+                      style={{
+                        fontSize: "24px",
+                        color: "#F44336", // Red color for inactive clients
+                        marginRight: "10px",
+                      }}
+                    />
+                    <h5 style={{ margin: 0 }}>Inactive</h5>
+                  </div>
                   <span
                     className="card-value"
                     style={{

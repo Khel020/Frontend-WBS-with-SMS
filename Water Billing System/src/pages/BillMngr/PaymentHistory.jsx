@@ -43,36 +43,38 @@ const PaymentHistory = () => {
       name: "OR No.",
       selector: (row) => row.OR_NUM,
       sortable: true,
-      width: "100px", // Adjust width as needed
-    },
-
-    {
-      name: "Account Name",
-      selector: (row) => row.accountName,
-      sortable: true,
-      width: "200px", // Adjust width as needed
+      width: "120px", // Adjusted width
     },
     {
       name: "Payment Date",
       selector: (row) => formatDate(row.paymentDate),
       sortable: true,
-      width: "180px", // Adjust width as needed
+      width: "160px", // Adjusted width
     },
     {
-      name: "Arrears",
-      selector: (row) => row.arrears,
-      sortable: true,
-      width: "150px", // Adjust width as needed
-    },
-    {
-      name: "Amount Due",
+      name: "Total Due",
       selector: (row) => `₱${row.amountDue.toFixed(2)}`,
+      width: "150px", // Adjusted width
     },
     {
-      name: "Amount Paid",
-      sortable: true,
+      name: "Payment Received",
       selector: (row) => `₱${row.tendered.toFixed(2)}`,
+      sortable: true,
+      width: "200px", // Adjusted width
     },
+    {
+      name: "Notes",
+      selector: (row) => row.notes || "N/A", // Default to "N/A" if no notes exist
+      sortable: false,
+      width: "150px", // Adjusted width
+    },
+    {
+      name: "Change Given",
+      selector: (row) => `₱${row.change.toFixed(2)}`,
+      sortable: true,
+      width: "180px", // Adjusted width
+    },
+
     {
       name: "Action",
       cell: (row) => (
@@ -120,9 +122,10 @@ const PaymentHistory = () => {
           </OverlayTrigger>
         </div>
       ),
-      width: "100px", // Adjust width as needed
+      width: "130px", // Adjusted width
     },
   ];
+
   const customStyles = {
     table: {
       style: {

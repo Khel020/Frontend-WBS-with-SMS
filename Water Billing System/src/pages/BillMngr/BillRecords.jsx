@@ -131,18 +131,8 @@ const BillRecords = () => {
       sortable: true,
     },
     {
-      name: "Total Due",
-      selector: (row) => {
-        // Convert the string values to numbers
-        const currentBill = parseFloat(row.currentBill) || 0;
-        const arrears = parseFloat(row.arrears) || 0;
-
-        // Perform the addition
-        const total = currentBill + arrears;
-
-        // Format the result as a currency string
-        return `₱${total.toFixed(2)}`;
-      },
+      name: "Amount Paid",
+      selector: (row) => `₱${row.amountPaid.toFixed(2)}`, // Format amount with peso sign and two decimal places
       sortable: true,
     },
     {
@@ -253,7 +243,7 @@ const BillRecords = () => {
       }}
     >
       <Sidebar role={usertype} />
-      <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <main className="flex-grow-1 ms-sm-auto px-md-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded">
           <h1 className="h2">{accountName} Billing Record</h1>
         </div>

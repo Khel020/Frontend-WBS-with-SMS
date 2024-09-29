@@ -3,7 +3,7 @@ import DataTable, { defaultThemes } from "react-data-table-component";
 import Sidebar from "../../components/Sidebar";
 import * as XLSX from "xlsx";
 import DatePicker from "react-datepicker";
-
+import { FaFileExport } from "react-icons/fa"; // Importing an icon for export button
 function Rtable() {
   const [filteredRecords, setFilteredRecords] = useState([]);
 
@@ -86,7 +86,7 @@ function Rtable() {
       width: "150px", // Same as before
     },
     {
-      name: "Total Billed", // Billed amount in pesos
+      name: "Bill Amount", // Billed amount in pesos
       selector: (row) => row.totalBilled,
       sortable: true,
       width: "140px", // Shortened label and adjusted width
@@ -120,11 +120,34 @@ function Rtable() {
   }
 
   const customStyles = {
+    table: {
+      style: {
+        border: "1px solid #ddd",
+        borderRadius: "8px",
+        overflow: "hidden",
+      },
+    },
     headCells: {
       style: {
         fontWeight: "bold",
-        color: "dark",
-        fontSize: "10px",
+        backgroundColor: "#1F702C",
+        color: "white",
+        fontSize: "12px",
+      },
+    },
+    rows: {
+      style: {
+        minHeight: "45px",
+        "&:hover": { backgroundColor: "#f1f1f1" },
+      },
+    },
+    pagination: {
+      style: {
+        border: "none",
+        fontSize: "14px",
+        color: "#000",
+        backgroundColor: "#f7f7f7",
+        minHeight: "50px",
       },
     },
   };
@@ -166,33 +189,33 @@ function Rtable() {
       }}
     >
       <Sidebar role={usertype} />
-      <main className="col-md-9 ms-sm-auto col-lg-10 px-md-3">
+      <main className="flex-grow-1 ms-sm-auto px-md-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded">
           <h1 className="h2">Summary of Collection</h1>
+          <button
+            onClick={exportToExcel}
+            className="btn btn-success d-flex align-items-center"
+          >
+            <FaFileExport className="me-2" /> Export PDF
+          </button>
         </div>
-        <div className="row">
-          <div className="mb-3 col-2">
+        <div className="row mb-3">
+          <div className="col-3">
+            <input
+              type="text"
+              placeholder="Search consumer"
+              className="form-control"
+            />
+          </div>
+          <div className="col-2">
             <DatePicker
               selected={selectedMonth}
               onChange={(date) => setSelectedMonth(date)}
               dateFormat="MMMM yyyy"
               showMonthYearPicker // Limit selection to month and year
               placeholderText="Select Month"
-              className="date-input"
+              className="form-control"
             />
-          </div>
-          <div className="mb-3 col-5">
-            <input
-              type="text"
-              placeholder="Search consumer"
-              className="form-control d-inline-block w-auto"
-            />
-          </div>
-          <div className="mb-3 col-5 text-end">
-            <button onClick={exportToExcel} className="btn btn-primary">
-              <i className="bi bi-file-earmark-arrow-down-fill mx-1"></i>
-              Export to Excel
-            </button>
           </div>
         </div>
 

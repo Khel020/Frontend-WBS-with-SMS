@@ -2,9 +2,17 @@ import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 import Sidebar from "../../components/Sidebar";
 import * as XLSX from "xlsx";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { FaFileExport } from "react-icons/fa"; // Importing an icon for export button
 
 function Rtable() {
   const [records, setRecords] = useState([]);
+  const [filteredRecords, setFilteredRecords] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedGroup, setSelectedGroup] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null); // For month-year selection
+
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
@@ -15,10 +23,15 @@ function Rtable() {
       if (response) {
         const data = await response.json();
         setRecords(data);
+        setFilteredRecords(data);
       }
     };
     fetchCustomers();
   }, [backend]);
+
+  useEffect(() => {
+    filterRecords();
+  }, [searchTerm, selectedGroup, selectedDate]);
 
   function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -28,18 +41,71 @@ function Rtable() {
     });
   }
 
+  const filterRecords = () => {
+    let filtered = records;
+
+    // Filter by search term (name)
+    if (searchTerm) {
+      filtered = filtered.filter((record) =>
+        record.accountName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filter by group
+    if (selectedGroup) {
+      filtered = filtered.filter(
+        (record) => record.client_type === selectedGroup
+      );
+    }
+
+    // Filter by month and year
+    if (selectedDate) {
+      const selectedMonth = selectedDate.getMonth();
+      const selectedYear = selectedDate.getFullYear();
+
+      filtered = filtered.filter((record) => {
+        const registrationDate = new Date(record.install_date);
+        return (
+          registrationDate.getMonth() === selectedMonth &&
+          registrationDate.getFullYear() === selectedYear
+        );
+      });
+    }
+
+    setFilteredRecords(filtered);
+  };
+
   const columns = [
     {
       name: "Acc No.",
       selector: (row) => row.acc_num,
       sortable: true,
-      width: "150px",
+      width: "153px",
     },
     {
       name: "Name",
-      selector: (row) => row.accountName,
+      selector: (row) => (
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {row.status && (
+            <span
+              className={`badge  border mx-2  rounded-pill ${
+                row.status === "Active"
+                  ? "bg-success-subtle border-success-subtle text-success-emphasis "
+                  : row.status === "Inactive"
+                  ? "bg-danger-subtle border-danger-subtle text-danger-emphasis "
+                  : row.status === "Pending"
+                  ? "bg-warning-subtle border-warning-subtle text-warning-emphasis "
+                  : "bg-secondary"
+              }`}
+            >
+              {row.status}
+            </span>
+          )}
+          <span>{row.accountName}</span>
+        </div>
+      ),
       sortable: true,
-      width: "200px",
+      width: "250px",
     },
     {
       name: "Group",
@@ -51,39 +117,42 @@ function Rtable() {
       name: "Address",
       selector: (row) => row.c_address,
       sortable: true,
-      width: "200px",
-    },
-    {
-      name: "Status",
-      selector: (row) => row.status,
-      sortable: true,
-      width: "150px",
+      width: "300px",
     },
     {
       name: "Date of Registration",
       selector: (row) => formatDate(row.install_date),
       sortable: true,
-      width: "200px",
+      width: "213px",
     },
   ];
 
   const customStyles = {
-    table: { style: { border: "1px solid #ddd" } },
+    table: {
+      style: {
+        border: "1px solid #ddd",
+        borderRadius: "8px",
+        overflow: "hidden",
+      },
+    },
     headCells: {
       style: {
         fontWeight: "bold",
-        backgroundColor: "#61b390",
-        color: "dark",
-        fontSize: "10px",
+        backgroundColor: "#1F702C",
+        color: "white",
+        fontSize: "12px",
       },
     },
     rows: {
-      style: { minHeight: "45px", "&:hover": { backgroundColor: "#f1f1f1" } },
+      style: {
+        minHeight: "45px",
+        "&:hover": { backgroundColor: "#f1f1f1" },
+      },
     },
     pagination: {
       style: {
         border: "none",
-        fontSize: "13px",
+        fontSize: "14px",
         color: "#000",
         backgroundColor: "#f7f7f7",
         minHeight: "50px",
@@ -93,7 +162,7 @@ function Rtable() {
 
   const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(
-      records.map((record) => ({
+      filteredRecords.map((record) => ({
         "Acc No.": record.acc_num,
         Name: record.accountName,
         Group: record.client_type,
@@ -110,33 +179,66 @@ function Rtable() {
   return (
     <div
       className="userlist d-flex flex-column flex-md-row"
-      style={{ backgroundColor: "white", height: "100vh", maxHeight: "100vh" }}
+      style={{
+        backgroundColor: "#f9f9f9",
+        height: "100vh",
+        maxHeight: "100vh",
+      }}
     >
       <Sidebar role={usertype} />
-      <main className="col-md-9 ms-sm-auto col-lg-10 px-md-3">
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded ">
+      <main className="flex-grow-1 ms-sm-auto px-md-4">
+        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded">
           <h1 className="h2">Customer Report</h1>
+          <button
+            onClick={exportToExcel}
+            className="btn btn-success d-flex align-items-center"
+          >
+            <FaFileExport className="me-2" /> Export PDF
+          </button>
         </div>
-        <div className="row">
-          <div className="mb-3 col-6">
+        <div className="row mb-3">
+          <div className="col-3">
             <input
               type="text"
-              placeholder="Filter by name"
-              className="form-control d-inline-block w-auto"
+              placeholder="Search consumer"
+              className="form-control"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="mb-3 col-6 text-end">
-            <button onClick={exportToExcel} className="btn btn-primary">
-              Export to Excel
-            </button>
+          <div className="col-2">
+            <select
+              className="form-select"
+              value={selectedGroup}
+              onChange={(e) => setSelectedGroup(e.target.value)}
+            >
+              <option value="">Select Group</option>
+              <option value="Residential">Residential</option>
+              <option value="Government">Government</option>
+              <option value="Industrial">Industrial</option>
+              <option value="Bulk">Bulk</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Commercial_A">Commercial_A</option>
+              <option value="Commercial_B">Commercial_B</option>
+              <option value="Commercial_C">Commercial_C</option>
+            </select>
+          </div>
+          <div className="col-7 text-end">
+            <DatePicker
+              selected={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              showMonthYearPicker
+              dateFormat="MM/yyyy"
+              placeholderText="Select Month/Year"
+              className="form-control"
+            />
           </div>
         </div>
 
         <DataTable
           columns={columns}
-          data={records}
+          data={filteredRecords}
           selectableRows
-          fixedHeader
           pagination
           customStyles={customStyles}
         />
