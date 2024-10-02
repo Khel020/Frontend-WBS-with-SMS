@@ -3,10 +3,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Button } from "react-bootstrap";
 import Sidebar from "../../components/Sidebar";
-import DataTable, { defaultThemes } from "react-data-table-component";
-import axios from "axios"; // Assuming you'll fetch data using axios
+import DataTable from "react-data-table-component";
+import axios from "axios";
 import * as XLSX from "xlsx";
-
+import { AiOutlinePoweroff, AiOutlineReload } from "react-icons/ai";
+import { FaFileExport } from "react-icons/fa"; // Importing an icon for export button
 const ForDisconnection = () => {
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
@@ -31,56 +32,95 @@ const ForDisconnection = () => {
       "Nov",
       "Dec",
     ];
-    const month = monthNames[d.getMonth()]; // Get month name
-    const day = String(d.getDate()).padStart(2, "0"); // Pad the day to 2 digits
+    const month = monthNames[d.getMonth()];
+    const day = String(d.getDate()).padStart(2, "0");
     return `${month} ${day}, ${year}`;
   };
 
-  // Columns for disconnection accounts table
   const columns = [
     {
       name: "Account No.",
       selector: (row) => row.acc_num,
       sortable: true,
-      width: "150px",
     },
     {
       name: "Account Name",
       selector: (row) => row.accountName,
       sortable: true,
-      width: "200px",
     },
     {
-      name: "Last Bill Date",
-      selector: (row) => formatDate(row.last_billDate),
+      name: "Disconnection Date",
+      selector: (row) => formatDate(row.dc_date),
       sortable: true,
-      width: "200px",
     },
     {
       name: "Status",
       selector: (row) => row.disconnection_status,
       sortable: true,
-      width: "200px",
     },
     {
       name: "Total Balance",
       selector: (row) =>
         row.totalBalance ? `₱${row.totalBalance.toFixed(2)}` : "₱0.00",
       sortable: true,
-      width: "200px",
     },
     {
       name: "Action",
       cell: (row) => (
         <div className="d-flex">
-          <button className="btn btn-outline-success btn-sm ms-2">
-            View Details
+          <button
+            className="btn btn-outline-danger btn-sm ms-2"
+            onClick={() => handleDisconnect(row.acc_num)}
+          >
+            <AiOutlinePoweroff size={20} className="me-1" />
+          </button>
+          <button
+            className="btn btn-outline-success btn-sm ms-2"
+            onClick={() => handleReconnect(row.acc_num)}
+          >
+            <AiOutlineReload size={20} className="me-1" />
           </button>
         </div>
       ),
-      width: "180px",
     },
   ];
+
+  // Expandable row component
+  const ExpandedRow = ({ data }) => (
+    <div
+      className="p-3"
+      style={{
+        backgroundColor: "#f9f9f9",
+        border: "1px solid #ddd",
+        borderRadius: "5px",
+      }}
+    >
+      <div className="row">
+        <div className="col-sm-6">
+          <p>
+            <strong>Address:</strong> {data.c_address}
+          </p>
+          <p>
+            <strong>Contact Number:</strong> {data.contact}
+          </p>
+          <p>
+            <strong>Meter Number:</strong> {data.meter_num}
+          </p>
+        </div>
+        <div className="col-sm-6">
+          <p>
+            <strong>Installation Date:</strong> {formatDate(data.install_date)}
+          </p>
+          <p>
+            <strong>Activation Date:</strong> {formatDate(data.activation_date)}
+          </p>
+          <p>
+            <strong>Client Type:</strong> {data.client_type}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 
   const customStyles = {
     table: {
@@ -104,6 +144,19 @@ const ForDisconnection = () => {
         "&:hover": { backgroundColor: "#f1f1f1" },
       },
     },
+    expandableRows: {
+      style: {
+        backgroundColor: "#f9f9f9", // Background color for the expandable row
+      },
+    },
+    expandableRowsHeader: {
+      style: {
+        backgroundColor: "#1F702C", // Header background color
+        color: "white", // Header text color
+        fontWeight: "bold",
+        padding: "10px",
+      },
+    },
     pagination: {
       style: {
         border: "none",
@@ -115,7 +168,6 @@ const ForDisconnection = () => {
     },
   };
 
-  // Fetch disconnection accounts from backend
   useEffect(() => {
     const fetchDisconnectionAccounts = async () => {
       try {
@@ -155,6 +207,16 @@ const ForDisconnection = () => {
     XLSX.writeFile(workbook, fileName);
   };
 
+  const handleDisconnect = (accNum) => {
+    // Implement your disconnect logic here
+    console.log("Disconnecting account:", accNum);
+  };
+
+  const handleReconnect = (accNum) => {
+    // Implement your reconnect logic here
+    console.log("Reconnecting account:", accNum);
+  };
+
   return (
     <div
       className="d-flex flex-column flex-md-row"
@@ -169,6 +231,12 @@ const ForDisconnection = () => {
       <main className="flex-grow-1 ms-sm-auto px-md-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
           <h1 className="h2">For Disconnection</h1>
+          <button
+            onClick={handleExport}
+            className="btn btn-success d-flex align-items-center"
+          >
+            <FaFileExport className="me-2" /> Export Excel
+          </button>
         </div>
         <div className="row mb-3">
           <div className="col-9 d-flex align-items-center">
@@ -180,12 +248,7 @@ const ForDisconnection = () => {
               className="form-control"
             />
           </div>
-          <div className="col-3 d-flex justify-content-end">
-            <button className="btn btn-primary" onClick={handleExport}>
-              <i className="bi bi-file-earmark-arrow-down-fill mx-1"></i>
-              Export to Excel
-            </button>
-          </div>
+          <div className="col-3 d-flex justify-content-end"></div>
         </div>
 
         <DataTable
@@ -193,6 +256,8 @@ const ForDisconnection = () => {
           data={disconnectionAccounts}
           pagination
           striped
+          expandableRows
+          expandableRowsComponent={ExpandedRow} // Set the expandable row component here
           customStyles={customStyles}
         />
 

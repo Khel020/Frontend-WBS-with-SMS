@@ -364,7 +364,6 @@ const CustomerTbl = () => {
           responsive
           fixedHeader
           highlightOnHover
-          noDataComponent={<div className="text-danger">No records found</div>}
         />
       </div>
 
@@ -587,6 +586,7 @@ const CustomerTbl = () => {
                     required
                     value={pipe_size}
                     onChange={(e) => setPipe(e.target.value)}
+                    disabled
                   >
                     <option value="" disabled>
                       Select pipe size

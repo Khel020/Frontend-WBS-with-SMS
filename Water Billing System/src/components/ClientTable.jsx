@@ -39,8 +39,8 @@ const Table = () => {
   const [billAmount, setBillAmount] = useState("");
   const [penaltyCharge, setTotalPenalty] = useState("");
   const [balance, setTotalBalance] = useState("");
-
-  const [paymentAmount, setPayment] = useState("");
+  const [amountPaid, setAmountPaid] = useState("");
+  const [tendered, setTendered] = useState("");
   const [p_date, setPdate] = useState(new Date().toISOString().split("T")[0]);
   const [address, setAddress] = useState("");
   const [totalChange, setTotalChange] = useState("");
@@ -177,6 +177,7 @@ const Table = () => {
           setAddress(data.address);
           setTotalPenalty(data.totalPenalty);
           setArrears(data.arrears);
+          setAmountPaid(data.amountPaid);
           setBillAmount(data.billAmount);
           setTotalBalance(
             data.totalAmountDue && data.totalBalance
@@ -205,19 +206,19 @@ const Table = () => {
   };
 
   useEffect(() => {
-    CalculateChange(paymentAmount);
-  }, [paymentAmount, advTotalAmount]);
+    CalculateChange(tendered);
+  }, [tendered, advTotalAmount]);
 
   const handlePaymentAmountChange = (e) => {
     const amount = parseFloat(e.target.value);
     console.log("Setting payment amount to:", amount);
-    setPayment(amount);
+    setTendered(amount);
     CalculateChange(amount); // Pass the latest amount directly
   };
   const handleAdvancePaymentChange = (e) => {
     const advancePayment = parseFloat(e.target.value);
     setAdvance(advancePayment);
-    CalculateChange(paymentAmount); // Recalculate change with the updated advance payment
+    CalculateChange(tendered); // Recalculate change with the updated advance payment
   };
   const CalculateChange = async (amount) => {
     if (amount) {
@@ -225,7 +226,7 @@ const Table = () => {
         // Prepare the payload for the request
         const payload = {
           acc_num: acc_num,
-          paymentAmount: amount,
+          tendered: amount,
         };
 
         console.log("Data to calculate change:", payload);
@@ -288,14 +289,24 @@ const Table = () => {
   const handleSubmitPay = async (e) => {
     e.preventDefault();
 
-    if (!paymentAmount || isNaN(paymentAmount) || paymentAmount <= 0) {
+    // If no valid tendered amount or balance
+    if (!tendered || isNaN(tendered) || tendered <= 0) {
       toast.warn("Please enter a valid payment amount.");
       return;
     }
+
+    // If no outstanding balance
     if (balance <= 0) {
       toast.warn("No outstanding balance.");
       return;
     }
+
+    // Combine tendered amount and amountPaid if there's an advance payment
+    const totalTendered = parseFloat(
+      (parseFloat(amountPaid) || 0) + (parseFloat(tendered) || 0)
+    ).toFixed(2);
+
+    // Create the payment object
     const newPayment = {
       billNo,
       acc_num,
@@ -304,7 +315,7 @@ const Table = () => {
       arrears,
       address,
       balance,
-      paymentAmount,
+      tendered: totalTendered, // Use the combined amount here
       advTotalAmount,
       totalChange,
     };
@@ -324,12 +335,13 @@ const Table = () => {
       if (result.success) {
         const paymentData = result.data[0]; // Assuming the first object is what you need
 
+        // Set the payment details to state
         setDetails({
           acc_number: paymentData.paymentResult.acc_num || "N/A",
           name: paymentData.paymentResult.accountName || "N/A",
           balance: paymentData.paymentResult.balance || "0",
           address: paymentData.paymentResult.address || "0",
-          amountpaid: paymentAmount,
+          amountpaid: totalTendered, // Use totalTendered here for display
           paymentDate: p_date,
           change: totalChange || "0",
           OR_NUM: paymentData.OR_NUM,
@@ -339,12 +351,14 @@ const Table = () => {
         setAccName(paymentData.accountName || " ");
         setTotalPenalty(paymentData.paid || "0");
         setTotalBalance(paymentData.balance || "0");
-        setPayment(paymentData.change || "0");
+        setTendered(paymentData.change || "0");
         setPdate(new Date().toLocaleDateString());
 
         toast.success(result.message || "Payment successful", {
           autoClose: 1000, // Auto close after 1 second
         });
+
+        // Trigger print after 1 second delay
         setTimeout(() => {
           handlePrint();
         }, 1000);
@@ -356,6 +370,7 @@ const Table = () => {
       toast.error("Request failed");
     }
   };
+
   const formatDate = (date) => {
     const d = new Date(date);
     const year = d.getFullYear();
@@ -397,6 +412,9 @@ const Table = () => {
     }
   };
 
+  const onChange = async (e) => {
+    setAccounts(e.target.value);
+  };
   if (!clients) {
     return (
       <div className="text-danger">
@@ -604,20 +622,77 @@ const Table = () => {
         </Modal.Header>
         <Modal.Body>
           <div className="row">
-            <div className="col-8">
+            <div className="col-12 col-md-8">
               <Form.Label>Search Account:</Form.Label>
-              <div className="d-flex">
+              <div className="d-flex position-relative">
                 <Form.Control
                   type="text"
                   name="account"
                   placeholder="Account Number or Name"
                   value={account}
-                  onChange={(e) => setAccounts(e.target.value)}
-                  style={{ width: "100%" }}
+                  onChange={onChange}
+                  style={{
+                    borderRadius: "5px",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    borderColor: "#ced4da",
+                  }}
                 />
-                <Button variant="primary" onClick={fetchData} className="ms-2">
+                <Button
+                  variant="primary"
+                  onClick={fetchData}
+                  className="ms-2"
+                  style={{
+                    borderRadius: "5px",
+                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                  }}
+                >
                   Search
                 </Button>
+              </div>
+
+              <div
+                style={{
+                  display: account ? "block" : "none", // Show suggestions only if there's input
+                  position: "absolute",
+                  minWidth: "225px",
+                  maxHeight: "200px", // Limit height for scroll
+                  overflowY: "auto", // Scroll if suggestions exceed height
+                  backgroundColor: "white",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  zIndex: "1",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  marginTop: "5px", // Add space between input and suggestions
+                }}
+              >
+                {clients
+                  .filter(
+                    (name) =>
+                      name.accountName
+                        .toLowerCase()
+                        .includes(account.toLowerCase()) && // Use includes for flexible search
+                      name.accountName !== account
+                  )
+                  .slice(0, 5)
+                  .map((name) => (
+                    <div
+                      key={name._id}
+                      onClick={() => setAccounts(name.accountName)}
+                      style={{
+                        padding: "10px",
+                        cursor: "pointer",
+                        transition: "background-color 0.2s",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#ADD8E6")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "white")
+                      }
+                    >
+                      {name.accountName}
+                    </div>
+                  ))}
               </div>
             </div>
           </div>
@@ -719,7 +794,7 @@ const Table = () => {
                     type="number"
                     placeholder="Enter amount"
                     step="0.01"
-                    value={paymentAmount}
+                    value={tendered}
                     onChange={handlePaymentAmountChange}
                     style={{ color: "#333" }} // Removed fontWeight
                   />

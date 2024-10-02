@@ -266,7 +266,6 @@ function BillTable() {
         customStyles={customStyles}
         pagination
         fixedHeaderScrollHeight="400px"
-        fixedHeader
         columns={columns}
         data={filteredBills}
         responsive
@@ -277,75 +276,95 @@ function BillTable() {
         onHide={handleClose}
         backdrop="static"
         keyboard={false}
+        centered
       >
-        <Modal.Header closeButton>
-          <Modal.Title>Billing Statement</Modal.Title>
+        <Modal.Header closeButton className="bg-primary">
+          <Modal.Title className="text-white">Billing Statement</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {billdetails.length > 0 ? (
             billdetails.map((bill) => (
-              <div key={bill._id} className="mb-4">
-                <h5 className="mb-3  text-center text-primary"></h5>
-                <ListGroup variant="flush">
-                  <ListGroup.Item>
-                    <strong>Bill Number:</strong> {bill.billNumber}
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <strong>Account Name:</strong> {bill.accountName}
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <strong>Present Reading:</strong> {bill.present_read}
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <strong>Previous Reading:</strong> {bill.prev_read}
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <strong>Consumption:</strong> {bill.consumption}
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <strong>Bill Amount:</strong> {bill.currentBill}
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <strong>Arrears:</strong> {bill.arrears}
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <strong>Amount Paid:</strong> {bill.amountPaid}
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <strong>Penalty Charge:</strong> {bill.p_charge}
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <strong>Payment Status:</strong>{" "}
-                    <span
-                      className={
-                        bill.payment_status === "Paid"
-                          ? "text-success"
-                          : "text-warning"
-                      }
-                    >
-                      {bill.payment_status}
-                    </span>
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <strong>Remarks:</strong> <span> {bill.remarks}</span>
-                  </ListGroup.Item>
-                </ListGroup>
+              <div key={bill._id} className="mb-4 p-3 ">
+                {/* Bill Information Section */}
+                <div className="mb-4">
+                  <h6 className="text-muted">Billing Information</h6>
+                  <ListGroup variant="flush">
+                    <ListGroup.Item>
+                      <strong>Bill Number:</strong> {bill.billNumber}
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <strong>Account Name:</strong> {bill.accountName}
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <strong>Payment Status:</strong>{" "}
+                      <span
+                        className={
+                          bill.payment_status === "Paid"
+                            ? "text-success"
+                            : "text-warning"
+                        }
+                      >
+                        {bill.payment_status}
+                      </span>
+                    </ListGroup.Item>
+                  </ListGroup>
+                </div>
+
+                {/* Meter Reading Section */}
+                <div className="mb-4">
+                  <h6 className="text-muted">Meter Reading</h6>
+                  <ListGroup variant="flush">
+                    <ListGroup.Item>
+                      <strong>Present Reading:</strong> {bill.present_read} m³
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <strong>Previous Reading:</strong> {bill.prev_read} m³
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <strong>Consumption:</strong> {bill.consumption} m³
+                    </ListGroup.Item>
+                  </ListGroup>
+                </div>
+
+                {/* Financial Details Section */}
+                <div className="mb-4">
+                  <h6 className="text-muted">Financial Details</h6>
+                  <ListGroup variant="flush">
+                    <ListGroup.Item>
+                      <strong>Bill Amount:</strong> ₱
+                      {bill.currentBill.toFixed(2)}
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <strong>Arrears:</strong> ₱{bill.arrears.toFixed(2)}
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <strong>Amount Paid:</strong> ₱
+                      {bill.amountPaid.toFixed(2)}
+                    </ListGroup.Item>
+                    <ListGroup.Item>
+                      <strong>Penalty Charge:</strong> ₱
+                      {bill.p_charge.toFixed(2)}
+                    </ListGroup.Item>
+                  </ListGroup>
+                </div>
+
+                {/* Additional Information Section */}
+                <div className="">
+                  <h6 className="text-muted">Additional Information</h6>
+                  <ListGroup variant="flush">
+                    <ListGroup.Item>
+                      <strong>Remarks:</strong> {bill.remarks || "N/A"}
+                    </ListGroup.Item>
+                  </ListGroup>
+                </div>
               </div>
             ))
           ) : (
-            <p className="text-muted">
+            <p className="text-muted text-center">
               No billing information is available at this time.
             </p>
           )}
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Acknowledge
-          </Button>
-        </Modal.Footer>
       </Modal>
     </div>
   );

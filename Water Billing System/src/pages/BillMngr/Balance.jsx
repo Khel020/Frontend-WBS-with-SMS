@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import * as XLSX from "xlsx";
+import { FaFileExport } from "react-icons/fa"; // Importing an icon for export button
 const DTransacReport = () => {
   const [filteredRecords, setFilteredRecords] = useState([]);
   const [records, setRecords] = useState([]);
@@ -219,6 +220,12 @@ const DTransacReport = () => {
       <main className="flex-grow-1 ms-sm-auto px-md-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
           <h1 className="h2">Consumers with Outstanding Balances</h1>
+          <button
+            onClick={exportToExcel}
+            className="btn btn-success d-flex align-items-center"
+          >
+            <FaFileExport className="me-2" /> Export Excel
+          </button>
         </div>
         <div className="row mb-3">
           <div className="col-9 d-flex align-items-center">
@@ -241,12 +248,6 @@ const DTransacReport = () => {
                 onChange={handleSearchChange}
               />
             </div>
-          </div>
-          <div className="col-3 d-flex justify-content-end">
-            <button onClick={exportToExcel} className="btn btn-primary">
-              <i className="bi bi-file-earmark-arrow-down-fill mx-1"></i>
-              Export to Excel
-            </button>
           </div>
         </div>
         <DataTable

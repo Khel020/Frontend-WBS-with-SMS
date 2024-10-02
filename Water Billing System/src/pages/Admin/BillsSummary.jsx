@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DataTable, { defaultThemes } from "react-data-table-component";
+import DataTable from "react-data-table-component";
 import Sidebar from "../../components/Sidebar";
 import DatePicker from "react-datepicker";
 import { FaFileExport } from "react-icons/fa"; // Importing an icon for export button
@@ -11,8 +11,8 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
 } from "recharts";
+import * as XLSX from "xlsx"; // Importing XLSX for exporting
 
 function BillsSummary() {
   const [Summary, setSummary] = useState([]);
@@ -46,8 +46,6 @@ function BillsSummary() {
           1
         ).toISOString();
 
-        console.log("endOfMonth", endOfMonth);
-        console.log("startOfMonth", startOfMonth);
         try {
           const response = await fetch(
             `${backend}/admin/billSummary?startDate=${encodeURIComponent(
@@ -87,7 +85,7 @@ function BillsSummary() {
       cell: (row) => `${row.totalConsumption} m³`,
     },
     {
-      name: "Total Amount Billed ",
+      name: "Total Amount Billed",
       selector: (row) => parseFloat(row.totalBilled).toFixed(2),
       sortable: true,
     },
@@ -136,6 +134,14 @@ function BillsSummary() {
     },
   };
 
+  // Function to handle export to Excel
+  const handleExport = () => {
+    const worksheet = XLSX.utils.json_to_sheet(Summary);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Bill Summary");
+    XLSX.writeFile(workbook, "bill_summary.xlsx");
+  };
+
   return (
     <div
       className="userlist d-flex flex-column flex-md-row"
@@ -145,7 +151,10 @@ function BillsSummary() {
       <main className="flex-grow-1 ms-sm-auto px-md-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
           <h1 className="h2">Summary of Bills</h1>
-          <button className="btn btn-success d-flex align-items-center">
+          <button
+            className="btn btn-success d-flex align-items-center"
+            onClick={handleExport} // Add the click handler for exporting
+          >
             <FaFileExport className="me-2" /> Export Excel
           </button>
         </div>
