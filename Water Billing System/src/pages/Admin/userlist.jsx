@@ -215,19 +215,16 @@ function Userlist() {
       name: "Date Created",
       sortable: true,
       selector: (row) => formatDate(row.dateCreated),
-      width: "150px", // Adjust width as needed
     },
     {
       name: "Email.",
       sortable: true,
       selector: (row) => row.email,
-      width: "250px", // Adjust width as needed
     },
     {
       name: "Contact No.",
       sortable: true,
       selector: (row) => row.contact,
-      width: "150px", // Adjust width as needed
     },
     {
       name: "Role",
@@ -238,7 +235,7 @@ function Userlist() {
           : row.usertype === "admin"
           ? "Admin"
           : "Biller",
-      width: "110px", // Adjust width as needed
+      width: "100px", // Adjust width as needed
     },
     {
       name: "Status",
@@ -282,7 +279,6 @@ function Userlist() {
           ></i>
         </div>
       ),
-      width: "140px", // Adjust width as needed
     },
   ];
   function formatDate(dateString) {

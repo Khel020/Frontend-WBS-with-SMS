@@ -38,14 +38,16 @@ function BillsSummary() {
         const startOfMonth = new Date(
           selectedMonth.getFullYear(),
           selectedMonth.getMonth(),
-          1
+          2
         ).toISOString();
         const endOfMonth = new Date(
           selectedMonth.getFullYear(),
           selectedMonth.getMonth() + 1,
-          0
+          1
         ).toISOString();
 
+        console.log("endOfMonth", endOfMonth);
+        console.log("startOfMonth", startOfMonth);
         try {
           const response = await fetch(
             `${backend}/admin/billSummary?startDate=${encodeURIComponent(
@@ -144,12 +146,12 @@ function BillsSummary() {
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
           <h1 className="h2">Summary of Bills</h1>
           <button className="btn btn-success d-flex align-items-center">
-            <FaFileExport className="me-2" /> Export PDF
+            <FaFileExport className="me-2" /> Export Excel
           </button>
         </div>
         <div className="d-flex align-items-center justify-content-between me-2 mb-3">
           <div className="d-flex align-items-center">
-            <label className="mx-2">Billing Period:</label>
+            <label className="mx-2">For the month of:</label>
             <DatePicker
               selected={selectedMonth}
               onChange={(date) => setSelectedMonth(date)}
@@ -161,17 +163,15 @@ function BillsSummary() {
           </div>
         </div>
 
-        {/* DataTable */}
         <DataTable
           columns={columns}
           data={Summary}
+          fixedHeaderScrollHeight="400px"
           responsive
-          pagination
           customStyles={customStyles}
         />
         {/* BarChart for visualizing total billed per category */}
-        <h2 className="mt-4">Total Billed by Category</h2>
-        <div style={{ width: "100%", height: 210, overflow: "hidden" }}>
+        <div style={{ width: "100%", height: 200, overflow: "hidden" }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={Summary}

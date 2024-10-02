@@ -22,6 +22,7 @@ const Table = () => {
     setShow(false);
     setShowAddBill(false);
   };
+  const [selectedFilter, setSelectedFilter] = useState("");
   const handleShow = () => setShow(true);
   //TODO: GET ALL Consumers
   const backend = import.meta.env.VITE_BACKEND;
@@ -40,7 +41,7 @@ const Table = () => {
   const [balance, setTotalBalance] = useState("");
 
   const [paymentAmount, setPayment] = useState("");
-  const [p_date, setPdate] = useState("");
+  const [p_date, setPdate] = useState(new Date().toISOString().split("T")[0]);
   const [address, setAddress] = useState("");
   const [totalChange, setTotalChange] = useState("");
   const [advTotalAmount, setAdvance] = useState("");
@@ -118,11 +119,22 @@ const Table = () => {
   };
 
   const filteredClients = clients.filter((client) => {
-    return (
-      client.acc_num.includes(search.toLowerCase()) ||
-      client.accountName.toLowerCase().includes(search.toLowerCase()) ||
-      client.client_type.toLowerCase().includes(search.toLowerCase())
-    );
+    let matchesSearch = client.accountName
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    switch (selectedFilter) {
+      case "withBalances":
+        return matchesSearch && client.totalBalance > 0;
+      case "active":
+        return matchesSearch && client.status === "Active";
+      case "inactive":
+        return matchesSearch && client.status === "Inactive";
+      case "pending":
+        return matchesSearch && client.status === "Pending";
+      default:
+        return matchesSearch; // No filter, show all clients
+    }
   });
 
   //TODO: FETCH DATA IF HAS ACC NUM
@@ -452,7 +464,6 @@ const Table = () => {
             </button>
           </Link>
 
-          {/* Updated Add Bill button with a new icon */}
           <button
             className="btn btn-outline-success btn-sm ms-2"
             onClick={() => handleShowAddBill(row)}
@@ -479,12 +490,21 @@ const Table = () => {
         overflow: "hidden",
       },
     },
+    headRow: {
+      style: {
+        position: "sticky",
+        top: 0,
+        zIndex: 10,
+        backgroundColor: "#1F702C", // Consistent header background
+      },
+    },
     headCells: {
       style: {
         fontWeight: "bold",
-        backgroundColor: "#1F702C",
+        backgroundColor: "transparent", // Inherits background from headRow
         color: "white",
         fontSize: "12px",
+        padding: "10px", // Adjust padding for aesthetics
       },
     },
     rows: {
@@ -503,9 +523,11 @@ const Table = () => {
       },
     },
   };
+
   return (
     <div>
       <div className="row">
+        {/* Search Input */}
         <div className="mb-3 col-3">
           <input
             type="text"
@@ -523,6 +545,23 @@ const Table = () => {
             onBlur={(e) => (e.target.style.borderColor = "#ced4da")} // Revert color on blur
           />
         </div>
+
+        {/* Filter Dropdown */}
+        <div className="mb-3 col-3">
+          <select
+            className="form-select"
+            value={selectedFilter}
+            onChange={(e) => setSelectedFilter(e.target.value)}
+          >
+            <option value="">All Clients</option>
+            <option value="withBalances">With Balances</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+            <option value="pending">Pending</option>
+          </select>
+        </div>
+
+        {/* Proceed to Payment Button */}
         <div className="col justify-content-end mb-2 text-end">
           <button
             className="btn btn-success justify-content-end mx-3"
@@ -543,7 +582,6 @@ const Table = () => {
         responsive
         fixedHeader
         highlightOnHover
-        noDataComponent={<div>Loading</div>}
       />
 
       <Modal

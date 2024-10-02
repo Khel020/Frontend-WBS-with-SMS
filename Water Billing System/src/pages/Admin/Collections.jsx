@@ -1,39 +1,42 @@
 import React, { useEffect, useState } from "react";
-import DataTable, { defaultThemes } from "react-data-table-component";
+import DataTable from "react-data-table-component";
 import Sidebar from "../../components/Sidebar";
 import * as XLSX from "xlsx";
 import DatePicker from "react-datepicker";
 import { FaFileExport } from "react-icons/fa"; // Importing an icon for export button
+
 function Rtable() {
   const [filteredRecords, setFilteredRecords] = useState([]);
-
   const [selectedMonth, setSelectedMonth] = useState(() => {
     const now = new Date();
-    return new Date(now.getFullYear(), now.getMonth(), 1);
+    return new Date(now.getFullYear(), now.getMonth(), 1); // Set default to current month
   });
+
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
 
   useEffect(() => {
-    // Check if selectedMonth is available
     if (selectedMonth) {
-      // Calculate the start and end of the month based on selectedMonth
+      console.log("Selected Month:", selectedMonth);
+
+      // Start of the selected month (September 1)
       const startOfMonth = new Date(
         selectedMonth.getFullYear(),
         selectedMonth.getMonth(),
-        1
+        2
       ).toISOString();
       const endOfMonth = new Date(
         selectedMonth.getFullYear(),
         selectedMonth.getMonth() + 1,
-        0
+        1
       ).toISOString();
 
-      // Define the async function to fetch data
+      console.log("endOfMonth", endOfMonth);
+      console.log("startOfMonth", startOfMonth);
+
       const fetchCustomers = async () => {
         try {
-          // Fetch data from the backend
           const response = await fetch(
             `${backend}/admin/collectionSummary?startDate=${encodeURIComponent(
               startOfMonth
@@ -42,72 +45,62 @@ function Rtable() {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
-                authorization: `Bearer ${localStorage.getItem("tkn")}`, // Authorization header
+                authorization: `Bearer ${localStorage.getItem("tkn")}`,
               },
             }
           );
 
-          // Handle non-OK responses
           if (!response.ok) {
             throw new Error("Network response was not ok");
           }
 
-          // Parse the response data
           const data = await response.json();
           console.log("RESPONSE", data);
-          setFilteredRecords(data); // Update state with the fetched data
+          setFilteredRecords(data);
         } catch (error) {
           console.error("Error fetching collection summary:", error);
         }
       };
 
-      // Call the fetch function
       fetchCustomers();
     }
-  }, [selectedMonth, backend]); // Dependency array
+  }, [selectedMonth, backend]);
 
   const columns = [
     {
-      name: "Pay Date", // Shortened label
+      name: "Payment Date",
       selector: (row) => formatDate(row.lastPaymentDate),
       sortable: true,
-      width: "120px", // Reduced width for better fit
     },
     {
-      name: "Acct Name", // Shortened label
+      name: "Acct Name",
       selector: (row) => row.accountName,
       sortable: true,
-      width: "200px", // Reduced width for better fit
     },
     {
       name: "Acct No.",
       selector: (row) => row.acc_num,
       sortable: true,
-      width: "150px", // Same as before
     },
     {
-      name: "Bill Amount", // Billed amount in pesos
+      name: "Bill Amount",
       selector: (row) => row.totalBilled,
       sortable: true,
-      width: "140px", // Shortened label and adjusted width
     },
     {
-      name: "Collected", // Total collected amount
+      name: "Collected",
       selector: (row) => row.totalCollected,
       sortable: true,
-      width: "140px",
     },
     {
-      name: "Outstanding", // Remaining balance
+      name: "Outstanding",
       selector: (row) => row.outstanding,
       sortable: true,
-      width: "140px",
     },
     {
-      name: "Penalties", // Penalty charges if any
+      name: "Penalties",
       selector: (row) => row.p_charge,
       sortable: true,
-      width: "140px",
     },
   ];
 
@@ -153,29 +146,25 @@ function Rtable() {
   };
 
   const exportToExcel = () => {
-    // Format the records for Excel export
     const formattedRecords = filteredRecords.map((record) => ({
-      "Account Number": record.acc_num, // Account number
-      "Account Name": record.accountName, // Name of the account holder
-      "Total Billed": record.totalBilled, // Total billed amount
-      "Total Collected": record.totalCollected, // Total amount collected
-      "Outstanding Balance": record.outstanding, // Outstanding balance
-      "Last Payment Date": formatDate(record.lastPaymentDate), // Most recent payment date
+      "Account Number": record.acc_num,
+      "Account Name": record.accountName,
+      "Total Billed": record.totalBilled,
+      "Total Collected": record.totalCollected,
+      "Outstanding Balance": record.outstanding,
+      "Last Payment Date": formatDate(record.lastPaymentDate),
     }));
 
-    // Create a worksheet from the formatted records
     const worksheet = XLSX.utils.json_to_sheet(formattedRecords);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Collection Summary");
 
-    // Generate file name based on the selected month
     const monthName = selectedMonth.toLocaleString("default", {
       month: "long",
     });
     const year = selectedMonth.getFullYear();
     const fileName = `Collection_Summary_${monthName}_${year}.xlsx`;
 
-    // Write the workbook to a file
     XLSX.writeFile(workbook, fileName);
   };
 
@@ -196,7 +185,7 @@ function Rtable() {
             onClick={exportToExcel}
             className="btn btn-success d-flex align-items-center"
           >
-            <FaFileExport className="me-2" /> Export PDF
+            <FaFileExport className="me-2" /> Export Excel
           </button>
         </div>
         <div className="row mb-3">

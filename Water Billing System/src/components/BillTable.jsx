@@ -265,12 +265,12 @@ function BillTable() {
       <DataTable
         customStyles={customStyles}
         pagination
-        fixedHeaderScrollHeight="520px"
+        fixedHeaderScrollHeight="400px"
+        fixedHeader
         columns={columns}
         data={filteredBills}
         responsive
         highlightOnHover
-        noDataComponent={<div>No data available</div>}
       />
       <Modal
         show={show}

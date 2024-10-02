@@ -30,6 +30,11 @@ const Customers = () => {
 
   const [selectedAccount, setSelectedAccount] = useState(null);
 
+  const [clientStats, setClientStats] = useState({
+    totalClients: 0,
+    activeClients: 0,
+    inactiveClients: 0,
+  });
   useEffect(() => {
     if (selectedAccount) {
       const updatePending = {
@@ -63,6 +68,24 @@ const Customers = () => {
     }
   }, [selectedAccount, backend]); // Dependencies to trigger the effect when values change
 
+  useEffect(() => {
+    const getStatus = async () => {
+      const response = await fetch(`${backend}/biller/status`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+
+        setClientStats(data);
+      } else {
+        toast.error("Error fetching client statistics.");
+      }
+    };
+    getStatus();
+  }, [backend]);
   const handleCloseAccModal = () => setActivation(false);
   const handleShowAccs = () => {
     setActivation(true);
@@ -129,72 +152,127 @@ const Customers = () => {
           </div>
         </div>
 
-        <Row>
-          {/* Accounts for Activation Card */}
-          <Col md={4} className="mb-4">
-            <Card className="dash-card pending-card position-relative">
-              <Card.Body className="dash-card-body d-flex flex-column">
-                <div className="d-flex align-items-center mb-2">
-                  <FaUserPlus
-                    className="me-2"
-                    size={24}
-                    style={{ color: "#0d6efd" }} // Blue color for Activation Icon
-                  />
-                  <span>Accounts for Activation</span>
-                </div>
-                {/* Badge for accounts */}
-                <Badge
-                  className="position-absolute top-0 start-100 translate-middle bg-danger"
-                  style={{ fontSize: "0.75rem" }}
-                  pill
-                >
-                  99+
-                </Badge>
-                <Link
-                  className="mt-auto mb-0 text-end"
-                  onClick={handleShowAccs}
-                  style={{ textDecoration: "none", color: "#007bff" }}
-                >
-                  View Details
-                </Link>
-              </Card.Body>
-            </Card>
-          </Col>
+        <Row className="mb-3">
+          <div className="col">
+            <div
+              className="card total-admin"
+              style={{
+                border: "none",
 
-          {/* Active Consumers Card */}
-          <Col md={4} className="mb-4">
-            <Card className="dash-card active-card">
-              <Card.Body className="dash-card-body d-flex flex-column">
-                <div className="d-flex align-items-center mb-2">
-                  <FaUserCheck
-                    className="me-2"
-                    size={24}
-                    style={{ color: "#28a745" }} // Green color for Active Icon
+                backgroundColor: "#DEF0F7",
+                borderRadius: "15px",
+              }}
+            >
+              <div className="card-body d-flex justify-content-between align-items-center">
+                <div className="d-flex align-items-center">
+                  <FaUserPlus
+                    style={{
+                      fontSize: "24px",
+                      color: "Blue", // Adjusting color for consistency
+                      marginRight: "10px",
+                    }}
                   />
-                  <span>Active Consumers</span>
+                  <h5 className="mt-2">Account for Activation</h5>
                 </div>
-                <p className="dash-card-value mt-auto mb-0 text-end">500</p>
-              </Card.Body>
-            </Card>
-          </Col>
+                <span
+                  className="card-value"
+                  style={{
+                    fontSize: "24px",
+                    color: "#006F56",
+                    marginLeft: "10px",
+                  }}
+                >
+                  <Badge
+                    className="position-absolute top-0 start-100 translate-middle bg-danger"
+                    style={{ fontSize: "0.75rem" }}
+                    pill
+                  >
+                    99+
+                  </Badge>
+
+                  <Link
+                    onClick={handleShowAccs}
+                    style={{ textDecoration: "none", color: "#007bff" }}
+                  >
+                    View Details
+                  </Link>
+                </span>
+              </div>
+            </div>
+          </div>
+          {/* Active Consumers Card */}
+          <div className="col">
+            <div
+              className="card total-admin"
+              style={{
+                border: "none",
+                cursor: "pointer",
+                backgroundColor: "#DEF0F7",
+                borderRadius: "15px",
+              }}
+            >
+              <div className="card-body d-flex justify-content-between align-items-center">
+                <div className="d-flex align-items-center">
+                  <FaUserCheck
+                    style={{
+                      fontSize: "24px",
+                      color: "#4CAF50",
+                      marginRight: "10px",
+                    }}
+                  />
+                  <h5 className="mb-0">Active</h5>
+                </div>
+                <span
+                  className="card-value"
+                  style={{
+                    fontSize: "24px",
+                    color: "#006F56",
+                    marginLeft: "10px",
+                  }}
+                >
+                  {clientStats.activeClients}
+                </span>
+              </div>
+            </div>
+          </div>
 
           {/* Inactive Consumers Card */}
-          <Col md={4} className="mb-4">
-            <Card className="dash-card inactive-card">
-              <Card.Body className="dash-card-body d-flex flex-column">
-                <div className="d-flex align-items-center mb-2">
+          <div className="col">
+            <div
+              className="card total-admin"
+              style={{
+                border: "none",
+                cursor: "pointer",
+                backgroundColor: "#DEF0F7",
+                borderRadius: "15px",
+              }}
+            >
+              <div className="card-body d-flex justify-content-between align-items-center">
+                <div className="d-flex align-items-center">
                   <FaUserTimes
-                    className="me-2"
-                    size={24}
-                    style={{ color: "#dc3545" }} // Red color for Inactive Icon
+                    style={{
+                      fontSize: "24px",
+                      color: "#F44336", // Red color for inactive clients
+                      marginRight: "10px",
+                    }}
                   />
-                  <span>Inactive Consumers</span>
+                  <h5 className="mb-0">Inactive</h5>
                 </div>
-                <p className="dash-card-value mt-auto mb-0 text-end">1200</p>
-              </Card.Body>
-            </Card>
-          </Col>
+                <span
+                  className="card-value"
+                  style={{
+                    fontSize: "24px",
+                    color: "#006F56",
+                    marginLeft: "10px",
+                  }}
+                >
+                  {clientStats.inactiveClients}
+                </span>
+              </div>
+            </div>
+          </div>
         </Row>
+
         <CusTable />
         <Modal
           show={showAcc}

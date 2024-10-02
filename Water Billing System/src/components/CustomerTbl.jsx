@@ -28,6 +28,7 @@ const CustomerTbl = () => {
   const [address, setAddress] = useState("");
   const [meterBrand, setMeterBrand] = useState("");
   const [search, setSearch] = useState("");
+  const [errors, setErrors] = useState("");
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
@@ -60,24 +61,26 @@ const CustomerTbl = () => {
     e.preventDefault();
     if (acc_num) {
       const accountNumber = acc_num;
-      const newClient = {
-        accountNumber,
-        accountName,
-        meter_num,
-        pipe_size,
-        contact,
-        initial_read,
-        address,
-        client_type,
-        install_date,
-        activationDate,
-        meterBrand,
-        installation_fee,
-        meter_installer,
-        zone,
-        seq_num,
-        book,
-      };
+      const newClient = [
+        {
+          accountNumber,
+          accountName,
+          meter_num,
+          pipe_size,
+          contact,
+          initial_read,
+          address,
+          client_type,
+          install_date,
+          activationDate,
+          meterBrand,
+          installation_fee,
+          meter_installer,
+          zone,
+          seq_num,
+          book,
+        },
+      ];
       try {
         const response = await axios.post(
           `${backend}/admin/newclient/`,

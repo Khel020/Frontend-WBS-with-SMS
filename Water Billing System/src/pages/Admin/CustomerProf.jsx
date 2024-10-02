@@ -14,11 +14,7 @@ const CustomerProf = () => {
     client_type: "",
     email: "",
     install_date: "",
-    c_address: {
-      house_num: "",
-      purok: "",
-      brgy: "",
-    },
+    c_address: "",
   });
 
   const [show, setShow] = useState(false);
@@ -31,11 +27,6 @@ const CustomerProf = () => {
   const handleEditModal = (data) => {
     setEditCustomer({
       ...data,
-      c_address: {
-        house_num: data.c_address.house_num || "",
-        purok: data.c_address.purok || "",
-        brgy: data.c_address.brgy || "",
-      },
       install_date: data.install_date
         ? new Date(data.install_date).toISOString().substring(0, 10)
         : "",
@@ -415,52 +406,20 @@ const CustomerProf = () => {
                     value={editCustomer.install_date || ""}
                   />
                 </div>
-                <div className="row mt-3">
-                  <div className="col-md-4">
-                    <label htmlFor="house_num" className="form-label">
-                      House Number
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="house_num"
-                      name="house_num"
-                      placeholder="130"
-                      required
-                      value={editCustomer.c_address?.house_num || ""}
-                      onChange={handleEditValues}
-                    />
-                  </div>
-                  <div className="col-md-4">
-                    <label htmlFor="purok" className="form-label">
-                      Purok
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="purok"
-                      name="purok"
-                      placeholder="4"
-                      required
-                      value={editCustomer.c_address?.purok || ""}
-                      onChange={handleEditValues}
-                    />
-                  </div>
-                  <div className="col-md-4">
-                    <label htmlFor="brgy" className="form-label">
-                      Barangay
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      id="brgy"
-                      name="brgy"
-                      placeholder="Timbayog"
-                      required
-                      value={editCustomer.c_address?.brgy || ""}
-                      onChange={handleEditValues}
-                    />
-                  </div>
+                {/* New Address Input */}
+                <div className="col-md-12">
+                  <label htmlFor="address" className="form-label">
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="address"
+                    name="c_address"
+                    required
+                    value={editCustomer.c_address || ""}
+                    onChange={handleEditValues}
+                  />
                 </div>
 
                 <Modal.Footer>

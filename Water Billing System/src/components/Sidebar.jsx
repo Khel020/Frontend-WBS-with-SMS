@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import Dropdown from "react-bootstrap/Dropdown";
-import { useNavigate } from "react-router-dom";
 import "../styles/sidebar.css";
+
 const Sidebar = ({ role }) => {
   const location = useLocation();
   const [activeLink, setActiveLink] = useState("");
@@ -10,12 +9,6 @@ const Sidebar = ({ role }) => {
   useEffect(() => {
     setActiveLink(location.pathname);
   }, [location]);
-
-  const navigate = useNavigate();
-  const handleLogOut = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
 
   const linkStyle = (path) => ({
     color: activeLink === path ? "#343a40" : "white",
@@ -63,7 +56,7 @@ const Sidebar = ({ role }) => {
                 className="nav-link"
               >
                 <i
-                  className="bi bi-speedometer2"
+                  className="bi bi-house-door"
                   style={iconStyle("/bill-dashboard")}
                 ></i>
                 Dashboard
@@ -76,7 +69,7 @@ const Sidebar = ({ role }) => {
                 className="nav-link"
               >
                 <i
-                  className="bi bi-person-lines-fill"
+                  className="bi bi-person-badge"
                   style={iconStyle("/listclient")}
                 ></i>
                 Consumers
@@ -95,17 +88,32 @@ const Sidebar = ({ role }) => {
                 Billing
               </Link>
             </li>
+            <hr className="text-white " />
+
             <li className="nav-item">
               <Link
-                to="/disconnection"
-                style={linkStyle("/disconnection")}
+                to="/bill-summary"
+                style={linkStyle("/bill-summary")}
                 className="nav-link"
               >
                 <i
-                  className="bi bi-slash-circle"
-                  style={iconStyle("/disconnection")}
+                  className="bi bi-file-earmark-bar-graph"
+                  style={iconStyle("/bill-summary")}
                 ></i>
-                Disconnection
+                Summary of Billing
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/collections"
+                style={linkStyle("/collections")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-file-earmark-check"
+                  style={iconStyle("/collections")}
+                ></i>
+                Summary of Collection
               </Link>
             </li>
             <li className="nav-item">
@@ -114,8 +122,24 @@ const Sidebar = ({ role }) => {
                 style={linkStyle("/balances")}
                 className="nav-link"
               >
-                <i className="bi bi-wallet2" style={iconStyle("/balances")}></i>
+                <i
+                  className="bi bi-file-earmark-person"
+                  style={iconStyle("/balances")}
+                ></i>
                 Outstanding Balance
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/disconnection"
+                style={linkStyle("/disconnection")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-exclamation-circle"
+                  style={iconStyle("/disconnection")}
+                ></i>
+                For Disconnection
               </Link>
             </li>
           </>
@@ -163,44 +187,6 @@ const Sidebar = ({ role }) => {
               </Link>
             </li>
             <li className="nav-item">
-              <>
-                <li className="nav-item dropdown">
-                  <Link
-                    to="/reports"
-                    style={linkStyle("/reports")}
-                    className="nav-link dropdown-toggle"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    <i
-                      className="bi bi-file-earmark-bar-graph"
-                      style={iconStyle("/reports")}
-                    ></i>
-                    Reports
-                  </Link>
-                  <ul className="dropdown-menu dropdown-menu-end">
-                    <li>
-                      <Link to="/bill-summary" className="dropdown-item">
-                        Bill Summary
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/cus_reports" className="dropdown-item">
-                        Customer Reports
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/collections" className="dropdown-item">
-                        Summary of Collection
-                      </Link>
-                    </li>
-                  </ul>
-                </li>
-                {/* Other navigation links */}
-              </>
-              {/* Other navigation links */}
-            </li>
-            <li className="nav-item">
               <Link to="/logs" style={linkStyle("/logs")} className="nav-link">
                 <i
                   className="bi bi-journal-text"
@@ -220,6 +206,48 @@ const Sidebar = ({ role }) => {
                   style={iconStyle("/settings")}
                 ></i>
                 Settings
+              </Link>
+            </li>
+
+            {/* New Reports Section */}
+            <hr className="text-white" />
+            <li className="nav-item">
+              <Link
+                to="/reports"
+                style={linkStyle("/reports")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-file-earmark-bar-graph"
+                  style={iconStyle("/reports")}
+                ></i>
+                Reports
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/reports/usage"
+                style={linkStyle("/reports/usage")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-graph-up"
+                  style={iconStyle("/reports/usage")}
+                ></i>
+                Usage Reports
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/reports/collection"
+                style={linkStyle("/reports/collection")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-graph-down"
+                  style={iconStyle("/reports/collection")}
+                ></i>
+                Collection Reports
               </Link>
             </li>
           </>

@@ -104,6 +104,15 @@ const router = createBrowserRouter(
       <Route path="disconnection" element={<BillerLayout />}>
         <Route index element={<ForDC />} />
       </Route>
+      <Route path="cus_reports" element={<BillerLayout />}>
+        <Route index element={<CusReport />} />
+      </Route>
+      <Route path="bill-summary" element={<BillerLayout />}>
+        <Route index element={<BillSummary />} />
+      </Route>
+      <Route path="collections" element={<BillerLayout />}>
+        <Route index element={<Collections />} />
+      </Route>
       //TODO: Admin ROUTES
       <Route path="admin-dashboard" element={<AdminLayout />}>
         <Route index element={<AdminDash />} />
@@ -116,21 +125,6 @@ const router = createBrowserRouter(
       </Route>
       <Route path="reports" element={<AdminLayout />}>
         <Route index element={<AdminReports />} />
-      </Route>
-      <Route path="reports" element={<AdminLayout />}>
-        <Route index element={<AdminReports />} />
-      </Route>
-      <Route path="cus_reports" element={<AdminLayout />}>
-        <Route index element={<CusReport />} />
-      </Route>
-      <Route path="consumption_rep" element={<AdminLayout />}>
-        <Route index element={<ConsumptionReport />} />
-      </Route>
-      <Route path="bill-summary" element={<AdminLayout />}>
-        <Route index element={<BillSummary />} />
-      </Route>
-      <Route path="collections" element={<AdminLayout />}>
-        <Route index element={<Collections />} />
       </Route>
       <Route path="customers" element={<AdminLayout />}>
         <Route index element={<Customers />} />
