@@ -3,7 +3,7 @@ import DataTable from "react-data-table-component";
 import Sidebar from "../../components/Sidebar";
 import * as XLSX from "xlsx";
 import DatePicker from "react-datepicker";
-import { FaFileExport } from "react-icons/fa"; // Importing an icon for export button
+import { FaFileExport } from "react-icons/fa";
 
 function Rtable() {
   const [filteredRecords, setFilteredRecords] = useState([]);
@@ -18,9 +18,6 @@ function Rtable() {
 
   useEffect(() => {
     if (selectedMonth) {
-      console.log("Selected Month:", selectedMonth);
-
-      // Start of the selected month (September 1)
       const startOfMonth = new Date(
         selectedMonth.getFullYear(),
         selectedMonth.getMonth(),
@@ -31,9 +28,6 @@ function Rtable() {
         selectedMonth.getMonth() + 1,
         1
       ).toISOString();
-
-      console.log("endOfMonth", endOfMonth);
-      console.log("startOfMonth", startOfMonth);
 
       const fetchCustomers = async () => {
         try {
@@ -55,7 +49,6 @@ function Rtable() {
           }
 
           const data = await response.json();
-          console.log("RESPONSE", data);
           setFilteredRecords(data);
         } catch (error) {
           console.error("Error fetching collection summary:", error);
@@ -65,11 +58,10 @@ function Rtable() {
       fetchCustomers();
     }
   }, [selectedMonth, backend]);
-
   const columns = [
     {
       name: "Payment Date",
-      selector: (row) => formatDate(row.lastPaymentDate),
+      selector: (row) => formatDate(row.lastPaymentDate || " "),
       sortable: true,
     },
     {
@@ -84,28 +76,61 @@ function Rtable() {
     },
     {
       name: "Bill Amount",
-      selector: (row) => row.totalBilled,
+      selector: (row) => parseFloat(row.totalBilled).toFixed(2),
       sortable: true,
+      cell: (row) => (
+        <span style={{ color: row.totalBilled > 0 ? "green" : "red" }}>
+          ₱{parseFloat(row.totalBilled).toFixed(2)}
+        </span>
+      ),
     },
     {
       name: "Collected",
-      selector: (row) => row.totalCollected,
+      selector: (row) => parseFloat(row.totalCollected).toFixed(2),
       sortable: true,
+      cell: (row) => (
+        <span
+          style={{
+            color: row.totalCollected >= row.totalBilled ? "blue" : "orange",
+          }}
+        >
+          ₱{parseFloat(row.totalCollected).toFixed(2)}
+        </span>
+      ),
     },
     {
       name: "Outstanding",
-      selector: (row) => row.outstanding,
+      selector: (row) => parseFloat(row.outstanding).toFixed(2),
       sortable: true,
+      cell: (row) => (
+        <span style={{ color: row.outstanding > 0 ? "red" : "black" }}>
+          ₱{parseFloat(row.outstanding).toFixed(2)}
+        </span>
+      ),
     },
     {
       name: "Penalties",
       selector: (row) => row.p_charge,
       sortable: true,
+      cell: (row) => {
+        const penalties = parseFloat(row.p_charge);
+        return <span>₱{isNaN(penalties) ? "0.00" : penalties.toFixed(2)}</span>;
+      },
     },
   ];
 
   function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString("en-US", {
+    // Check if dateString is falsy (null, undefined, empty string)
+    if (!dateString) return ""; // Return an empty string if no date is provided
+
+    // Attempt to create a new Date object
+    const date = new Date(dateString);
+
+    // Check if the date is valid
+    if (isNaN(date)) return ""; // Return an empty string if the date is invalid
+
+    // Format the valid date
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -144,6 +169,31 @@ function Rtable() {
       },
     },
   };
+
+  const calculateTotals = () => {
+    const totalBilled = filteredRecords.reduce(
+      (sum, record) => sum + parseFloat(record.totalBilled || 0),
+      0
+    );
+    const totalCollected = filteredRecords.reduce(
+      (sum, record) => sum + parseFloat(record.totalCollected || 0),
+      0
+    );
+    const totalOutstanding = filteredRecords.reduce(
+      (sum, record) => sum + parseFloat(record.outstanding || 0),
+      0
+    );
+
+    return {
+      acc_num: <strong className="text-success">Total</strong>, // Make "Total" bold
+      totalBilled: totalBilled.toFixed(2),
+      totalCollected: totalCollected.toFixed(2),
+      outstanding: totalOutstanding.toFixed(2),
+      lastPaymentDate: "",
+    };
+  };
+
+  const dataWithTotals = [...filteredRecords, calculateTotals()];
 
   const exportToExcel = () => {
     const formattedRecords = filteredRecords.map((record) => ({
@@ -201,7 +251,7 @@ function Rtable() {
               selected={selectedMonth}
               onChange={(date) => setSelectedMonth(date)}
               dateFormat="MMMM yyyy"
-              showMonthYearPicker // Limit selection to month and year
+              showMonthYearPicker
               placeholderText="Select Month"
               className="form-control"
             />
@@ -211,9 +261,12 @@ function Rtable() {
         <DataTable
           customStyles={customStyles}
           columns={columns}
-          data={filteredRecords} // Use filteredRecords here
+          data={dataWithTotals}
           responsive
           pagination
+          conditionalRowClassName={(row) => {
+            return row.acc_num === "Total" ? "total-row" : ""; // Apply total-row class for total row
+          }}
         />
       </main>
     </div>

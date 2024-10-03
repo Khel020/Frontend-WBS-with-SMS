@@ -173,7 +173,7 @@ const CustomerProf = () => {
                       <strong>Pipe Size:</strong> {customer.pipe_size}
                     </p>
                     <p class="card-text">
-                      <strong>Brand Number:</strong> {customer.brand_num}
+                      <strong>Meter Brand:</strong> {customer.meter_brand}
                     </p>
                   </div>
                 </div>
@@ -230,24 +230,15 @@ const CustomerProf = () => {
                             ? formatDate(customer.last_billDate)
                             : "N/A"}
                         </p>
-                        <p class="card-text">
-                          {/* Dynamically display the next due date */}
-                          <strong>Next Payment Due:</strong>{" "}
-                          {customer.nextDueDate
-                            ? formatDate(customer.nextDueDate)
-                            : "August 30, 2024"}{" "}
-                          {/* Replace with dynamic value */}
-                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
-
                 <div class="row">
                   <div class="col-md-12">
                     <div
                       class="card mb-3 shadow-sm"
-                      style={{ height: "230px", overflow: "hidden" }}
+                      style={{ height: "250px", overflow: "hidden" }}
                     >
                       <div class="card-body">
                         <h6 class="card-title text-primary">

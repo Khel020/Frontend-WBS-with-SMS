@@ -31,48 +31,52 @@ const PaymentHistory = () => {
     };
     fetchPayment();
   }, [acc_num, backend]);
-  function formatDate(dateString) {
-    return new Date(dateString).toLocaleDateString("en-US", {
+  const formatDateTime = (date) => {
+    const options = {
       year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  }
+      month: "short", // Short month format (e.g., Jan)
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true, // Use 12-hour format with AM/PM
+    };
+
+    const formattedDate = new Date(date).toLocaleString("en-US", options); // Use en-US locale for AM/PM formatting
+    return formattedDate.replace(",", ""); // Remove comma if present
+  };
+
   const columns = [
     {
       name: "OR No.",
       selector: (row) => row.OR_NUM,
       sortable: true,
-      width: "120px", // Adjusted width
+      width: "100px",
     },
     {
       name: "Payment Date",
-      selector: (row) => formatDate(row.paymentDate),
+      selector: (row) => formatDateTime(row.paymentDate),
       sortable: true,
-      width: "160px", // Adjusted width
+      width: "200px",
     },
     {
       name: "Total Due",
       selector: (row) => `₱${row.amountDue.toFixed(2)}`,
-      width: "150px", // Adjusted width
+      width: "150px",
     },
     {
       name: "Payment Received",
       selector: (row) => `₱${row.tendered.toFixed(2)}`,
       sortable: true,
-      width: "200px", // Adjusted width
     },
     {
       name: "Notes",
       selector: (row) => row.notes || "N/A", // Default to "N/A" if no notes exist
       sortable: false,
-      width: "150px", // Adjusted width
     },
     {
       name: "Change Given",
       selector: (row) => `₱${row.change.toFixed(2)}`,
       sortable: true,
-      width: "180px", // Adjusted width
     },
 
     {

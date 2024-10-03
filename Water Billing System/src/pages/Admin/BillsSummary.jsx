@@ -76,8 +76,18 @@ function BillsSummary() {
   }, [selectedMonth]);
 
   const columns = [
-    { name: "Category", selector: (row) => row.category, sortable: true },
-    { name: "No. of Bills", selector: (row) => row.totalBills, sortable: true },
+    {
+      name: "Category",
+      selector: (row) => row.category,
+      sortable: true,
+      width: "150px",
+    },
+    {
+      name: "No. of Bills",
+      selector: (row) => row.totalBills,
+      sortable: true,
+      width: "150px",
+    },
     {
       name: "Total Consumption",
       selector: (row) => row.totalConsumption,
@@ -179,8 +189,8 @@ function BillsSummary() {
           responsive
           customStyles={customStyles}
         />
-        {/* BarChart for visualizing total billed per category */}
-        <div style={{ width: "100%", height: 200, overflow: "hidden" }}>
+        {/* BarChart for visualizing total billed vs amount paid per category */}
+        <div style={{ width: "100%", height: 300, overflow: "hidden" }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={Summary}
@@ -190,7 +200,12 @@ function BillsSummary() {
               <XAxis dataKey="category" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="totalBilled" fill="#7989C5" />
+              <Bar dataKey="totalBilled" fill="#7989C5" name="Total Billed" />
+              <Bar
+                dataKey="totalAmountPaid"
+                fill="#82ca9d"
+                name="Total Amount Paid"
+              />
             </BarChart>
           </ResponsiveContainer>
         </div>

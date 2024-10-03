@@ -6,7 +6,7 @@ import { Modal, ListGroup, Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import * as XLSX from "xlsx";
-import { AiFillEye, AiOutlineEdit, AiFillFilePdf } from "react-icons/ai";
+import { AiFillEye, AiFillEdit, AiFillFilePdf } from "react-icons/ai";
 import { FaFileExport } from "react-icons/fa"; // Importing an icon for export button
 function BillTable() {
   const [bills, setBills] = useState([]);
@@ -190,7 +190,7 @@ function BillTable() {
             onClick={() => handleEdit(row)}
             title="Edit Bill"
           >
-            <AiOutlineEdit style={{ fontSize: "20px" }} />
+            <AiFillEdit style={{ fontSize: "20px" }} />
           </button>
 
           {/* Button to Download Bill */}
@@ -271,6 +271,7 @@ function BillTable() {
         responsive
         highlightOnHover
       />
+
       <Modal
         show={show}
         onHide={handleClose}

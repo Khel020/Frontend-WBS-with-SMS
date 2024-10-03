@@ -2,11 +2,13 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar.jsx";
 import { Link, useParams } from "react-router-dom";
 import DataTable from "react-data-table-component";
-import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import { Modal, Button, Form, Row, Col, ListGroup } from "react-bootstrap";
+
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // Add this line to import styles
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const BillRecords = () => {
   const { accountName, acc_number } = useParams();
   const backend = import.meta.env.VITE_BACKEND;
@@ -14,6 +16,8 @@ const BillRecords = () => {
   const usertype = token;
 
   const [show, setShow] = useState(false);
+  const [showBill, setShowBill] = useState(false);
+  const [billdetails, setBillDetails] = useState([]);
   const [bills, setBills] = useState([]);
   const [filteredBills, setFilteredBills] = useState([]);
   const [startDate, setStartDate] = useState(null);
@@ -77,10 +81,35 @@ const BillRecords = () => {
     setShow(true);
   };
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => {
+    setShow(false);
+    setShowBill(false);
+  };
 
-  const handlePrint = (row) => {
-    // Implement print functionality
+  const handleViewBill = async (billNumber) => {
+    setShowBill(true);
+    try {
+      const response = await fetch(
+        `${backend}/biller/getBillbyBillNum?billNumber=${billNumber}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem("tkn")}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("No bills found");
+      }
+
+      const data = await response.json(); // Await the JSON parsing
+      console.log("data from fetch", data);
+      setBillDetails(data);
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   const handleSaveChanges = async () => {
@@ -178,37 +207,35 @@ const BillRecords = () => {
     {
       name: "Action",
       cell: (row) => (
-        <div style={{ display: "flex", padding: "8px" }}>
-          <i
-            className="bi bi-pencil-square"
-            style={{
-              fontSize: "22px",
-              color: "#555", // Subtle business-like color
-              cursor: "pointer",
-              transition: "color 0.2s ease-in-out",
-              marginRight: "10px", // Space between icons
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#007bff")} // Subtle hover effect
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#555")} // Restore color on hover out
-            title="Adjustment" // Tooltip
+        <div className="d-flex">
+          <button
+            className="btn btn-outline-success btn-sm ms-2"
             onClick={() => handleShow(row)}
-          ></i>
-          <i
-            className="bi bi-printer"
-            style={{
-              fontSize: "22px",
-              color: "#555", // Subtle business-like color
-              cursor: "pointer",
-              transition: "color 0.2s ease-in-out",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#007bff")} // Subtle hover effect
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#555")} // Restore color on hover out
-            title="Print" // Tooltip
-            onClick={() => handlePrint(row)} // Function to handle print action
-          ></i>
+          >
+            <i
+              className="bi bi-pencil-square"
+              style={{
+                fontSize: "20px",
+              }}
+              title="Adjustment" // Tooltip
+            ></i>
+          </button>
+
+          <button
+            className="btn btn-outline-primary btn-sm ms-2 "
+            onClick={() => handleViewBill(row.billNumber)} // Function to handle viewing the bill
+          >
+            <i
+              className="bi bi-eye-fill"
+              style={{
+                fontSize: "20px",
+              }}
+              title="View Bill"
+            ></i>
+          </button>
         </div>
       ),
-      width: "100px", // Adjust width as needed
+      sortable: true,
     },
   ];
 
@@ -311,46 +338,6 @@ const BillRecords = () => {
           </Modal.Header>
           <Modal.Body className="p-4 bg-light">
             <Row className="g-3">
-              {/* Current Bill Amount */}
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label className="fw-bold">
-                    Current Bill Amount
-                  </Form.Label>
-                  <Form.Control
-                    type="number"
-                    value={adjustment.currentBill}
-                    onChange={(e) =>
-                      setAdjustment({
-                        ...adjustment,
-                        currentBill: e.target.value,
-                      })
-                    }
-                    placeholder="Enter current bill amount"
-                    className="border-primary"
-                  />
-                </Form.Group>
-              </Col>
-
-              {/* Amount Paid */}
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label className="fw-bold">Amount Paid</Form.Label>
-                  <Form.Control
-                    type="number"
-                    value={adjustment.amountPaid}
-                    onChange={(e) =>
-                      setAdjustment({
-                        ...adjustment,
-                        amountPaid: e.target.value,
-                      })
-                    }
-                    placeholder="Enter amount paid"
-                    className="border-primary"
-                  />
-                </Form.Group>
-              </Col>
-
               {/* Reading Date */}
               <Col md={6}>
                 <Form.Group>
@@ -367,7 +354,7 @@ const BillRecords = () => {
                     dateFormat="MMMM d, yyyy"
                     className="form-control border-primary"
                     placeholderText="Select reading date"
-                    style={{ marginBottom: "15px" }} // Added margin for better spacing
+                    style={{ marginBottom: "15px" }}
                   />
                 </Form.Group>
               </Col>
@@ -386,7 +373,45 @@ const BillRecords = () => {
                     dateFormat="MMMM d, yyyy"
                     className="form-control border-primary"
                     placeholderText="Select due date"
-                    style={{ marginBottom: "15px" }} // Added margin for better spacing
+                    style={{ marginBottom: "15px" }}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label className="fw-bold">
+                    Current Bill Amount
+                  </Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={adjustment.currentBill}
+                    onChange={(e) =>
+                      setAdjustment({
+                        ...adjustment,
+                        currentBill: e.target.value,
+                      })
+                    }
+                    placeholder="Enter current bill amount"
+                    className="form-control border-primary"
+                  />
+                </Form.Group>
+              </Col>
+
+              {/* Amount Paid */}
+              <Col md={6}>
+                <Form.Group>
+                  <Form.Label className="fw-bold">Amount Paid</Form.Label>
+                  <Form.Control
+                    type="number"
+                    value={adjustment.amountPaid}
+                    onChange={(e) =>
+                      setAdjustment({
+                        ...adjustment,
+                        amountPaid: e.target.value,
+                      })
+                    }
+                    placeholder="Enter amount paid"
+                    className="form-control border-primary"
                   />
                 </Form.Group>
               </Col>
@@ -405,7 +430,7 @@ const BillRecords = () => {
                       })
                     }
                     placeholder="Enter arrears"
-                    className="border-primary"
+                    className="form-control border-primary"
                   />
                 </Form.Group>
               </Col>
@@ -424,7 +449,7 @@ const BillRecords = () => {
                       })
                     }
                     placeholder="Enter penalty charge"
-                    className="border-primary"
+                    className="form-control border-primary"
                   />
                 </Form.Group>
               </Col>
@@ -443,7 +468,7 @@ const BillRecords = () => {
                       })
                     }
                     placeholder="Enter previous reading"
-                    className="border-primary"
+                    className="form-control border-primary"
                   />
                 </Form.Group>
               </Col>
@@ -462,7 +487,7 @@ const BillRecords = () => {
                       })
                     }
                     placeholder="Enter present reading"
-                    className="border-primary"
+                    className="form-control border-primary"
                   />
                 </Form.Group>
               </Col>
@@ -478,7 +503,7 @@ const BillRecords = () => {
                       setAdjustment({ ...adjustment, reason: e.target.value })
                     }
                     placeholder="Enter reason for adjustment"
-                    className="border-primary"
+                    className="form-control border-primary"
                   />
                 </Form.Group>
               </Col>
@@ -496,7 +521,7 @@ const BillRecords = () => {
                         adjustmentType: e.target.value,
                       })
                     }
-                    className="border-primary"
+                    className="form-control border-primary"
                   >
                     <option value="">Select Type</option>
                     <option value="Increase">Debit</option>
@@ -519,7 +544,7 @@ const BillRecords = () => {
                       })
                     }
                     placeholder="Enter remarks"
-                    className="border-primary"
+                    className="form-control border-primary"
                   />
                 </Form.Group>
               </Col>
@@ -531,6 +556,102 @@ const BillRecords = () => {
             >
               Save Changes
             </Button>
+          </Modal.Body>
+        </Modal>
+
+        <Modal
+          show={showBill}
+          onHide={handleClose}
+          backdrop="static"
+          keyboard={false}
+          centered
+        >
+          <Modal.Header closeButton className="bg-primary">
+            <Modal.Title className="text-white">Billing Statement</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {billdetails.length > 0 ? (
+              billdetails.map((bill) => (
+                <div key={bill._id} className="mb-4 p-3 ">
+                  {/* Bill Information Section */}
+                  <div className="mb-4">
+                    <h6 className="text-muted">Billing Information</h6>
+                    <ListGroup variant="flush">
+                      <ListGroup.Item>
+                        <strong>Bill Number:</strong> {bill.billNumber}
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <strong>Account Name:</strong> {bill.accountName}
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <strong>Payment Status:</strong>{" "}
+                        <span
+                          className={
+                            bill.payment_status === "Paid"
+                              ? "text-success"
+                              : "text-warning"
+                          }
+                        >
+                          {bill.payment_status}
+                        </span>
+                      </ListGroup.Item>
+                    </ListGroup>
+                  </div>
+
+                  {/* Meter Reading Section */}
+                  <div className="mb-4">
+                    <h6 className="text-muted">Meter Reading</h6>
+                    <ListGroup variant="flush">
+                      <ListGroup.Item>
+                        <strong>Present Reading:</strong> {bill.present_read} m³
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <strong>Previous Reading:</strong> {bill.prev_read} m³
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <strong>Consumption:</strong> {bill.consumption} m³
+                      </ListGroup.Item>
+                    </ListGroup>
+                  </div>
+
+                  {/* Financial Details Section */}
+                  <div className="mb-4">
+                    <h6 className="text-muted">Financial Details</h6>
+                    <ListGroup variant="flush">
+                      <ListGroup.Item>
+                        <strong>Bill Amount:</strong> ₱
+                        {bill.currentBill.toFixed(2)}
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <strong>Arrears:</strong> ₱{bill.arrears.toFixed(2)}
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <strong>Amount Paid:</strong> ₱
+                        {bill.amountPaid.toFixed(2)}
+                      </ListGroup.Item>
+                      <ListGroup.Item>
+                        <strong>Penalty Charge:</strong> ₱
+                        {bill.p_charge.toFixed(2)}
+                      </ListGroup.Item>
+                    </ListGroup>
+                  </div>
+
+                  {/* Additional Information Section */}
+                  <div className="">
+                    <h6 className="text-muted">Additional Information</h6>
+                    <ListGroup variant="flush">
+                      <ListGroup.Item>
+                        <strong>Remarks:</strong> {bill.remarks || "N/A"}
+                      </ListGroup.Item>
+                    </ListGroup>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="text-muted text-center">
+                No billing information is available at this time.
+              </p>
+            )}
           </Modal.Body>
         </Modal>
       </main>

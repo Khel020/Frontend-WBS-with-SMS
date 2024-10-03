@@ -41,7 +41,17 @@ const Table = () => {
   const [balance, setTotalBalance] = useState("");
   const [amountPaid, setAmountPaid] = useState("");
   const [tendered, setTendered] = useState("");
-  const [p_date, setPdate] = useState(new Date().toISOString().split("T")[0]);
+  const [p_date, setPdate] = useState(() => {
+    const currentDate = new Date();
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const day = String(currentDate.getDate()).padStart(2, "0");
+    const hours = String(currentDate.getHours()).padStart(2, "0");
+    const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  });
+
   const [address, setAddress] = useState("");
   const [totalChange, setTotalChange] = useState("");
   const [advTotalAmount, setAdvance] = useState("");
@@ -311,7 +321,7 @@ const Table = () => {
       billNo,
       acc_num,
       acc_name,
-      p_date,
+      p_date: new Date(p_date), // Convert string to Date object
       arrears,
       address,
       balance,
@@ -319,6 +329,8 @@ const Table = () => {
       advTotalAmount,
       totalChange,
     };
+
+    console.log("newPayment", newPayment);
 
     try {
       const response = await fetch(`${backend}/biller/newPayment`, {
@@ -497,7 +509,6 @@ const Table = () => {
           </button>
         </div>
       ),
-      sortable: true,
     },
   ];
   const customStyles = {
@@ -805,7 +816,7 @@ const Table = () => {
               <Form.Group controlId="paymentDate">
                 <Form.Label className="fw-bold">Payment Date:</Form.Label>
                 <Form.Control
-                  type="date"
+                  type="datetime-local" // Changed to datetime-local
                   value={p_date}
                   onChange={(e) => setPdate(e.target.value)}
                   style={{ width: "100%" }}

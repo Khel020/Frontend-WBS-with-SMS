@@ -1,70 +1,66 @@
 import React from "react";
+import { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar.jsx";
 import DataTable, { defaultThemes } from "react-data-table-component";
 const Logs = () => {
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
+  const [logs, setLogs] = useState([]);
 
-  const data = [
-    {
-      activity: "Login",
-      timestamp: "2024-09-22 10:30:00 AM",
-      details: "Logged in successfully",
-      accountName: "Juan Dela Cruz",
-      role: "Admin",
-      action: "View",
-    },
-    {
-      activity: "Bill Generation",
-      timestamp: "2024-09-22 11:00:00 AM",
-      details: "Generated bills for all clients",
-      accountName: "Maria Santos",
-      role: "Biller Manager",
-      action: "View",
-    },
-    {
-      activity: "Disconnection List",
-      timestamp: "2024-09-22 01:15:00 PM",
-      details: "Added 5 accounts to disconnection list",
-      accountName: "Pedro Reyes",
-      role: "Admin",
-      action: "View",
-    },
-    {
-      activity: "Payment",
-      timestamp: "2024-09-22 02:45:00 PM",
-      details: "Processed payment for account #12345",
-      accountName: "Ana Lopez",
-      role: "Biller",
-      action: "View",
-    },
-    {
-      activity: "Update Profile",
-      timestamp: "2024-09-22 03:30:00 PM",
-      details: "Updated account details for Juan Dela Cruz",
-      accountName: "Juan Dela Cruz",
-      role: "Client",
-      action: "View",
-    },
-  ];
+  useEffect(() => {
+    const gettingsLogs = async () => {
+      try {
+        const response = await fetch(`${backend}/admin/logs`);
+        const data = await response.json(); // Parse the JSON response
 
+        // Check if the response is successful
+        if (data.success) {
+          // Using response.ok to check for successful HTTP status
+          setLogs(data.data); // Set the logs with the parsed data
+        } else {
+          console.error(
+            "Failed to fetch logs:",
+            data.message || "Unknown error"
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching logs:", error);
+      }
+    };
+
+    gettingsLogs(); // Call the async function
+  }, []); // Dependency array to run the effect once on mount
+  const formatCustomDate = (date) => {
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true, // Change to true for 12-hour format
+    };
+
+    // Format date
+    const formattedDate = new Date(date).toLocaleString("en-US", options);
+
+    // Adjust the output format
+    const [datePart, timePart] = formattedDate.split(", ");
+    const [month, day, year] = datePart.split("/");
+    const [time, period] = timePart.split(" ");
+
+    return `${year}-${month}-${day} ${time} ${period}`;
+  };
   const columns = [
     {
       name: "Activity",
-      selector: (row) => row.activity,
-      sortable: true,
-      width: "150px",
-    },
-    {
-      name: "Time Stamp",
-      selector: (row) => row.timestamp,
+      selector: (row) => row.action,
       sortable: true,
       width: "200px",
     },
     {
-      name: "Details",
-      selector: (row) => row.details,
+      name: "Time Stamp",
+      selector: (row) => formatCustomDate(row.createdAt),
       sortable: true,
       width: "200px",
     },
@@ -76,14 +72,39 @@ const Logs = () => {
     },
     {
       name: "Role",
-      selector: (row) => row.role,
+      cell: (row) => {
+        let roleText = "User"; // Default role
+        let badgeClass =
+          "bg-secondary-subtle text-secondary-emphasis rounded-pill"; // Default badge class
+
+        if (row.role === "billmngr") {
+          roleText = "Biller";
+          badgeClass =
+            "bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill"; // Biller badge
+        } else if (row.role === "admin") {
+          roleText = "Admin";
+          badgeClass =
+            "bg-primary border border-primary text-primary-emphasis rounded-pill"; // Admin badge
+        }
+
+        // Return badge with inline styles for size
+        return (
+          <span
+            className={`badge ${badgeClass}`}
+            style={{ fontSize: "12px", padding: "0.5em 0.75em" }} // Inline styles for size
+          >
+            {roleText}
+          </span>
+        ); // Render badge
+      },
       sortable: true,
-      width: "200px",
+      width: "100px",
     },
     {
-      name: "Action",
-      selector: (row) => row.action,
-      width: "150px",
+      name: "Details",
+      selector: (row) => row.details,
+      sortable: true,
+      width: "350px",
     },
   ];
 
@@ -107,7 +128,7 @@ const Logs = () => {
           pagination
           fixedHeaderScrollHeight="520px"
           columns={columns}
-          data={data}
+          data={logs}
           responsive
           fixedHeader
           highlightOnHover
