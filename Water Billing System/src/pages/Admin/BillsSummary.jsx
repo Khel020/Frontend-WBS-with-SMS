@@ -190,7 +190,7 @@ function BillsSummary() {
           customStyles={customStyles}
         />
         {/* BarChart for visualizing total billed vs amount paid per category */}
-        <div style={{ width: "100%", height: 300, overflow: "hidden" }}>
+        <div style={{ width: "100%", height: 200, overflowY: "hidden" }}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={Summary}

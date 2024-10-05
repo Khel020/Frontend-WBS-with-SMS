@@ -20,34 +20,6 @@ const AdminDash = () => {
     setFile(e.target.files[0]);
   };
 
-  const handleUpload = async () => {
-    if (!file) {
-      alert("Please select a file to upload.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch("YOUR_UPLOAD_API_ENDPOINT", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        alert("File uploaded successfully!");
-        // Reset the file input
-        setFile(null);
-      } else {
-        alert("File upload failed. Please try again.");
-      }
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      alert("Error uploading file. Please try again.");
-    }
-  };
-
   return (
     <div className="d-flex">
       <Sidebar role={usertype} />
@@ -106,20 +78,6 @@ const AdminDash = () => {
               </Dropdown.Menu>
             </Dropdown>
           </div>
-        </div>
-
-        {/* File Upload Section */}
-        <div className="mt-4">
-          <h2>Upload Bills</h2>
-          <input
-            type="file"
-            accept=".txt, .csv, .xlsx, .xls" // Specify accepted file types
-            onChange={handleFileChange}
-            className="form-control mb-2"
-          />
-          <button className="btn btn-primary" onClick={handleUpload}>
-            Upload
-          </button>
         </div>
       </main>
     </div>

@@ -88,14 +88,7 @@ const Logs = () => {
         }
 
         // Return badge with inline styles for size
-        return (
-          <span
-            className={`badge ${badgeClass}`}
-            style={{ fontSize: "12px", padding: "0.5em 0.75em" }} // Inline styles for size
-          >
-            {roleText}
-          </span>
-        ); // Render badge
+        return <span className={`badge ${badgeClass}`}>{roleText}</span>; // Render badge
       },
       sortable: true,
       width: "100px",

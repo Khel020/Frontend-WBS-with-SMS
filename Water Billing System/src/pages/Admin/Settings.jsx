@@ -5,6 +5,8 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form"; // Import Form from react-bootstrap
+import { ProgressBar, Alert } from "react-bootstrap";
+import { FaFileUpload } from "react-icons/fa";
 
 const tableStyle = {
   fontSize: "0.9rem",
@@ -20,8 +22,13 @@ function Table() {
     minimumCharge: "",
     commodityRates: [],
   });
+  const [uploadData, setUploadData] = useState(null); // State to hold the uploaded file
   const [show, setShow] = useState(false);
   const [selectedRate, setSelectedRate] = useState(null); // State to hold the rate being edited
+
+  const [progress, setProgress] = useState(0); // For tracking progress
+  const [logs, setLogs] = useState([]); // For tracking log messages
+  const [errors, setErrors] = useState([]); // To store validation errors
 
   const navigate = useNavigate(); // Initialize navigate
 
@@ -67,6 +74,7 @@ function Table() {
   const handleSubmit = async (e) => {
     console.log("SELECTED RATE", selectedRate._id);
     e.preventDefault();
+
     try {
       const id = selectedRate._id;
       await fetch(`${backend}/admin/updateRate/${id}`, {
@@ -83,6 +91,59 @@ function Table() {
     } catch (error) {
       console.log(error.message);
     }
+  };
+
+  const handleUploadSubmit = async () => {
+    if (!uploadData) {
+      setErrors(["No file selected"]); // Add a specific error
+      return;
+    }
+    setProgress(30);
+    const reader = new FileReader();
+
+    reader.onload = async (event) => {
+      try {
+        const jsonData = JSON.parse(event.target.result);
+
+        if (!Array.isArray(jsonData)) {
+          throw new Error("Uploaded data must be an array.");
+        }
+        setProgress(40);
+        const response = await fetch(`${backend}/admin/uploadBills`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem("tkn")}`,
+          },
+          body: JSON.stringify(jsonData),
+        });
+
+        setProgress(50);
+
+        if (response.ok) {
+          const data = await response.json();
+          setProgress(100);
+          console.log("Bills uploaded successfully:", data);
+        } else {
+          // Handle response errors
+          const errorResponse = await response.json(); // Assuming backend returns errors as JSON
+          setErrors(
+            errorResponse.errors || ["An error occurred while uploading."]
+          );
+          console.error("Error uploading bills:", errorResponse);
+        }
+      } catch (error) {
+        setErrors([error.message]);
+        console.error("Error parsing or uploading the bills:", error.message);
+      }
+    };
+
+    reader.onerror = (error) => {
+      setErrors(["File reading error: " + error.message]);
+      console.error("File reading error:", error);
+    };
+
+    reader.readAsText(uploadData);
   };
 
   useEffect(() => {
@@ -108,55 +169,7 @@ function Table() {
   const renderContent = () => {
     switch (activeTab) {
       case "Account":
-        return (
-          <div className="account-settings-wrapper">
-            <h2>Account Settings</h2>
-            <p className="subtitle">
-              Manage your personal details and update your password for a more
-              secure experience.
-            </p>
-
-            {/* Profile Information Section */}
-            <div className="section profile-info">
-              <h3>Profile Information</h3>
-              <p className="description">
-                Review and keep your account information up-to-date for seamless
-                communication.
-              </p>
-              <div className="profile-details">
-                <div className="info-row">
-                  <span className="label">Account Name:</span>
-                  <span className="value">John Doe</span>
-                </div>
-                <div className="info-row">
-                  <span className="label">Email Address:</span>
-                  <span className="value">johndoe@example.com</span>
-                </div>
-                <div className="info-row">
-                  <span className="label">Contact Number:</span>
-                  <span className="value">(123) 456-7890</span>
-                </div>
-                <div className="info-row">
-                  <span className="label">Mailing Address:</span>
-                  <span className="value">1234 Elm Street, Springfield</span>
-                </div>
-              </div>
-              <button className="btn btn-primary edit-btn">Edit Profile</button>
-            </div>
-
-            {/* Change Password Section */}
-            <div className="section change-password">
-              <h3>Change Password</h3>
-              <p className="description">
-                For enhanced security, it’s recommended to update your password
-                regularly.
-              </p>
-              <button className="btn btn-primary change-password-btn">
-                Update Password
-              </button>
-            </div>
-          </div>
-        );
+        return <div></div>;
 
       case "Messages":
         return (
@@ -211,13 +224,63 @@ function Table() {
             </div>
           </div>
         );
-      default:
+
+      case "Upload Bill":
         return (
-          <div>
-            <h2>Account Settings</h2>
-            <p>Manage your account information here.</p>
+          <div className="upload-bill-container p-5 shadow rounded">
+            <h2 className="upload-bill-title text-primary mb-4">
+              <FaFileUpload className="me-2" style={{ fontSize: "40px" }} />
+              Upload Your Bill
+            </h2>
+            <p className="upload-bill-description text-muted mb-4">
+              Please select a file to upload your bill. Accepted formats are{" "}
+              <strong>JSON</strong> and <strong>CSV</strong>.
+            </p>
+
+            {/* File Input */}
+            <Form.Group controlId="formFile" className="mb-4">
+              <Form.Label className="fw-bold">Select Bill File</Form.Label>
+              <Form.Control
+                type="file"
+                accept=".json, .csv"
+                onChange={(e) => setUploadData(e.target.files[0])}
+                required
+                className="file-input p-2 border-primary"
+              />
+            </Form.Group>
+
+            {/* Upload Button */}
+            <Button
+              type="button"
+              onClick={handleUploadSubmit}
+              className="btn btn-primary mt-3 upload-btn w-100 d-flex justify-content-center align-items-center"
+            >
+              Upload Bill
+            </Button>
+
+            {/* Progress Bar */}
+            {progress > 0 && (
+              <ProgressBar
+                animated
+                now={progress}
+                label={`${progress}%`}
+                className="mt-3"
+              />
+            )}
+            {errors.length > 0 && (
+              <div className="alert alert-danger mt-2">
+                <ul>
+                  {errors.map((error, index) => (
+                    <li key={index}>{error}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         );
+
+      default:
+        return null;
     }
   };
 
@@ -302,6 +365,17 @@ function Table() {
                     href="#"
                   >
                     Rates
+                  </a>
+                </li>
+                <li className="nav-item">
+                  <a
+                    className={`nav-link ${
+                      activeTab === "Upload Bill" ? "active" : ""
+                    }`}
+                    onClick={() => setActiveTab("Upload Bill")}
+                    href="#"
+                  >
+                    Upload Bill
                   </a>
                 </li>
               </ul>
