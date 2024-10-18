@@ -212,7 +212,8 @@ function BillTable() {
       style: {
         border: "1px solid #ddd",
         borderRadius: "8px",
-        overflow: "hidden",
+        overflow: "auto",
+        height: "420px",
       },
     },
     headCells: {
@@ -265,7 +266,7 @@ function BillTable() {
       <DataTable
         customStyles={customStyles}
         pagination
-        fixedHeaderScrollHeight="400px"
+        fixedHeaderScrollHeight="420px"
         columns={columns}
         data={filteredBills}
         responsive

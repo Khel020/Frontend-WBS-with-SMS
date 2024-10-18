@@ -190,7 +190,7 @@ const CustomerTbl = () => {
 
   const columns = [
     {
-      name: "Full Name",
+      name: "Account Name",
       selector: (row) => (
         <div style={{ display: "flex", alignItems: "center" }}>
           {row.status && (
@@ -235,7 +235,10 @@ const CustomerTbl = () => {
     },
     {
       name: "Balance", // Column name
-      selector: (row) => `₱${parseFloat(row.totalBalance || 0).toFixed(2)}`, // Format with peso sign and two decimal places
+      selector: (row) =>
+        row.totalBalance != null
+          ? `₱${parseFloat(row.totalBalance).toFixed(2)}`
+          : "N/A",
       sortable: true,
       width: "140px", // Adjust width as needed
     },
@@ -302,7 +305,6 @@ const CustomerTbl = () => {
     setFilterStatus(event.target.value);
   };
   useEffect(() => {
-    // Filter clients based on status and search term
     const filtered = clients.filter((client) => {
       const matchesStatus =
         filterStatus === "" || client.status === filterStatus;
@@ -353,7 +355,6 @@ const CustomerTbl = () => {
           </Button>
         </div>
       </div>
-
       <div>
         <DataTable
           customStyles={customStyles}

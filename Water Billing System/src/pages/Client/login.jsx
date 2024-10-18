@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Card from "react-bootstrap/Card";
 import image from "../../assets/bg.jpg";
 import "../../styles/loginreg.css";
-import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function ClientLogin() {
   const [show, setShow] = useState(false);
@@ -15,30 +15,22 @@ function ClientLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const Login = {
-      username,
-      password,
-    };
+    const Login = { username: username, password: password };
+
     try {
       const response = await fetch(`${backend}/login/newLogin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(Login),
       });
+      const data = await response.json();
+      console.log("Response:", data.success);
+      if (data.ok || data.success) {
+        const { token, type, expTKN } = data.returnBody;
 
-      if (response.ok) {
-        const data = await response.json();
-
-        const token = data.token;
-        // const acc_num = data.acc_num;
-        const type = data.type;
-        const exp = data.expTKN;
-        const name = data.name;
-
-        // Store the token in local storage
         localStorage.setItem("tkn", token);
         localStorage.setItem("type", type);
-        localStorage.setItem("exp", exp);
+        localStorage.setItem("exp", expTKN);
 
         if (type === "users") {
           navigate("/clientdash/");
@@ -50,16 +42,18 @@ function ClientLogin() {
           navigate("/login");
         }
       } else {
-        console.log("Login failed: ");
+        toast.error(data.message);
       }
     } catch (error) {
       console.error("Error occurred during login:", error);
+      toast.error("An error occurred. Please try again later.");
     }
   };
 
   useEffect(() => {
     setShow(true);
   }, []);
+
   return (
     <div
       style={{
@@ -72,8 +66,8 @@ function ClientLogin() {
       }}
     >
       <div className="container h-100">
-        <div className="row h-100 align-items-center justify-content-between ">
-          <div className="col-12 col-lg-6 text-start text-lg-left mb-5 mb-lg-0 ">
+        <div className="row h-100 align-items-center justify-content-between">
+          <div className="col-12 col-lg-6 text-start text-lg-left mb-5 mb-lg-0">
             <div
               className={`hero text-white ${show ? "show" : ""}`}
               style={{ padding: "20px" }}
@@ -93,7 +87,7 @@ function ClientLogin() {
             </div>
           </div>
 
-          <div className="col-12 col-lg-5 d-flex justify-content-center ">
+          <div className="col-12 col-lg-5 d-flex justify-content-center">
             <Card
               style={{
                 width: "100%",
@@ -116,7 +110,9 @@ function ClientLogin() {
                         className="form-control"
                         id="floatingUsername"
                         placeholder="Username"
+                        value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        required
                       />
                       <label htmlFor="floatingInput">Account Name</label>
                     </div>
@@ -126,31 +122,39 @@ function ClientLogin() {
                         className="form-control"
                         id="floatingPassword"
                         placeholder="Password"
+                        value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                       />
                       <label htmlFor="floatingPassword">Password</label>
                     </div>
 
                     <div className="form-check text-center mt-4 mx-auto mb-3">
-                      <a
-                        href=""
+                      <Link
+                        to="/forgot-password"
                         className="text-dark"
                         style={{ textDecoration: "none" }}
                       >
                         Forgot Password?
-                      </a>
+                      </Link>
                     </div>
+
                     <button
                       className="btn btn-primary w-100 py-2"
                       type="submit"
                     >
                       Sign in
                     </button>
-                    <div className="form-check text-center mt-4 ">
+
+                    <div className="form-check text-center mt-4">
                       <p>
-                        Don't have an account?
-                        <Link to="/register">
-                          <a href="">Sign up</a>
+                        Don't have an account?{" "}
+                        <Link
+                          to="/register"
+                          className="text-dark"
+                          style={{ textDecoration: "none" }}
+                        >
+                          Sign up
                         </Link>
                       </p>
                     </div>
@@ -160,6 +164,17 @@ function ClientLogin() {
             </Card>
           </div>
         </div>
+        <ToastContainer
+          position="top-right"
+          autoClose={1800}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          theme="light"
+        />
       </div>
     </div>
   );

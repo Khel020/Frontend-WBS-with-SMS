@@ -234,7 +234,9 @@ function Userlist() {
           ? "Users"
           : row.usertype === "admin"
           ? "Admin"
-          : "Biller",
+          : row.usertype === "billmngr"
+          ? "Biller"
+          : "Data Entry",
       width: "100px", // Adjust width as needed
     },
     {
@@ -302,6 +304,9 @@ function Userlist() {
         break;
       case "biller":
         endpoint = "/biller/addBiller";
+        break;
+      case "dataStaff":
+        endpoint = "/admin/addDataEntry";
         break;
       default:
         console.error("Invalid role selected");
@@ -551,6 +556,7 @@ function Userlist() {
                     <option value="admin">Admin</option>
                     <option value="user">User</option>
                     <option value="biller">Biller</option>
+                    <option value="dataStaff">Data Entry</option>
                   </Form.Select>
                 </Form.Group>
               </Col>

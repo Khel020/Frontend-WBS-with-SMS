@@ -517,6 +517,7 @@ const Table = () => {
         border: "1px solid #ddd",
         borderRadius: "8px",
         overflow: "hidden",
+        height: "420px",
       },
     },
     headRow: {
@@ -605,7 +606,7 @@ const Table = () => {
       <DataTable
         customStyles={customStyles}
         pagination
-        fixedHeaderScrollHeight="400px"
+        fixedHeaderScrollHeight="420px"
         columns={columns}
         data={filteredClients}
         responsive
