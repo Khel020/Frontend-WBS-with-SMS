@@ -29,10 +29,6 @@ const DTransacReport = () => {
 
   // Add this useEffect to filter records based on selected option and search term
   useEffect(() => {
-    console.log("Filtering records...");
-    console.log("Selected Option:", selectedOption);
-    console.log("Search Term:", searchTerm);
-
     const filtered = records.filter((record) => {
       const matchesCategory =
         selectedOption === "" ||

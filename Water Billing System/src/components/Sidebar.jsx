@@ -34,7 +34,7 @@ const Sidebar = ({ role }) => {
       style={{
         width: "200px",
         height: "100vh",
-        backgroundColor: "#1F316F",
+        backgroundColor: "#091057",
       }}
     >
       <Link

@@ -21,9 +21,7 @@ const CustomerProf = () => {
   const token = localStorage.getItem("type");
   const usertype = token;
   const backend = import.meta.env.VITE_BACKEND;
-  // const houseNumber = editCustomer.c_address.house_num;
-  // const Purok = editCustomer.c_address.purok;
-  // const Barangay = editCustomer.c_address.brgy;
+
   const handleEditModal = (data) => {
     setEditCustomer({
       ...data,

@@ -11,7 +11,7 @@ import {
   Badge,
 } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
-import { FaUserCheck, FaUserTimes, FaUserPlus } from "react-icons/fa"; // Import icons
+import { FaUserCheck, FaUserTimes, FaClock } from "react-icons/fa"; // Import icons
 import { Link, useNavigate } from "react-router-dom";
 import Countdown from "react-countdown";
 import Dropdown from "react-bootstrap/Dropdown";
@@ -34,6 +34,7 @@ const Customers = () => {
     totalClients: 0,
     activeClients: 0,
     inactiveClients: 0,
+    pendingClients: 0,
   });
   useEffect(() => {
     if (selectedAccount) {
@@ -153,26 +154,27 @@ const Customers = () => {
         </div>
 
         <Row className="mb-3">
+          {/* Pending Consumers Card */}
           <div className="col">
             <div
               className="card total-admin"
               style={{
                 border: "none",
-
                 backgroundColor: "#DEF0F7",
                 borderRadius: "15px",
               }}
             >
               <div className="card-body d-flex justify-content-between align-items-center">
                 <div className="d-flex align-items-center">
-                  <FaUserPlus
+                  <FaClock
                     style={{
                       fontSize: "24px",
-                      color: "Blue", // Adjusting color for consistency
+                      color: "Orange", // Adjust color as desired
                       marginRight: "10px",
+                      cursor: "pointer",
                     }}
                   />
-                  <h5 className="mt-2">Account for Activation</h5>
+                  <h5 className="mt-2">Pending</h5>
                 </div>
                 <span
                   className="card-value"
@@ -182,24 +184,12 @@ const Customers = () => {
                     marginLeft: "10px",
                   }}
                 >
-                  <Badge
-                    className="position-absolute top-0 start-100 translate-middle bg-danger"
-                    style={{ fontSize: "0.75rem" }}
-                    pill
-                  >
-                    99+
-                  </Badge>
-
-                  <Link
-                    onClick={handleShowAccs}
-                    style={{ textDecoration: "none", color: "#007bff" }}
-                  >
-                    View Details
-                  </Link>
+                  {clientStats.pendingClients}
                 </span>
               </div>
             </div>
           </div>
+
           {/* Active Consumers Card */}
           <div className="col">
             <div
@@ -252,7 +242,7 @@ const Customers = () => {
                   <FaUserTimes
                     style={{
                       fontSize: "24px",
-                      color: "#F44336", // Red color for inactive clients
+                      color: "#F44336",
                       marginRight: "10px",
                     }}
                   />

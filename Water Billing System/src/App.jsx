@@ -11,6 +11,7 @@ import VisitorLayout from "./layouts/VisitorLayout.jsx";
 import ClientLayout from "./layouts/ClientLayout.jsx";
 import BillerLayout from "./layouts/BillerLayout.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
+import StaffLayout from "./layouts/dataEntryLayout.jsx";
 
 // TODO: Imports for Client Side pages
 import AboutUS from "./pages/Client/About.jsx";
@@ -46,6 +47,9 @@ import ConsumptionReport from "./pages/Admin/Consumptions.jsx";
 import Collections from "./pages/Admin/Collections.jsx";
 import BillSummary from "./pages/Admin/BillsSummary.jsx";
 import Logs from "./pages/Admin/Logs.jsx";
+
+//TODO: Data Entry Staff Pages
+import DashboardStaff from "./pages/DataEntry/DataEntryDash.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -134,6 +138,9 @@ const router = createBrowserRouter(
       </Route>
       <Route path="logs" element={<AdminLayout />}>
         <Route index element={<Logs />} />
+      </Route>
+      <Route path="staff-dashboard" element={<StaffLayout />}>
+        <Route index element={<DashboardStaff />} />
       </Route>
       <Route path="*" element={<div>Page is not available</div>} />
     </>

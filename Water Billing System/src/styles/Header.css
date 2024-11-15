@@ -1,0 +1,16 @@
+.nav-link-hover {
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.nav-link-hover:hover {
+  color: #f8d210; /* Change color on hover */
+  text-decoration: underline; /* Underline effect on hover */
+}
+
+.nav-link .react-icon {
+  transition: transform 0.3s ease;
+}
+
+.nav-link-hover:hover .react-icon {
+  transform: scale(1.1); /* Slight zoom effect for the icon */
+}

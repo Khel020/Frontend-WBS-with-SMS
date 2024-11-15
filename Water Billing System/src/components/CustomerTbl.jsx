@@ -228,27 +228,51 @@ const CustomerTbl = () => {
     },
     {
       name: "Last Bill Date",
-      selector: (row) =>
-        row.last_billDate ? formatDate(row.last_billDate) : "Bill Not Issued",
+      selector: (row) => {
+        if (row.status === "Pending") {
+          return <span className="text-muted">N/A</span>;
+        }
+        return row.last_billDate ? (
+          formatDate(row.last_billDate)
+        ) : (
+          <span className=" text-success fw-bold">New</span>
+        );
+      },
       sortable: true,
       width: "150px", // Adjust width as needed
     },
+
     {
       name: "Balance", // Column name
-      selector: (row) =>
-        row.totalBalance != null
+      selector: (row) => {
+        if (row.status === "Pending") {
+          return <span className="text-muted">N/A</span>;
+        }
+        if (row.status === "Active") {
+          return `₱${parseFloat(row.totalBalance).toFixed(2)}`;
+        }
+
+        return row.totalBalance != 0
           ? `₱${parseFloat(row.totalBalance).toFixed(2)}`
-          : "N/A",
+          : "N/A";
+      },
       sortable: true,
       width: "140px", // Adjust width as needed
     },
     {
       name: "Deposit",
-      selector: (row) => `₱${parseFloat(row.advancePayment || 0).toFixed(2)}`,
+      selector: (row) => {
+        if (row.status === "Pending") {
+          return <span className="text-muted">N/A</span>;
+        }
+        if (row.newlyActivated) {
+          return "New";
+        }
+        return `₱${parseFloat(row.advancePayment || 0).toFixed(2)}`;
+      },
       sortable: true,
       width: "135px", // Adjust width as needed
     },
-
     {
       name: "Action",
       cell: (row) => (
@@ -268,6 +292,7 @@ const CustomerTbl = () => {
       width: "150px", // Adjust width as needed
     },
   ];
+
   const customStyles = {
     table: {
       style: {

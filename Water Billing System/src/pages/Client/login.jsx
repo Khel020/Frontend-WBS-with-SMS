@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Card from "react-bootstrap/Card";
-import image from "../../assets/bg.jpg";
 import "../../styles/loginreg.css";
 import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import "../../styles/loginreg.css";
 function ClientLogin() {
   const [show, setShow] = useState(false);
   const [username, setUsername] = useState("");
@@ -15,7 +14,7 @@ function ClientLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const Login = { username: username, password: password };
+    const Login = { username, password };
 
     try {
       const response = await fetch(`${backend}/login/newLogin`, {
@@ -24,10 +23,9 @@ function ClientLogin() {
         body: JSON.stringify(Login),
       });
       const data = await response.json();
-      console.log("Response:", data.success);
+
       if (data.ok || data.success) {
         const { token, type, expTKN } = data.returnBody;
-
         localStorage.setItem("tkn", token);
         localStorage.setItem("type", type);
         localStorage.setItem("exp", expTKN);
@@ -38,6 +36,8 @@ function ClientLogin() {
           navigate("/admin-dashboard");
         } else if (type === "billmngr") {
           navigate("/bill-dashboard");
+        } else if (type === "data entry staff") {
+          navigate("/staff-dashboard");
         } else {
           navigate("/login");
         }
@@ -57,50 +57,50 @@ function ClientLogin() {
   return (
     <div
       style={{
-        backgroundImage: `url(${image})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        height: "90vh",
-        margin: "0",
+        background: "#DBDFFF",
+        height: "85vh",
+        maxHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px",
       }}
     >
-      <div className="container h-100">
-        <div className="row h-100 align-items-center justify-content-between">
-          <div className="col-12 col-lg-6 text-start text-lg-left mb-5 mb-lg-0">
-            <div
-              className={`hero text-white ${show ? "show" : ""}`}
-              style={{ padding: "20px" }}
+      <div className="container">
+        <div className="row align-items-center justify-content-center">
+          <div
+            className="col-12 col-lg-6 mb-lg-0 text-start p-5 mx-5 fade-in"
+            style={{ marginBottom: "2rem" }}
+          >
+            <h1
+              className="text-primary fw-bold show"
+              style={{ fontSize: "2.5rem" }}
             >
-              <h1 style={{ fontSize: "2.5rem" }}>Casiguran Water District</h1>
-              <p className="motto" style={{ fontSize: "1.2rem" }}>
-                "Serbisyong Bulahos Para sa Gabos"
-              </p>
-              <p
-                className="welcome-message"
-                style={{ fontSize: "1rem", lineHeight: "1.5" }}
-              >
-                Welcome to the Casiguran Water District Customer Portal. Easily
-                access your account, view your bills, and stay updated with SMS
-                notifications for a seamless water service experience.
-              </p>
-            </div>
+              Casiguran Water District
+            </h1>
+            <p style={{ fontSize: "1.2rem", color: "#555" }}>
+              "Serbisyong Bulahos Para sa Gabos"
+            </p>
+            <p style={{ fontSize: "1rem", color: "#666" }}>
+              Welcome to the Casiguran Water District Customer Portal. Easily
+              access your account, view your bills, and stay updated with SMS
+              notifications for a seamless water service experience.
+            </p>
           </div>
-
           <div className="col-12 col-lg-5 d-flex justify-content-center">
             <Card
               style={{
                 width: "100%",
-                maxWidth: "30rem",
+                maxWidth: "28rem",
                 backgroundColor: "#78A7FF",
                 padding: "20px",
                 borderRadius: "10px",
               }}
             >
-              <Card.Body className="p-3 p-md-4">
+              <Card.Body className="p-4">
                 <main className="form-signin w-100">
                   <form onSubmit={handleSubmit}>
-                    <h1 className="h3 mb-3 fw-normal text-center mb-5">
+                    <h1 className="h3 mb-4 fw-normal text-center text-dark">
                       Login
                     </h1>
 
@@ -114,9 +114,10 @@ function ClientLogin() {
                         onChange={(e) => setUsername(e.target.value)}
                         required
                       />
-                      <label htmlFor="floatingInput">Account Name</label>
+                      <label htmlFor="floatingUsername">Account Name</label>
                     </div>
-                    <div className="form-floating">
+
+                    <div className="form-floating mb-3">
                       <input
                         type="password"
                         className="form-control"
@@ -129,11 +130,11 @@ function ClientLogin() {
                       <label htmlFor="floatingPassword">Password</label>
                     </div>
 
-                    <div className="form-check text-center mt-4 mx-auto mb-3">
+                    <div className="text-center mb-3">
                       <Link
                         to="/forgot-password"
-                        className="text-dark"
-                        style={{ textDecoration: "none" }}
+                        className="text-primary"
+                        style={{ textDecoration: "none", fontSize: "0.9rem" }}
                       >
                         Forgot Password?
                       </Link>
@@ -146,12 +147,12 @@ function ClientLogin() {
                       Sign in
                     </button>
 
-                    <div className="form-check text-center mt-4">
-                      <p>
-                        Don't have an account?{" "}
+                    <div className="text-center mt-4">
+                      <p className="mb-0">
+                        Don’t have an account?{" "}
                         <Link
                           to="/register"
-                          className="text-dark"
+                          className="text-primary"
                           style={{ textDecoration: "none" }}
                         >
                           Sign up
@@ -164,18 +165,16 @@ function ClientLogin() {
             </Card>
           </div>
         </div>
-        <ToastContainer
-          position="top-right"
-          autoClose={1800}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          theme="light"
-        />
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={1800}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        theme="light"
+      />
     </div>
   );
 }

@@ -497,6 +497,7 @@ const Table = () => {
           <button
             className="btn btn-outline-success btn-sm ms-2"
             onClick={() => handleShowAddBill(row)}
+            disabled={row.status === "Inactive"} // Disable if status is Inactive
           >
             <AiOutlineFileAdd style={{ fontSize: "20px" }} />
           </button>

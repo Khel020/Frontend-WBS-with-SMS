@@ -172,48 +172,48 @@ function ListExample() {
   return (
     <div
       style={{
-        backgroundImage: `url(${image})`,
+        background: "#DBDFFF",
         backgroundPosition: "center",
         backgroundSize: "cover",
         backgroundRepeat: "no-repeat",
-        height: "95vh",
+        height: "85vh",
         overflow: "auto",
       }}
     >
-      <div className="container h-100">
-        <div className="row h-100 align-items-center justify-content-between">
-          <div className="col-12 col-lg-6 text-start text-lg-left mb-5 mb-lg-0">
-            <div
-              className={`hero text-white ${show ? "show" : ""}`}
-              style={{ padding: "20px" }}
+      <div className="container mt-2">
+        <div className="row align-items-center ">
+          <div
+            className="col-12 col-lg-6 mb-lg-0 text-start p-5 mx-5 fade-in"
+            style={{ marginBottom: "2rem" }}
+          >
+            <h1
+              className="text-primary fw-bold show"
+              style={{ fontSize: "2.5rem" }}
             >
-              <h1 style={{ fontSize: "2.5rem" }}>Casiguran Water District</h1>
-              <p className="motto" style={{ fontSize: "1.2rem" }}>
-                "Serbisyong Bulahos Para sa Gabos"
-              </p>
-              <p
-                className="welcome-message"
-                style={{ fontSize: "1rem", lineHeight: "1.5" }}
-              >
-                Welcome to the Casiguran Water District Customer Portal. Easily
-                access your account, view your bills, and stay updated with SMS
-                notifications for a seamless water service experience.
-              </p>
-            </div>
+              Casiguran Water District
+            </h1>
+            <p style={{ fontSize: "1.2rem", color: "#555" }}>
+              "Serbisyong Bulahos Para sa Gabos"
+            </p>
+            <p style={{ fontSize: "1rem", color: "#666" }}>
+              Welcome to the Casiguran Water District Customer Portal. Easily
+              access your account, view your bills, and stay updated with SMS
+              notifications for a seamless water service experience.
+            </p>
           </div>
 
-          <div className="col-12 col-lg-5 d-flex justify-content-center">
+          <div className="col-12 col-lg-5 d-flex">
             <Card
               style={{
                 width: "100%",
                 maxWidth: "30rem",
                 backgroundColor: "#78A7FF",
-                padding: "20px",
+                padding: "5px",
                 borderRadius: "10px",
               }}
             >
               <Card.Body>
-                <h4 style={{ textAlign: "center", marginBottom: "30px" }}>
+                <h4 style={{ textAlign: "center" }} className="mb-2">
                   Register
                 </h4>
                 <form className="row g-3" onSubmit={handleSubmit}>
@@ -271,16 +271,17 @@ function ListExample() {
                       <div className="text-danger">{errors.acc_num}</div>
                     )}
                   </div>
+
                   <div className="col-12 col-md-6">
                     <label htmlFor="Contact" className="form-label">
-                      Contact
+                      Contact Number
                     </label>
                     <input
                       type="text"
-                      name="contact"
                       className="form-control"
+                      name="contact"
                       id="Contact"
-                      placeholder="+63"
+                      placeholder="Ex. 09123456789"
                       value={formData.contact}
                       onChange={handleChange}
                     />
@@ -385,17 +386,6 @@ function ListExample() {
                     </p>
                   </div>
                 </form>
-                <ToastContainer
-                  position="top-right"
-                  autoClose={1000}
-                  hideProgressBar={false}
-                  newestOnTop={false}
-                  closeOnClick
-                  rtl={false}
-                  pauseOnFocusLoss
-                  draggable
-                  theme="light"
-                />
               </Card.Body>
             </Card>
           </div>
