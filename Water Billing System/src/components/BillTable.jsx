@@ -164,13 +164,19 @@ function BillTable() {
       name: "Status",
       selector: (row) => row.payment_status,
       sortable: true,
-      width: "150px", // Adjust width as needed
+      width: "120px", // Adjust width as needed
     },
     {
-      name: "Bill Amount",
+      name: "Amount",
       selector: (row) => "₱ " + row.currentBill.toFixed(2),
       sortable: true,
-      width: "160", // Adjust width as needed
+      width: "130px", // Adjust width as needed
+    },
+    {
+      name: "Penalty",
+      selector: (row) => "₱ " + row.p_charge.toFixed(2),
+      sortable: true,
+      width: "120px", // Adjust width as needed
     },
     {
       name: "Action",
@@ -212,7 +218,7 @@ function BillTable() {
       style: {
         border: "1px solid #ddd",
         borderRadius: "8px",
-        overflow: "auto",
+
         height: "420px",
       },
     },

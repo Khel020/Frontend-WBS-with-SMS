@@ -6,6 +6,8 @@ import { Button, Card, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import {
   LineChart,
+  AreaChart,
+  Area,
   Line,
   XAxis,
   YAxis,
@@ -14,7 +16,15 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import * as XLSX from "xlsx"; // Importing XLSX for exporting
 
+import {
+  FaUserTimes,
+  FaUsers,
+  FaUserCheck,
+  FaClock,
+  FaUser,
+} from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import DataTable, { defaultThemes } from "react-data-table-component";
 const AdminDash = () => {
@@ -25,6 +35,12 @@ const AdminDash = () => {
     accountName: "",
     acc_num: "",
     client_type: "",
+  });
+  const [clientStats, setClientStats] = useState({
+    totalClients: 0,
+    activeClients: 0,
+    inactiveClients: 0,
+    pendingClients: 0,
   });
   const token = localStorage.getItem("type");
   const usertype = token;
@@ -68,22 +84,66 @@ const AdminDash = () => {
         });
     }
   };
+  const [paymentStatusData, setPaymentStatus] = useState([]);
 
-  const [revenueData, setRevenueData] = useState([
-    { month: "Jan", revenue: 2000 },
-    { month: "Feb", revenue: 3000 },
-    { month: "Mar", revenue: 2500 },
-    { month: "Apr", revenue: 3500 },
-    { month: "May", revenue: 4000 },
-    { month: "Jun", revenue: 4500 },
-    { month: "Jul", revenue: 5000 },
-    { month: "Aug", revenue: 5500 },
-    { month: "Sep", revenue: 5500 },
-    { month: "Oct", revenue: 5500 },
-    { month: "Nov", revenue: 5500 },
-    { month: "Dec", revenue: 5500 },
-  ]);
+  const [revenueData, setRevenueData] = useState([]);
+  //TODO: Dashboard Cards
+  useEffect(() => {
+    const getStatus = async () => {
+      const response = await fetch(`${backend}/biller/status`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Data:", data);
+        setClientStats(data);
+      } else {
+        toast.error("Error fetching client statistics.");
+      }
+    };
+    getStatus();
+  }, [backend]);
 
+  useEffect(() => {
+    const getPaymentStats = async () => {
+      const response = await fetch(`${backend}/admin/paymentStatus/`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Data:", data);
+        setPaymentStatus(data);
+      } else {
+        toast.error("Error fetching client statistics.");
+      }
+    };
+    getPaymentStats();
+  }, [backend]);
+  // Get Monthly Revenue
+  useEffect(() => {
+    const getRevenue = async () => {
+      try {
+        const response = await fetch(`${backend}/admin/revenues`);
+        if (!response.ok) {
+          throw new Error("Error Getting Monthly Revenue");
+        }
+        const data = await response.json();
+        setRevenueData(data); // Update state with fetched data
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getRevenue();
+  }, []); // Empty dependency array ensures the effect runs only once
+
+  // TODO: For Activation
   useEffect(() => {
     const accountForAct = async () => {
       try {
@@ -100,6 +160,8 @@ const AdminDash = () => {
 
     accountForAct();
   }, [backend]);
+
+  // TODO: For Logs
   useEffect(() => {
     const gettingsLogs = async () => {
       try {
@@ -128,55 +190,92 @@ const AdminDash = () => {
     localStorage.clear();
     navigate("/login");
   };
+  // TODO: Logs Columns
   const columns = [
-    {
-      name: "Activity",
-      selector: (row) => row.action,
-      sortable: true,
-      width: "200px",
-    },
     {
       name: "Time Stamp",
       selector: (row) => formatCustomDate(row.createdAt),
       sortable: true,
-      width: "200px",
+      width: "180px",
     },
-    {
-      name: "Account Name",
-      selector: (row) => row.accountName,
-      sortable: true,
-      width: "200px",
-    },
-    {
-      name: "Role",
-      cell: (row) => {
-        let roleText = "User"; // Default role
-        let badgeClass =
-          "bg-secondary-subtle text-secondary-emphasis rounded-pill"; // Default badge class
+    // {
+    //   name: "Role",
+    //   cell: (row) => {
+    //     let roleText = "User"; // Default role
+    //     let badgeClass =
+    //       "bg-secondary-subtle text-secondary-emphasis rounded-pill"; // Default badge class
 
-        if (row.role === "billmngr") {
-          roleText = "Biller";
-          badgeClass =
-            "bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill"; // Biller badge
-        } else if (row.role === "admin") {
-          roleText = "Admin";
-          badgeClass =
-            "bg-primary border border-primary text-primary-emphasis rounded-pill"; // Admin badge
-        }
+    //     if (row.role === "billmngr") {
+    //       roleText = "Biller";
+    //       badgeClass =
+    //         "bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill"; // Biller badge
+    //     } else if (row.role === "admin") {
+    //       roleText = "Admin";
+    //       badgeClass =
+    //         "bg-primary border border-primary text-primary-emphasis rounded-pill"; // Admin badge
+    //     }
 
-        // Return badge with inline styles for size
-        return <span className={`badge ${badgeClass}`}>{roleText}</span>; // Render badge
-      },
-      sortable: true,
-      width: "100px",
+    //     // Return badge with inline styles for size
+    //     return <span className={`badge ${badgeClass}`}>{roleText}</span>; // Render badge
+    //   },
+    //   sortable: true,
+    //   width: "100px",
+    // },
+    {
+      name: "Activity",
+      selector: (row) => row.action,
+      width: "180px",
     },
     {
-      name: "Details",
-      selector: (row) => row.details,
-      sortable: true,
-      width: "350px",
+      name: "Action",
+      selector: (row) => row.action,
+      width: "140px",
+      cell: (row) => (
+        <div>
+          <button
+            style={{
+              fontSize: "12px",
+              cursor: "pointer",
+            }}
+            className="btn btn-primary btn-sm "
+          >
+            View Details
+          </button>
+        </div>
+      ),
     },
   ];
+  // TODO: Table Styles
+  const customStyles = {
+    rows: {
+      style: {
+        fontSize: "10px", // Standard font size for body text in rows
+        "&:hover": { backgroundColor: "#f8f9fa" }, // Subtle hover effect for better UI
+      },
+    },
+    pagination: {
+      style: {
+        border: "none", // Clean pagination design
+        fontSize: "12px", // Comfortable font size for pagination text
+        color: "#495057", // Neutral gray for text color
+        backgroundColor: "#ffffff", // White background for pagination area
+      },
+    },
+    headCells: {
+      style: {
+        fontSize: "13px", // Slightly larger font for header cells
+        fontWeight: "600", // Medium weight for emphasis
+        color: "#212529", // Darker text for better contrast
+      },
+    },
+    cells: {
+      style: {
+        fontSize: "10px", // Same size as rows for consistency
+        color: "#343a40", // Neutral dark gray for data text
+      },
+    },
+  };
+
   const formatCustomDate = (date) => {
     const options = {
       year: "numeric",
@@ -197,6 +296,13 @@ const AdminDash = () => {
 
     return `${year}-${month}-${day} ${time} ${period}`;
   };
+  function formatDate(dateString) {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
   return (
     <div
       className="d-flex"
@@ -238,7 +344,7 @@ const AdminDash = () => {
             </Dropdown>
 
             {/* Profile Dropdown */}
-            <Dropdown align="end" className="ms-2">
+            <Dropdown align="end">
               <Dropdown.Toggle
                 id="profileDropdown"
                 className="d-flex align-items-center bg-transparent border-0"
@@ -263,50 +369,106 @@ const AdminDash = () => {
             </Dropdown>
           </div>
         </div>
-
-        {/* Dashboard Content */}
+        {/* TODO: Dashboard Content */}
         <div className="row">
-          <div className="col-md-4">
-            <Card className="mb-2">
+          <div className="col-md-3">
+            <Card className="mb-2 shadow-sm">
               <Card.Body>
-                <Card.Title>Total Revenue</Card.Title>
-                <Card.Text className="h4">{`₱${revenueData
-                  .reduce((acc, item) => acc + item.revenue, 0)
-                  .toLocaleString()}`}</Card.Text>
+                <Card.Title className="d-flex align-items-center">
+                  <FaUser
+                    className="me-2"
+                    style={{ fontSize: "20px", color: "#28a745" }} // Green for revenue
+                  />
+                  Active Consumers
+                </Card.Title>
+                <Card.Text className="h4 text-end text-secondary">
+                  {clientStats.activeClients}
+                </Card.Text>
               </Card.Body>
             </Card>
           </div>
-          <div className="col-md-4">
-            <Card className="mb-2">
+
+          <div className="col-md-3">
+            <Card className="mb-2 shadow-sm">
               <Card.Body>
-                <Card.Title>Total Consumers</Card.Title>
-                <Card.Text className="h4">{forActivation.length}</Card.Text>
+                <Card.Title className="d-flex align-items-center">
+                  <FaClock
+                    className="me-2"
+                    style={{ fontSize: "20px", color: "Orange" }} // Green for revenue
+                  />
+                  Pending Consumers
+                </Card.Title>
+                <Card.Text className="h4 text-end  text-secondary">
+                  {clientStats.pendingClients}
+                </Card.Text>
               </Card.Body>
             </Card>
           </div>
-          <div className="col-md-4">
-            <Card className="mb-2">
+
+          {/* Ready for Activation */}
+          <div className="col-md-3">
+            <Card className="mb-2 shadow-sm">
               <Card.Body>
-                <Card.Title>Ready for Activation</Card.Title>
-                <Card.Text className="h4">
-                  {
-                    forActivation.filter((acc) => acc.status === "Pending")
-                      .length
-                  }
+                <Card.Title className="d-flex align-items-center">
+                  <FaUserTimes
+                    className="me-2"
+                    style={{ fontSize: "20px", color: "#dc3545" }}
+                  />
+                  Inactive Consumers
+                </Card.Title>
+                <Card.Text className="h4 text-end text-secondary">
+                  {clientStats.inactiveClients}
+                </Card.Text>
+              </Card.Body>
+            </Card>
+          </div>
+          {/* Total Consumers */}
+          <div className="col-md-3">
+            <Card className="mb-2 shadow-sm">
+              <Card.Body>
+                <Card.Title className="d-flex align-items-center">
+                  <FaUsers
+                    className="me-2"
+                    style={{ fontSize: "15px", color: "#007bff" }}
+                  />
+                  Total Consumers
+                </Card.Title>
+                <Card.Text className="h4 text-end text-secondary">
+                  {clientStats.totalClients}
                 </Card.Text>
               </Card.Body>
             </Card>
           </div>
         </div>
 
-        {/* Revenue Chart Column */}
+        {/* TODO: This is graphs */}
         <div className="row">
-          {/* Revenue Chart Column */}
           <div className="col-md-6 mb-2">
             <Card>
               <Card.Body>
-                <Card.Title>Revenue Over Time</Card.Title>
-                <div style={{ height: "200px" }}>
+                <Card.Title className="d-flex justify-content-between align-items-center">
+                  <span>Monthly Revenue</span>
+                  <button
+                    onClick={() =>
+                      exportToExcel(revenueData, "revenue_report.xlsx")
+                    }
+                    className="btn btn-sm btn-light d-flex align-items-center"
+                    style={{ backgroundColor: "#f8f9fa" }} // Light gray background
+                  >
+                    <i
+                      className="bi bi-download"
+                      style={{ marginRight: "8px" }}
+                    ></i>
+                    Report
+                  </button>
+                </Card.Title>
+                <div
+                  style={{
+                    height: "200px",
+                    fontSize: "13px",
+                    overflowX: "auto",
+                  }}
+                >
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={revenueData}>
                       <CartesianGrid strokeDasharray="3 3" />
@@ -327,34 +489,93 @@ const AdminDash = () => {
             </Card>
           </div>
 
-          {/* Logs Table Column */}
+          {/* Payment Status Card */}
           <div className="col-md-6 mb-2">
             <Card>
               <Card.Body>
-                <Card.Title>Activity Logs</Card.Title>
-                <DataTable
-                  columns={columns}
-                  data={logs}
-                  pagination
-                  highlightOnHover
-                  responsive
-                  striped
-                />
+                <Card.Title className="d-flex justify-content-between align-items-center">
+                  <span>Payment Status</span>
+                  <button
+                    onClick={() =>
+                      exportToExcel(
+                        paymentStatusData,
+                        "payment_status_report.xlsx"
+                      )
+                    }
+                    className="btn btn-light btn-sm d-flex align-items-center"
+                  >
+                    <i
+                      className="bi bi-download"
+                      style={{ marginRight: "5px" }}
+                    ></i>
+                    Report
+                  </button>
+                </Card.Title>
+                <div
+                  style={{
+                    height: "200px",
+                    fontSize: "13px",
+                    overflowX: "auto",
+                  }}
+                >
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={paymentStatusData.TotalPaymentStatus}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Area
+                        type="monotone"
+                        dataKey="paid"
+                        stroke="#28a745"
+                        fill="#28a745"
+                        fillOpacity={0.3}
+                      />
+                      <Area
+                        type="monotone"
+                        dataKey="unpaid"
+                        stroke="#dc3545"
+                        fill="#dc3545"
+                        fillOpacity={0.3}
+                      />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
               </Card.Body>
             </Card>
           </div>
         </div>
-
+        {/* TODO: Tables */}
         <div className="row">
-          <div className="col-md-6 mb-4">
+          {/* Account For Activation Section */}
+          <div className="col-md-6 ">
             <Card>
               <Card.Body>
-                <Card.Title>Account For Activation</Card.Title>
+                <Card.Title className="d-flex justify-content-between align-items-center">
+                  <span>Account For Activation</span>
+                  <button
+                    onClick={() =>
+                      exportToExcel(
+                        forActivation,
+                        "account_for_activation_report.xlsx"
+                      )
+                    }
+                    className="btn btn-light btn-sm d-flex align-items-center"
+                  >
+                    <i
+                      className="bi bi-download"
+                      style={{ marginRight: "5px" }}
+                    ></i>
+                    Report
+                  </button>
+                </Card.Title>
                 <div
                   style={{
                     overflowY: "auto",
-                    height: "180px",
-                    maxHeight: "180px", // Increased height for better scrollable view
+                    overflowX: "auto",
+                    height: "170px",
+                    maxHeight: "170px", // Increased height for better scrollable view
                   }}
                 >
                   <table className="table">
@@ -362,7 +583,8 @@ const AdminDash = () => {
                       <tr>
                         <th scope="col">No.</th>
                         <th scope="col">Account Name</th>
-                        <th scope="col">Activation in</th>
+                        <th scope="col">Activation Date</th>
+                        <th scope="col">Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -371,6 +593,7 @@ const AdminDash = () => {
                           <tr key={index}>
                             <th scope="row">{index + 1}</th>
                             <td>{accs.accountName}</td>
+                            <td>{formatDate(accs.activation_date)}</td>
                             <td>
                               <Countdown
                                 date={new Date(accs.activation_date).getTime()}
@@ -412,6 +635,46 @@ const AdminDash = () => {
                       )}
                     </tbody>
                   </table>
+                </div>
+              </Card.Body>
+            </Card>
+          </div>
+
+          {/* Recent Activity Logs Section */}
+          <div className="col-md-6 mb-2">
+            <Card>
+              <Card.Body>
+                <Card.Title className="d-flex justify-content-between align-items-center">
+                  <span>Recent Activity Logs</span>
+                  <button
+                    onClick={() =>
+                      exportToExcel(logs, "recent_activity_logs_report.xlsx")
+                    }
+                    className="btn btn-light btn-sm d-flex align-items-center"
+                  >
+                    <i
+                      className="bi bi-download"
+                      style={{ marginRight: "5px" }}
+                    ></i>
+                    Report
+                  </button>
+                </Card.Title>
+                <div
+                  style={{
+                    overflowY: "auto",
+                    overflowX: "auto",
+                    height: "170px",
+                    maxHeight: "170px", // Increased height for better scrollable view
+                  }}
+                >
+                  <DataTable
+                    columns={columns}
+                    data={logs}
+                    pagination
+                    highlightOnHover
+                    striped
+                    customStyles={customStyles}
+                  />
                 </div>
               </Card.Body>
             </Card>

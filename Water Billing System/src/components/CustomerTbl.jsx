@@ -249,12 +249,12 @@ const CustomerTbl = () => {
           return <span className="text-muted">N/A</span>;
         }
         if (row.status === "Active") {
+          if (!row.last_billDate) {
+            return <span className="text-success fw-bold">New</span>;
+          }
           return `₱${parseFloat(row.totalBalance).toFixed(2)}`;
         }
-
-        return row.totalBalance != 0
-          ? `₱${parseFloat(row.totalBalance).toFixed(2)}`
-          : "N/A";
+        return "N/A"; // Default return if none of the conditions match
       },
       sortable: true,
       width: "140px", // Adjust width as needed
@@ -265,10 +265,13 @@ const CustomerTbl = () => {
         if (row.status === "Pending") {
           return <span className="text-muted">N/A</span>;
         }
-        if (row.newlyActivated) {
-          return "New";
+        if (row.status === "Active") {
+          if (!row.last_billDate) {
+            return <span className="text-success fw-bold">New</span>;
+          }
+          return `₱${parseFloat(row.advancePayment).toFixed(2)}`;
         }
-        return `₱${parseFloat(row.advancePayment || 0).toFixed(2)}`;
+        return "N/A"; // Default return if none of the conditions match
       },
       sortable: true,
       width: "135px", // Adjust width as needed

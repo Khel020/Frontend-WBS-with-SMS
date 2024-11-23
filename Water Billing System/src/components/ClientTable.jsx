@@ -517,7 +517,7 @@ const Table = () => {
       style: {
         border: "1px solid #ddd",
         borderRadius: "8px",
-        overflow: "hidden",
+        overflow: "auto",
         height: "420px",
       },
     },

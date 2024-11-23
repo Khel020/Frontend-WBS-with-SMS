@@ -125,21 +125,7 @@ const Header = () => {
                   <MdContacts className="me-2" /> Contact Us
                 </NavLink>
               </li>
-              <li className="nav-item mx-2">
-                <NavLink
-                  to="services"
-                  className="nav-link d-flex align-items-center"
-                  style={navLinkStyle}
-                  onMouseOver={(e) =>
-                    (e.currentTarget.style.color = navLinkHoverStyle.color)
-                  }
-                  onMouseOut={(e) =>
-                    (e.currentTarget.style.color = navLinkStyle.color)
-                  }
-                >
-                  <RiServiceLine className="me-2" /> Services
-                </NavLink>
-              </li>
+
               <li className="nav-item mx-2">
                 <NavLink
                   to="login"

@@ -1,3 +1,6 @@
+* {
+  font-size: 14px;
+}
 .fade-in {
   animation: fadeIn 1.5s ease-in-out;
 }
