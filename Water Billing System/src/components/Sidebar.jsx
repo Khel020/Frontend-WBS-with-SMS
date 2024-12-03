@@ -16,10 +16,11 @@ const Sidebar = ({ role }) => {
     alignItems: "center",
     textDecoration: "none",
     padding: "5px 10px",
-    borderRadius: "10px",
+    borderRadius: "8px",
     backgroundColor: activeLink === path ? "#e9ecef" : "transparent",
     marginBottom: "10px",
     fontWeight: "500",
+    fontSize: "14px",
   });
 
   const iconStyle = (path) => ({
@@ -162,15 +163,15 @@ const Sidebar = ({ role }) => {
             </li>
             <li className="nav-item">
               <Link
-                to="/userlist"
-                style={linkStyle("/userlist")}
+                to="/registration"
+                style={linkStyle("/registration")}
                 className="nav-link"
               >
                 <i
-                  className="bi bi-people-fill"
-                  style={iconStyle("/userlist")}
+                  className="bi bi-person-circle"
+                  style={iconStyle("/registration")}
                 ></i>
-                Accounts
+                Account Registration
               </Link>
             </li>
             <li className="nav-item">
@@ -183,7 +184,20 @@ const Sidebar = ({ role }) => {
                   className="bi bi-person-circle"
                   style={iconStyle("/customers")}
                 ></i>
-                Customers
+                Consumer Accs
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/userlist"
+                style={linkStyle("/userlist")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-people-fill"
+                  style={iconStyle("/userlist")}
+                ></i>
+                User Management
               </Link>
             </li>
             <li className="nav-item">
@@ -206,48 +220,6 @@ const Sidebar = ({ role }) => {
                   style={iconStyle("/settings")}
                 ></i>
                 Settings
-              </Link>
-            </li>
-
-            {/* New Reports Section */}
-            <hr className="text-white" />
-            <li className="nav-item">
-              <Link
-                to="/reports"
-                style={linkStyle("/reports")}
-                className="nav-link"
-              >
-                <i
-                  className="bi bi-file-earmark-bar-graph"
-                  style={iconStyle("/reports")}
-                ></i>
-                Reports
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                to="/reports/usage"
-                style={linkStyle("/reports/usage")}
-                className="nav-link"
-              >
-                <i
-                  className="bi bi-graph-up"
-                  style={iconStyle("/reports/usage")}
-                ></i>
-                Usage Reports
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                to="/reports/collection"
-                style={linkStyle("/reports/collection")}
-                className="nav-link"
-              >
-                <i
-                  className="bi bi-graph-down"
-                  style={iconStyle("/reports/collection")}
-                ></i>
-                Collection Reports
               </Link>
             </li>
           </>

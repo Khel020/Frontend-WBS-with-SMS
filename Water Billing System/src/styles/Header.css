@@ -1,16 +1,94 @@
-.nav-link-hover {
-  transition: color 0.3s ease, text-decoration 0.3s ease;
+/* General Header Styles */
+header {
+  background-color: #000b58;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
 }
 
-.nav-link-hover:hover {
-  color: #f8d210; /* Change color on hover */
-  text-decoration: underline; /* Underline effect on hover */
+.navbar-nav .nav-link {
+  color: white;
+  transition: color 0.3s, background-color 0.3s;
+  border-bottom: 2px solid transparent;
 }
 
-.nav-link .react-icon {
-  transition: transform 0.3s ease;
+.navbar-nav .nav-link:hover {
+  color: #80b3ff;
+  background-color: #112e73;
 }
 
-.nav-link-hover:hover .react-icon {
-  transform: scale(1.1); /* Slight zoom effect for the icon */
+/* Mobile Styles (max-width: 600px) */
+@media (max-width: 600px) {
+  .navbar-brand h6 {
+    font-size: 1rem;
+  }
+
+  .navbar-nav {
+    text-align: right;
+    padding-right: 15px;
+  }
+
+  .nav-link {
+    padding: 0.5rem 1rem;
+  }
+
+  .navbar-toggler {
+    font-size: 1.5rem;
+    border: none;
+    background: none;
+  }
+
+  .navbar-collapse {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 100%;
+    background-color: #000b58;
+  }
+
+  .rounded-circle {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Tablet Styles (601px - 1024px) */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .navbar-brand h5 {
+    font-size: 1.2rem;
+  }
+
+  .nav-link {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+
+  .rounded-circle {
+    width: 45px;
+    height: 45px;
+  }
+}
+
+/* Laptop/Desktop Styles (min-width: 1025px) */
+@media (min-width: 1025px) {
+  .navbar-brand h5 {
+    font-size: 1.5rem;
+  }
+
+  .nav-link {
+    padding: 0.5rem 1.5rem;
+    font-size: 1.1rem;
+  }
+
+  .rounded-circle {
+    width: 50px;
+    height: 50px;
+  }
+
+  .navbar-nav {
+    text-align: left;
+  }
 }

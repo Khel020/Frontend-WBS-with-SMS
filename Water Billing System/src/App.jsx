@@ -6,7 +6,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 
-//layouts
+//TODO: layouts
 import VisitorLayout from "./layouts/VisitorLayout.jsx";
 import ClientLayout from "./layouts/ClientLayout.jsx";
 import BillerLayout from "./layouts/BillerLayout.jsx";
@@ -14,26 +14,26 @@ import AdminLayout from "./layouts/AdminLayout.jsx";
 import StaffLayout from "./layouts/dataEntryLayout.jsx";
 
 // TODO: Imports for Client Side pages
-import AboutUS from "./pages/Client/About.jsx";
-import DashClient from "./pages/Client/ClientDash.jsx";
-import ContactUS from "./pages/Client/ContactUs.jsx";
-import Home from "./pages/Client/Home.jsx";
-import Login from "./pages/Client/login.jsx";
-import Register from "./pages/Client/register.jsx";
-import Services from "./pages/Client/Services.jsx";
-import YourBills from "./pages/Client/billingCus.jsx";
-import Profile from "./pages/Client/Profile.jsx";
-import PaymentHisto from "./pages/Client/PaymentHisto.jsx";
-
+import AboutUS from "./pages/Portal/About.jsx";
+import DashClient from "./pages/Portal/ClientDash.jsx";
+import ContactUS from "./pages/Portal/ContactUs.jsx";
+import Home from "./pages/Portal/Home.jsx";
+import Login from "./pages/Portal/login.jsx";
+import Register from "./pages/Portal/register.jsx";
+import Services from "./pages/Portal/Services.jsx";
+import YourBills from "./pages/Portal/billingCus.jsx";
+import Profile from "./pages/Portal/Profile.jsx";
+import PaymentHisto from "./pages/Portal/PaymentHisto.jsx";
+import OrgLogin from "./pages/OrgLogin.jsx";
 // TODO: Imported Page for Bill MNGR
-import BillerDash from "./pages/BillMngr/BillerDash.jsx";
-import BillingDetails from "./pages/BillMngr/BillingDetails.jsx";
-import BillRecords from "./pages/BillMngr/BillRecords.jsx";
-import Bills from "./pages/BillMngr/ListBills.jsx";
-import ListClient from "./pages/BillMngr/ListClient.jsx";
-import ReceivePayments from "./pages/BillMngr/PaymentHistory.jsx";
-import Balance from "./pages/BillMngr/Balance.jsx";
-import ForDC from "./pages/BillMngr/ForDisconnect.jsx";
+import BillerDash from "./pages/Cashiers/BillerDash.jsx";
+import BillingDetails from "./pages/Cashiers/BillingDetails.jsx";
+import BillRecords from "./pages/Cashiers/BillRecords.jsx";
+import Bills from "./pages/Cashiers/ListBills.jsx";
+import ListClient from "./pages/Cashiers/ListClient.jsx";
+import ReceivePayments from "./pages/Cashiers/PaymentHistory.jsx";
+import Balance from "./pages/Cashiers/Balance.jsx";
+import ForDC from "./pages/Cashiers/ForDisconnect.jsx";
 
 //TODO: Admin Pages
 import AdminDash from "./pages/Admin/AdminDash.jsx";
@@ -43,13 +43,16 @@ import AdminReports from "./pages/Admin/DetailedReports.jsx";
 import CustomersProfile from "./pages/Admin/CustomerProf.jsx";
 import Customers from "./pages/Admin/Customers.jsx";
 import CusReport from "./pages/Admin/customerReports.jsx";
-import ConsumptionReport from "./pages/Admin/Consumptions.jsx";
 import Collections from "./pages/Admin/Collections.jsx";
 import BillSummary from "./pages/Admin/BillsSummary.jsx";
 import Logs from "./pages/Admin/Logs.jsx";
+import Registration from "./pages/Admin/Registraion.jsx";
 
 //TODO: Data Entry Staff Pages
-import DashboardStaff from "./pages/DataEntry/DataEntryDash.jsx";
+import DashboardStaff from "./pages/Data_Uploader/DataEntryDash.jsx";
+
+//TODO: CS OFFICER
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -61,6 +64,7 @@ const router = createBrowserRouter(
         <Route path="services" element={<Services />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
+        <Route path="cws-login" element={<OrgLogin />} />
       </Route>
       //TODO: Client ROUTES
       <Route path="clientdash" element={<ClientLayout />}>
@@ -123,6 +127,9 @@ const router = createBrowserRouter(
       </Route>
       <Route path="userlist" element={<AdminLayout />}>
         <Route index element={<Userlist />} />
+      </Route>
+      <Route path="registration" element={<AdminLayout />}>
+        <Route index element={<Registration />} />
       </Route>
       <Route path="settings" element={<AdminLayout />}>
         <Route index element={<Settings />} />

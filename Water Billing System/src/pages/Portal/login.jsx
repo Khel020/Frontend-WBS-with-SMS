@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Card from "react-bootstrap/Card";
-import "../../styles/loginreg.css";
+
 import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "../../styles/loginreg.css";
+
 function ClientLogin() {
-  const [show, setShow] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -17,7 +16,7 @@ function ClientLogin() {
     const Login = { username, password };
 
     try {
-      const response = await fetch(`${backend}/login/newLogin`, {
+      const response = await fetch(`${backend}/login/Login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(Login),
@@ -32,12 +31,6 @@ function ClientLogin() {
 
         if (type === "users") {
           navigate("/clientdash/");
-        } else if (type === "admin") {
-          navigate("/admin-dashboard");
-        } else if (type === "billmngr") {
-          navigate("/bill-dashboard");
-        } else if (type === "data entry staff") {
-          navigate("/staff-dashboard");
         } else {
           navigate("/login");
         }
@@ -50,12 +43,9 @@ function ClientLogin() {
     }
   };
 
-  useEffect(() => {
-    setShow(true);
-  }, []);
-
   return (
     <div
+      className="container-fluid"
       style={{
         background: "#DBDFFF",
         height: "85vh",
@@ -100,8 +90,8 @@ function ClientLogin() {
               <Card.Body className="p-4">
                 <main className="form-signin w-100">
                   <form onSubmit={handleSubmit}>
-                    <h1 className="h3 mb-4 fw-normal text-center text-dark">
-                      Login
+                    <h1 className="h3 mb-4 fw-bold text-start text-dark">
+                      Login Form
                     </h1>
 
                     <div className="form-floating mb-3">
@@ -133,8 +123,8 @@ function ClientLogin() {
                     <div className="text-center mb-3">
                       <Link
                         to="/forgot-password"
-                        className="text-primary"
-                        style={{ textDecoration: "none", fontSize: "0.9rem" }}
+                        className="text-dark"
+                        style={{ fontSize: "1rem" }}
                       >
                         Forgot Password?
                       </Link>
@@ -149,11 +139,10 @@ function ClientLogin() {
 
                     <div className="text-center mt-4">
                       <p className="mb-0">
-                        Don’t have an account?{" "}
+                        New to CWD My Water bill?{" "}
                         <Link
                           to="/register"
-                          className="text-primary"
-                          style={{ textDecoration: "none" }}
+                          className="text-primary-100 fw-bold"
                         >
                           Sign up
                         </Link>
@@ -165,16 +154,16 @@ function ClientLogin() {
             </Card>
           </div>
         </div>
+        <ToastContainer
+          position="top-right"
+          autoClose={1800}
+          hideProgressBar={false}
+          closeOnClick
+          pauseOnFocusLoss
+          draggable
+          theme="light"
+        />
       </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={1800}
-        hideProgressBar={false}
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        theme="light"
-      />
     </div>
   );
 }
