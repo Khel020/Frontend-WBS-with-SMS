@@ -13,18 +13,19 @@ import BillerLayout from "./layouts/BillerLayout.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import StaffLayout from "./layouts/dataEntryLayout.jsx";
 
-// TODO: Imports for Client Side pages
-import AboutUS from "./pages/Portal/About.jsx";
+// TODO: Visitor Pages
+import AboutUS from "./pages/Visitors/About.jsx";
+import ContactUS from "./pages/Visitors/ContactUs.jsx";
+import Home from "./pages/Visitors/Home.jsx";
+import Login from "./pages/Visitors/login.jsx";
+import Register from "./pages/Visitors/register.jsx";
+import OrgLogin from "./pages/Visitors/OrgLogin.jsx";
+
+//TODO: Portal Pages
 import DashClient from "./pages/Portal/ClientDash.jsx";
-import ContactUS from "./pages/Portal/ContactUs.jsx";
-import Home from "./pages/Portal/Home.jsx";
-import Login from "./pages/Portal/login.jsx";
-import Register from "./pages/Portal/register.jsx";
-import Services from "./pages/Portal/Services.jsx";
-import YourBills from "./pages/Portal/billingCus.jsx";
-import Profile from "./pages/Portal/Profile.jsx";
 import PaymentHisto from "./pages/Portal/PaymentHisto.jsx";
-import OrgLogin from "./pages/OrgLogin.jsx";
+import Profile from "./pages/Portal/Profile.jsx";
+import YourBills from "./pages/Portal/YourBills.jsx";
 // TODO: Imported Page for Bill MNGR
 import BillerDash from "./pages/Cashiers/BillerDash.jsx";
 import BillingDetails from "./pages/Cashiers/BillingDetails.jsx";
@@ -50,6 +51,7 @@ import Registration from "./pages/Admin/Registraion.jsx";
 
 //TODO: Data Entry Staff Pages
 import DashboardStaff from "./pages/Data_Uploader/DataEntryDash.jsx";
+import Page404 from "./pages/Visitors/404.jsx";
 
 //TODO: CS OFFICER
 
@@ -61,7 +63,6 @@ const router = createBrowserRouter(
         <Route index element={<Home />} />
         <Route path="about-us" element={<AboutUS />} />
         <Route path="contact-us" element={<ContactUS />} />
-        <Route path="services" element={<Services />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="cws-login" element={<OrgLogin />} />
@@ -149,7 +150,7 @@ const router = createBrowserRouter(
       <Route path="staff-dashboard" element={<StaffLayout />}>
         <Route index element={<DashboardStaff />} />
       </Route>
-      <Route path="*" element={<div>Page is not available</div>} />
+      <Route path="*" element={<Page404 />} />
     </>
   )
 );

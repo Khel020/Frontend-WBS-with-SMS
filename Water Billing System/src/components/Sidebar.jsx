@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import "../styles/sidebar.css";
 
 const Sidebar = ({ role }) => {
   const location = useLocation();
@@ -220,6 +219,64 @@ const Sidebar = ({ role }) => {
                   style={iconStyle("/settings")}
                 ></i>
                 Settings
+              </Link>
+            </li>
+          </>
+        )}
+
+        {role === "users" && (
+          <>
+            <li className="nav-item">
+              <Link
+                to="/clientdash"
+                style={linkStyle("/clientdash")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-house-door"
+                  style={iconStyle("/clientdash")}
+                ></i>
+                Dashboard
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/yourbills"
+                style={linkStyle("/yourbills")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-file-earmark-text"
+                  style={iconStyle("/yourbills")}
+                ></i>
+                View Bills
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/payments"
+                style={linkStyle("/payments")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-credit-card"
+                  style={iconStyle("/payments")}
+                ></i>
+                Payment History
+              </Link>
+            </li>
+
+            <li className="nav-item">
+              <Link
+                to="/profile"
+                style={linkStyle("/profile")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-person-circle"
+                  style={iconStyle("/profile")}
+                ></i>
+                Profile
               </Link>
             </li>
           </>

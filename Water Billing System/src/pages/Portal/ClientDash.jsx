@@ -1,24 +1,32 @@
-import React, { useEffect, useRef } from "react";
-import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
-
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Sidebar from "../../components/Sidebar";
 const ClientDash = () => {
-  const token = localStorage.getItem("token");
   const backend = import.meta.env.VITE_BACKEND;
-  axios
-    .get(`${backend}/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-    });
+  const [data, setData] = useState(null);
+  const token = localStorage.getItem("type");
+  const usertype = token;
 
-  return <div>This is dashboard for client side</div>;
+  const navigate = useNavigate();
+  console.log("usertype:", usertype);
+  return (
+    <div
+      className="d-flex"
+      style={{
+        backgroundColor: "white",
+        height: "100vh",
+        maxHeight: "100vh",
+        overflow: "hidden",
+      }}
+    >
+      <Sidebar role={usertype} />
+      <main className="flex-grow-1 ms-sm-auto px-md-4">
+        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 className="h2">Dashboard</h1>
+        </div>
+      </main>
+    </div>
+  );
 };
 
 export default ClientDash;

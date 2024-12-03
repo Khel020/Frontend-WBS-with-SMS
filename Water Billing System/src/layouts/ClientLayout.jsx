@@ -1,5 +1,4 @@
 import React from "react";
-import Header from "../components/ClientHeader";
 import { useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -11,7 +10,6 @@ const ClientLayout = () => {
     return (
       <div>
         <main>
-          <Header />
           <Outlet />
         </main>
       </div>

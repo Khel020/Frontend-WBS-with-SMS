@@ -173,11 +173,12 @@ function ListExample() {
     <div
       style={{
         background: "#DBDFFF",
-        backgroundPosition: "center",
-        backgroundSize: "cover",
-        backgroundRepeat: "no-repeat",
-        height: "85vh",
-        overflow: "auto",
+        height: "90vh",
+        maxHeight: "90vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px",
       }}
     >
       <div className="container mt-2">

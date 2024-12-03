@@ -1,0 +1,43 @@
+/* Page404.css */
+
+/* Style for the main container */
+.page-404-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f7f7f7; /* Light background color */
+  text-align: center;
+}
+
+/* Centered content */
+.page-404-content {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+}
+
+/* Heading for 404 */
+.page-404-heading {
+  font-size: 100px;
+  font-weight: bold;
+  color: #e74c3c; /* Red color for the 404 */
+  margin: 0;
+}
+
+/* Message text */
+.page-404-message {
+  font-size: 20px;
+  margin: 20px 0;
+  color: #555;
+}
+
+/* Description text */
+.page-404-description {
+  font-size: 16px;
+  color: #777;
+  margin-bottom: 20px;
+}

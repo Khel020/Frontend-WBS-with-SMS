@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Card from "react-bootstrap/Card";
-
 import { useNavigate, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "../../styles/loginreg.css"; // Add a custom CSS file
 
 function ClientLogin() {
   const [username, setUsername] = useState("");
@@ -48,8 +48,7 @@ function ClientLogin() {
       className="container-fluid"
       style={{
         background: "#DBDFFF",
-        height: "85vh",
-        maxHeight: "100vh",
+        minHeight: "90vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -58,26 +57,32 @@ function ClientLogin() {
     >
       <div className="container">
         <div className="row align-items-center justify-content-center">
-          <div
-            className="col-12 col-lg-6 mb-lg-0 text-start p-5 mx-5 fade-in"
-            style={{ marginBottom: "2rem" }}
-          >
+          {/* Left Content */}
+          <div className="col-12 col-lg-6 text-start p-5 mx-5  fade-in">
             <h1
-              className="text-primary fw-bold show"
+              className="hero-text text-primary fw-bold fade-in"
               style={{ fontSize: "2.5rem" }}
             >
               Casiguran Water District
             </h1>
-            <p style={{ fontSize: "1.2rem", color: "#555" }}>
+            <p
+              className="welcome-message fade-in"
+              style={{ fontSize: "1.2rem", color: "#555" }}
+            >
               "Serbisyong Bulahos Para sa Gabos"
             </p>
-            <p style={{ fontSize: "1rem", color: "#666" }}>
+            <p
+              className="additional-info d-none d-lg-block fade-in" // Hide this paragraph on mobile
+              style={{ fontSize: "1rem", color: "#666" }}
+            >
               Welcome to the Casiguran Water District Customer Portal. Easily
               access your account, view your bills, and stay updated with SMS
               notifications for a seamless water service experience.
             </p>
           </div>
-          <div className="col-12 col-lg-5 d-flex justify-content-center">
+
+          {/* Login Form */}
+          <div className="col-12 col-lg-5">
             <Card
               style={{
                 width: "100%",
@@ -85,12 +90,13 @@ function ClientLogin() {
                 backgroundColor: "#78A7FF",
                 padding: "20px",
                 borderRadius: "10px",
+                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
               }}
             >
-              <Card.Body className="p-4">
+              <Card.Body>
                 <main className="form-signin w-100">
                   <form onSubmit={handleSubmit}>
-                    <h1 className="h3 mb-4 fw-bold text-start text-dark">
+                    <h1 className="h3 mb-4 fw-bold text-center text-dark">
                       Login Form
                     </h1>
 
@@ -103,6 +109,7 @@ function ClientLogin() {
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
+                        aria-label="Account Name"
                       />
                       <label htmlFor="floatingUsername">Account Name</label>
                     </div>
@@ -116,6 +123,7 @@ function ClientLogin() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        aria-label="Password"
                       />
                       <label htmlFor="floatingPassword">Password</label>
                     </div>
@@ -142,7 +150,8 @@ function ClientLogin() {
                         New to CWD My Water bill?{" "}
                         <Link
                           to="/register"
-                          className="text-primary-100 fw-bold"
+                          className="text-dark fw-bold"
+                          style={{ textDecoration: "underline" }}
                         >
                           Sign up
                         </Link>
