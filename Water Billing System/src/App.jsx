@@ -12,7 +12,7 @@ import ClientLayout from "./layouts/ClientLayout.jsx";
 import BillerLayout from "./layouts/CashierLayout.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import StaffLayout from "./layouts/dataEntryLayout.jsx";
-
+import ITLayout from "./layouts/InfoLayout.jsx";
 // TODO: Visitor Pages
 import AboutUS from "./pages/Visitors/About.jsx";
 import ContactUS from "./pages/Visitors/ContactUs.jsx";
@@ -52,8 +52,10 @@ import Logs from "./pages/Admin/Logs.jsx";
 import DashboardStaff from "./pages/Data_Uploader/DataEntryDash.jsx";
 import Page404 from "./pages/Visitors/404.jsx";
 
-//TODO: CS OFFICER
-
+//TODO:CS OFFICER
+//TODO: IT
+import IT_Dashboard from "./pages/IT/Dashboard.jsx";
+import IT_Userlist from "./pages/IT/userlist.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -151,6 +153,13 @@ const router = createBrowserRouter(
       </Route>
       <Route path="staff-dashboard" element={<StaffLayout />}>
         <Route index element={<DashboardStaff />} />
+      </Route>
+      {/* TODO: IT ROUTES */}
+      <Route path="it-dashboard" element={<ITLayout />}>
+        <Route index element={<IT_Dashboard />} />
+      </Route>
+      <Route path="it-users" element={<ITLayout />}>
+        <Route index element={<IT_Userlist />} />
       </Route>
       <Route path="*" element={<Page404 />} />
     </>

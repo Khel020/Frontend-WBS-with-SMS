@@ -32,6 +32,8 @@ const OrgLogin = () => {
           navigate("/bill-dashboard");
         } else if (type === "data entry staff") {
           navigate("/staff-dashboard");
+        } else if (type === "Information Tech") {
+          navigate("/it-dashboard");
         } else {
           navigate("/login");
         }

@@ -232,8 +232,10 @@ function Userlist() {
           ? "Users"
           : row.usertype === "admin"
           ? "Admin"
-          : row.usertype === "teller"
-          ? "Teller"
+          : row.usertype === "cashier"
+          ? "Cashier"
+          : row.usertype === "CS_Officer"
+          ? "Customer Service"
           : "Data Entry",
     },
     {
@@ -291,17 +293,20 @@ function Userlist() {
 
     let endpoint;
     switch (formData.role) {
+      case "IT":
+        endpoint = "/infoTech/new_IT";
+        break;
       case "admin":
-        endpoint = "/admin/add";
+        endpoint = "/infoTech/new_Admin";
         break;
-      case "user":
-        endpoint = "/user/newUser";
-        break;
-      case "teller":
-        endpoint = "/biller/addBiller";
+      case "cashier":
+        endpoint = "/infoTech/new_Cashier";
         break;
       case "dataStaff":
-        endpoint = "/admin/addDataEntry";
+        endpoint = "/infoTech/new_Uploader";
+        break;
+      case "cs-officer":
+        endpoint = "/infoTech/newCS_Officer";
         break;
       default:
         console.error("Invalid role selected");
@@ -382,7 +387,8 @@ function Userlist() {
               <option value="">Filter by Role</option>
               <option value="admin">Admin</option>
               <option value="users">User</option>
-              <option value="teller">Teller</option>
+              <option value="cashier">Teller</option>
+              <option value="cs-officer">Customer service officer</option>
             </select>
           </div>
 
@@ -556,7 +562,8 @@ function Userlist() {
                     <option value="">Select a role</option>
                     <option value="admin">Admin</option>
                     <option value="user">User</option>
-                    <option value="teller">Teller</option>
+                    <option value="cashier">Cashier</option>
+                    <option value="cs-officer">Customer Service Officer</option>
                     <option value="dataStaff">Data Entry</option>
                   </Form.Select>
                 </Form.Group>
