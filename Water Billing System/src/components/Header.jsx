@@ -24,7 +24,12 @@ const Header = () => {
   return (
     <header
       className="navbar navbar-expand-lg navbar-dark px-3"
-      style={{ backgroundColor: "#000B58", position: "relative" }}
+      style={{
+        backgroundColor: "#000B58",
+        position: "sticky",
+        top: "0", // Para naka-fix sa pinaka-ibabaw
+        zIndex: "1020", // Para mas mataas kaysa ibang elements
+      }}
     >
       {/* Logo and Title */}
       <NavLink

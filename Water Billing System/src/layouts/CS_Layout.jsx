@@ -2,10 +2,11 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import Swal from "sweetalert2";
-const BillerLayout = () => {
+
+const CS_Layout = () => {
   const token = localStorage.getItem("type");
   const usertype = token;
-  if (usertype === "billmngr") {
+  if (usertype === "CustomerService") {
     return (
       <div>
         <main>
@@ -49,4 +50,4 @@ const BillerLayout = () => {
   }
 };
 
-export default BillerLayout;
+export default CS_Layout;

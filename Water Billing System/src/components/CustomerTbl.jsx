@@ -212,19 +212,17 @@ const CustomerTbl = () => {
         </div>
       ),
       sortable: true,
-      width: "250px", // Adjust width as needed
+      width: "250px",
     },
     {
       name: "Acct. No.",
       selector: (row) => row.acc_num,
       sortable: true,
-      width: "150px", // Adjust width as needed
     },
     {
       name: "Contact", // Column name
       selector: (row) => row.contact,
       sortable: true,
-      width: "140px", // Adjust width as needed
     },
     {
       name: "Last Bill Date",
@@ -239,7 +237,6 @@ const CustomerTbl = () => {
         );
       },
       sortable: true,
-      width: "150px", // Adjust width as needed
     },
 
     {
@@ -257,7 +254,6 @@ const CustomerTbl = () => {
         return "N/A"; // Default return if none of the conditions match
       },
       sortable: true,
-      width: "140px", // Adjust width as needed
     },
     {
       name: "Deposit",
@@ -274,7 +270,6 @@ const CustomerTbl = () => {
         return "N/A"; // Default return if none of the conditions match
       },
       sortable: true,
-      width: "135px", // Adjust width as needed
     },
     {
       name: "Action",
@@ -292,7 +287,6 @@ const CustomerTbl = () => {
           </Button>
         </div>
       ),
-      width: "150px", // Adjust width as needed
     },
   ];
 
@@ -309,19 +303,18 @@ const CustomerTbl = () => {
         fontWeight: "bold",
         backgroundColor: "#1F702C",
         color: "white",
-        fontSize: "12px",
       },
     },
     rows: {
       style: {
-        minHeight: "45px",
+        minHeight: "35px",
         "&:hover": { backgroundColor: "#f1f1f1" },
       },
     },
     pagination: {
       style: {
         border: "none",
-        fontSize: "14px",
+        fontSize: "13px",
         color: "#000",
         backgroundColor: "#f7f7f7",
         minHeight: "50px",

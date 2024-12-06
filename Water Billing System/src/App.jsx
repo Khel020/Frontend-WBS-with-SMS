@@ -9,7 +9,7 @@ import {
 //TODO: layouts
 import VisitorLayout from "./layouts/VisitorLayout.jsx";
 import ClientLayout from "./layouts/ClientLayout.jsx";
-import BillerLayout from "./layouts/BillerLayout.jsx";
+import BillerLayout from "./layouts/CashierLayout.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import StaffLayout from "./layouts/dataEntryLayout.jsx";
 
@@ -40,14 +40,13 @@ import ForDC from "./pages/Cashiers/ForDisconnect.jsx";
 import AdminDash from "./pages/Admin/AdminDash.jsx";
 import Userlist from "./pages/Admin/userlist.jsx";
 import Settings from "./pages/Admin/Settings.jsx";
-import AdminReports from "./pages/Admin/DetailedReports.jsx";
+
 import CustomersProfile from "./pages/Admin/CustomerProf.jsx";
 import Customers from "./pages/Admin/Customers.jsx";
 import CusReport from "./pages/Admin/customerReports.jsx";
 import Collections from "./pages/Admin/Collections.jsx";
 import BillSummary from "./pages/Admin/BillsSummary.jsx";
 import Logs from "./pages/Admin/Logs.jsx";
-import Registration from "./pages/Admin/Registraion.jsx";
 
 //TODO: Data Entry Staff Pages
 import DashboardStaff from "./pages/Data_Uploader/DataEntryDash.jsx";
@@ -58,6 +57,15 @@ import Page404 from "./pages/Visitors/404.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
+      //TODO: Customer Service OFFICER
+      <Route path="/" element={<VisitorLayout />}>
+        <Route index element={<Home />} />
+        <Route path="about-us" element={<AboutUS />} />
+        <Route path="contact-us" element={<ContactUS />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="cws-login" element={<OrgLogin />} />
+      </Route>
       //TODO: VISITOR ROUTES
       <Route path="/" element={<VisitorLayout />}>
         <Route index element={<Home />} />
@@ -129,14 +137,8 @@ const router = createBrowserRouter(
       <Route path="userlist" element={<AdminLayout />}>
         <Route index element={<Userlist />} />
       </Route>
-      <Route path="registration" element={<AdminLayout />}>
-        <Route index element={<Registration />} />
-      </Route>
       <Route path="settings" element={<AdminLayout />}>
         <Route index element={<Settings />} />
-      </Route>
-      <Route path="reports" element={<AdminLayout />}>
-        <Route index element={<AdminReports />} />
       </Route>
       <Route path="customers" element={<AdminLayout />}>
         <Route index element={<Customers />} />

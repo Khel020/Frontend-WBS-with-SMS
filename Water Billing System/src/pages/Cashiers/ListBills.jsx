@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 
-import Container from "react-bootstrap/Container";
-
 import { toast, ToastContainer } from "react-toastify";
 import {
   FaFileInvoiceDollar,
@@ -172,6 +170,7 @@ function ListBills() {
             </div>
           </div>
           <Bills />
+          <ToastContainer />
         </main>
       </div>
     </>

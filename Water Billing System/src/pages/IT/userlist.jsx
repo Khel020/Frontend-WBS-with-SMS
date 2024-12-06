@@ -96,7 +96,7 @@ function Userlist() {
       case "user":
         endpoint = "/user/editUser";
         break;
-      case "cashier":
+      case "teller":
         endpoint = "/biller/editBiller";
         break;
       default:
@@ -232,8 +232,8 @@ function Userlist() {
           ? "Users"
           : row.usertype === "admin"
           ? "Admin"
-          : row.usertype === "cashier"
-          ? "Cashier"
+          : row.usertype === "teller"
+          ? "Teller"
           : "Data Entry",
     },
     {
@@ -297,7 +297,7 @@ function Userlist() {
       case "user":
         endpoint = "/user/newUser";
         break;
-      case "cashier":
+      case "teller":
         endpoint = "/biller/addBiller";
         break;
       case "dataStaff":
@@ -382,7 +382,7 @@ function Userlist() {
               <option value="">Filter by Role</option>
               <option value="admin">Admin</option>
               <option value="users">User</option>
-              <option value="cashier">Cashier</option>
+              <option value="teller">Teller</option>
             </select>
           </div>
 
@@ -556,7 +556,7 @@ function Userlist() {
                     <option value="">Select a role</option>
                     <option value="admin">Admin</option>
                     <option value="user">User</option>
-                    <option value="cashier">Cashier</option>
+                    <option value="teller">Teller</option>
                     <option value="dataStaff">Data Entry</option>
                   </Form.Select>
                 </Form.Group>

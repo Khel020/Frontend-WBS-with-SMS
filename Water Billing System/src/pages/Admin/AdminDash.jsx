@@ -198,29 +198,6 @@ const AdminDash = () => {
       sortable: true,
       width: "180px",
     },
-    // {
-    //   name: "Role",
-    //   cell: (row) => {
-    //     let roleText = "User"; // Default role
-    //     let badgeClass =
-    //       "bg-secondary-subtle text-secondary-emphasis rounded-pill"; // Default badge class
-
-    //     if (row.role === "billmngr") {
-    //       roleText = "Biller";
-    //       badgeClass =
-    //         "bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill"; // Biller badge
-    //     } else if (row.role === "admin") {
-    //       roleText = "Admin";
-    //       badgeClass =
-    //         "bg-primary border border-primary text-primary-emphasis rounded-pill"; // Admin badge
-    //     }
-
-    //     // Return badge with inline styles for size
-    //     return <span className={`badge ${badgeClass}`}>{roleText}</span>; // Render badge
-    //   },
-    //   sortable: true,
-    //   width: "100px",
-    // },
     {
       name: "Activity",
       selector: (row) => row.action,
@@ -316,7 +293,7 @@ const AdminDash = () => {
       <Sidebar role={usertype} />
       <main className="flex-grow-1 ms-sm-auto px-md-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-          <h1 className="h2">Dashboard</h1>
+          <h1 className="h2">Admin Dashboard</h1>
           <div className="d-flex align-items-center">
             <Dropdown align="end">
               <Dropdown.Toggle
@@ -369,7 +346,7 @@ const AdminDash = () => {
             </Dropdown>
           </div>
         </div>
-        {/* TODO: Dashboard Content */}
+        {/* TODO: Dashboard Content CARDS */}
         <div className="row">
           <div className="col-md-3">
             <Card className="mb-2 shadow-sm">

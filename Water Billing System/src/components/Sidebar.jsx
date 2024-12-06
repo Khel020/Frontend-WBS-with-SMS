@@ -4,50 +4,92 @@ import { Link, useLocation } from "react-router-dom";
 const Sidebar = ({ role }) => {
   const location = useLocation();
   const [activeLink, setActiveLink] = useState("");
+  const [collapsed, setCollapsed] = useState(false); // State for collapsing
 
   useEffect(() => {
     setActiveLink(location.pathname);
   }, [location]);
+
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed);
+  };
+
+  const sidebarStyle = {
+    width: collapsed ? "60px" : "220px",
+    transition: "width 0.3s",
+    height: "100vh",
+    backgroundColor: "#091057",
+  };
 
   const linkStyle = (path) => ({
     color: activeLink === path ? "#343a40" : "white",
     display: "flex",
     alignItems: "center",
     textDecoration: "none",
-    padding: "5px 10px",
+    padding: collapsed ? "5px" : "5px 10px",
     borderRadius: "8px",
     backgroundColor: activeLink === path ? "#e9ecef" : "transparent",
     marginBottom: "10px",
     fontWeight: "500",
     fontSize: "14px",
+    justifyContent: collapsed ? "center" : "flex-start",
   });
 
   const iconStyle = (path) => ({
     fontSize: "20px",
-    marginRight: "10px",
+    marginRight: collapsed ? "0" : "10px",
     color: activeLink === path ? "#343a40" : "white",
   });
 
+  const headerStyle = {
+    textAlign: "center",
+    color: "white",
+    fontSize: collapsed ? "10px" : "16px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  };
+
   return (
-    <div
-      className="d-flex flex-column flex-shrink-0 p-3"
-      style={{
-        width: "200px",
-        height: "100vh",
-        backgroundColor: "#091057",
-      }}
-    >
-      <Link
-        to=""
-        className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-decoration-none"
-      >
-        <h5 className="text-center mx-auto" style={{ color: "white" }}>
-          Water Billing System
+    <div className="d-flex flex-column flex-shrink-0 p-3" style={sidebarStyle}>
+      <div className="d-flex align-items-center justify-content-between">
+        <i
+          class={collapsed ? "" : "bi bi-droplet-half mt-3"}
+          style={{
+            backgroundColor: "transparent",
+            border: "none",
+            color: "white",
+            fontSize: "20px",
+            cursor: "pointer",
+          }}
+        ></i>
+        <h5 style={headerStyle} className="mt-4">
+          {!collapsed && "WBS Casiguran"}
         </h5>
-      </Link>
+        <button
+          onClick={toggleSidebar}
+          style={{
+            backgroundColor: "transparent",
+            border: "none",
+            color: "white",
+            fontSize: "40px",
+            cursor: "pointer",
+          }}
+          title={collapsed ? "Expand" : "Collapse"}
+        >
+          <i
+            className={collapsed ? "bi bi-justify" : "bi bi-filter-right"}
+            style={{
+              fontSize: "20px",
+            }}
+          ></i>
+        </button>
+      </div>
+
       <hr style={{ borderColor: "white" }} />
       <ul className="nav nav-pills flex-column mb-auto">
-        {role === "billmngr" && (
+        {/* TODO: CASHIER SIDEBAR */}
+        {role === "cashier" && (
           <>
             <li className="nav-item">
               <Link
@@ -56,10 +98,10 @@ const Sidebar = ({ role }) => {
                 className="nav-link"
               >
                 <i
-                  className="bi bi-house-door"
+                  className="bi bi-grid"
                   style={iconStyle("/bill-dashboard")}
                 ></i>
-                Dashboard
+                {!collapsed && "Dashboard"}
               </Link>
             </li>
             <li className="nav-item">
@@ -72,7 +114,7 @@ const Sidebar = ({ role }) => {
                   className="bi bi-person-badge"
                   style={iconStyle("/listclient")}
                 ></i>
-                Consumers
+                {!collapsed && "Consumers"}
               </Link>
             </li>
             <li className="nav-item">
@@ -85,7 +127,7 @@ const Sidebar = ({ role }) => {
                   className="bi bi-file-earmark-text"
                   style={iconStyle("/bills")}
                 ></i>
-                Billing
+                {!collapsed && "Billing"}
               </Link>
             </li>
             <hr className="text-white " />
@@ -100,7 +142,7 @@ const Sidebar = ({ role }) => {
                   className="bi bi-file-earmark-bar-graph"
                   style={iconStyle("/bill-summary")}
                 ></i>
-                Summary of Billing
+                {!collapsed && "Summary of Bills"}
               </Link>
             </li>
             <li className="nav-item">
@@ -113,7 +155,7 @@ const Sidebar = ({ role }) => {
                   className="bi bi-file-earmark-check"
                   style={iconStyle("/collections")}
                 ></i>
-                Summary of Collection
+                {!collapsed && "Summary of Collection"}
               </Link>
             </li>
             <li className="nav-item">
@@ -126,7 +168,7 @@ const Sidebar = ({ role }) => {
                   className="bi bi-file-earmark-person"
                   style={iconStyle("/balances")}
                 ></i>
-                Outstanding Balance
+                {!collapsed && "Outstanding Balance"}
               </Link>
             </li>
             <li className="nav-item">
@@ -139,12 +181,12 @@ const Sidebar = ({ role }) => {
                   className="bi bi-exclamation-circle"
                   style={iconStyle("/disconnection")}
                 ></i>
-                For Disconnection
+                {!collapsed && "For Disconnection"}
               </Link>
             </li>
           </>
         )}
-
+        {/* TODO: ADMIN SIDEBAR */}
         {role === "admin" && (
           <>
             <li className="nav-item">
@@ -154,36 +196,10 @@ const Sidebar = ({ role }) => {
                 className="nav-link"
               >
                 <i
-                  className="bi bi-house-fill"
+                  className="bi bi-grid"
                   style={iconStyle("/admin-dashboard")}
                 ></i>
-                Dashboard
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                to="/registration"
-                style={linkStyle("/registration")}
-                className="nav-link"
-              >
-                <i
-                  className="bi bi-person-circle"
-                  style={iconStyle("/registration")}
-                ></i>
-                Account Registration
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                to="/customers"
-                style={linkStyle("/customers")}
-                className="nav-link"
-              >
-                <i
-                  className="bi bi-person-circle"
-                  style={iconStyle("/customers")}
-                ></i>
-                Consumer Accs
+                {!collapsed && "Dashboard"}
               </Link>
             </li>
             <li className="nav-item">
@@ -196,16 +212,21 @@ const Sidebar = ({ role }) => {
                   className="bi bi-people-fill"
                   style={iconStyle("/userlist")}
                 ></i>
-                User Management
+                {!collapsed && "User Management"}
               </Link>
             </li>
+
             <li className="nav-item">
-              <Link to="/logs" style={linkStyle("/logs")} className="nav-link">
+              <Link
+                to="/customers"
+                style={linkStyle("/customers")}
+                className="nav-link"
+              >
                 <i
-                  className="bi bi-journal-text"
-                  style={iconStyle("/logs")}
+                  className="bi bi-person-circle"
+                  style={iconStyle("/customers")}
                 ></i>
-                Logs
+                {!collapsed && "List of Consumers"}
               </Link>
             </li>
             <li className="nav-item">
@@ -218,7 +239,61 @@ const Sidebar = ({ role }) => {
                   className="bi bi-gear-fill"
                   style={iconStyle("/settings")}
                 ></i>
-                Settings
+                {!collapsed && "Bills Overview"}
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/settings"
+                style={linkStyle("/settings")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-gear-fill"
+                  style={iconStyle("/settings")}
+                ></i>
+                {!collapsed && "Settings"}
+              </Link>
+            </li>
+
+            <hr className="text-white" />
+            <li className="nav-item">
+              <Link
+                to="/reports/consumer"
+                style={linkStyle("/reports/consumer")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-file-earmark-bar-graph"
+                  style={iconStyle("/reports/consumer")}
+                ></i>
+                {!collapsed && "Consumer Reports"}
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/reports/billing"
+                style={linkStyle("/reports/billing")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-file-earmark-bar-graph-fill"
+                  style={iconStyle("/reports/billing")}
+                ></i>
+                {!collapsed && "Billing Reports"}
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/reports/payment"
+                style={linkStyle("/reports/payment")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-file-earmark-check"
+                  style={iconStyle("/reports/payment")}
+                ></i>
+                {!collapsed && "Payment Reports"}
               </Link>
             </li>
           </>
@@ -236,7 +311,7 @@ const Sidebar = ({ role }) => {
                   className="bi bi-house-door"
                   style={iconStyle("/clientdash")}
                 ></i>
-                Dashboard
+                {!collapsed && "Dashboard"}
               </Link>
             </li>
             <li className="nav-item">

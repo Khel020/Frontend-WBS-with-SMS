@@ -378,6 +378,17 @@ function Table() {
                     Upload Bill
                   </a>
                 </li>
+                <li className="nav-item">
+                  <a
+                    className={`nav-link ${
+                      activeTab === "Upload Bill" ? "active" : ""
+                    }`}
+                    onClick={() => setActiveTab("Upload Bill")}
+                    href="#"
+                  >
+                    Database managment
+                  </a>
+                </li>
               </ul>
             </div>
           </div>

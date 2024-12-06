@@ -558,7 +558,6 @@ const Table = () => {
   return (
     <div>
       <div className="row">
-        {/* Search Input */}
         <div className="mb-3 col-3">
           <input
             type="text"
