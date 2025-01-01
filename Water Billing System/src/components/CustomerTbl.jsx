@@ -195,13 +195,13 @@ const CustomerTbl = () => {
         <div style={{ display: "flex", alignItems: "center" }}>
           {row.status && (
             <span
-              className={`badge border mx-2 rounded-pill ${
+              className={`badge mx-2 rounded-pill  ${
                 row.status === "Active"
-                  ? "bg-success-subtle border-success-subtle text-success-emphasis"
+                  ? "bg-success-subtle text-success-emphasis"
                   : row.status === "Inactive"
-                  ? "bg-danger-subtle border-danger-subtle text-danger-emphasis"
+                  ? "bg-danger-subtle  text-danger-emphasis"
                   : row.status === "Pending"
-                  ? "bg-warning-subtle border-warning-subtle text-warning-emphasis"
+                  ? "bg-warning-subtle text-warning-emphasis"
                   : "bg-secondary"
               }`}
             >
@@ -293,21 +293,19 @@ const CustomerTbl = () => {
   const customStyles = {
     table: {
       style: {
-        border: "1px solid #ddd",
-        borderRadius: "8px",
         overflow: "hidden",
+        borderRadius: "5px",
       },
     },
     headCells: {
       style: {
-        fontWeight: "bold",
-        backgroundColor: "#1F702C",
-        color: "white",
+        backgroundColor: "#EEF1F8", // Lightest blue
+        color: "#333333", // Dark text for contrast
       },
     },
     rows: {
       style: {
-        minHeight: "35px",
+        minHeight: "40px",
         "&:hover": { backgroundColor: "#f1f1f1" },
       },
     },
@@ -321,7 +319,6 @@ const CustomerTbl = () => {
       },
     },
   };
-
   const handleStatusChange = (event) => {
     setFilterStatus(event.target.value);
   };
@@ -386,6 +383,7 @@ const CustomerTbl = () => {
           responsive
           fixedHeader
           highlightOnHover
+          noDataComponent={<div>No Record Found</div>}
         />
       </div>
 

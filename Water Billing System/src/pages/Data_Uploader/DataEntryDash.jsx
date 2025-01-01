@@ -6,6 +6,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import DataTable from "react-data-table-component";
 import { FaFileExport } from "react-icons/fa"; // Importing an icon for export button
 import DatePicker from "react-datepicker";
+import Sidebar from "../../components/Sidebar";
 const DataEntryDash = () => {
   const backend = import.meta.env.VITE_BACKEND;
   const [uploadData, setUploadData] = useState(null);
@@ -15,7 +16,8 @@ const DataEntryDash = () => {
   const [statusLog, setStatusLog] = useState([]); // State to store log messages
   const [Zone, selectZone] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
-
+  const token = localStorage.getItem("type");
+  const usertype = token;
   const navigate = useNavigate();
 
   const handleLogOut = () => {
@@ -238,6 +240,7 @@ const DataEntryDash = () => {
       className="d-flex flex-column flex-md-row"
       style={{ height: "100vh", overflow: "hidden" }}
     >
+      <Sidebar role={usertype} />
       <main
         className="flex-grow-1 px-md-4 py-4"
         style={{ backgroundColor: "#f8f9fa" }}

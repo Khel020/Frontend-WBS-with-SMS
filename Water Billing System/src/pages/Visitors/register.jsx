@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Card from "react-bootstrap/Card";
 import { useNavigate, Link } from "react-router-dom";
-import image from "../../assets/bg.jpg";
+
 import "../../styles/loginreg.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

@@ -1,260 +1,1320 @@
-import React, { useState } from "react";
-import {
-  Carousel,
-  Card,
-  Container,
-  Row,
-  Col,
-  Button,
-  Form,
-} from "react-bootstrap";
-import { FiArrowUpCircle } from "react-icons/fi";
+import React, { useState, useEffect } from "react";
+import { Container, Row, Col, Card, Button } from "react-bootstrap";
 
 const Home = () => {
-  const [showMoreMandate, setShowMoreMandate] = useState(false);
-  const [showMoreVision, setShowMoreVision] = useState(false);
-  const [waterUsage, setWaterUsage] = useState(0);
-  const [billAmount, setBillAmount] = useState(0);
-
-  const calculateBill = () => {
-    // Assuming a basic formula for the bill calculation based on water usage
-    const rate = 5; // Example rate per cubic meter
-    const calculatedBill = waterUsage * rate;
-    setBillAmount(calculatedBill);
-  };
-
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
   };
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
+  const [showMoreMandate, setShowMoreMandate] = useState(false);
+  const [hoveredCard, setHoveredCard] = useState(null);
+
+  const linkStyle = {
+    color: "white",
+    textDecoration: "none",
+    transition: "opacity 0.3s ease",
+    cursor: "pointer",
+    display: "block",
+    marginBottom: "10px",
+  };
+
+  const ulStyle = {
+    listStyle: "none",
+    padding: 0,
+    margin: 0,
+  };
+
+  const sectionTitleStyle = {
+    fontSize: "20px",
+    fontWeight: "600",
+    marginBottom: "20px",
+  };
+
+  const contactTextStyle = {
+    marginBottom: "10px",
+  };
+  const cardStyle = (isHovered) => ({
+    height: "100%",
+    border: "none",
+    borderRadius: "8px",
+    transition: "all 0.3s ease",
+    transform: isHovered ? "translateY(-10px)" : "translateY(0)",
+    boxShadow: isHovered
+      ? "0 10px 20px rgba(0,0,0,0.1)"
+      : "0 4px 6px rgba(0,0,0,0.05)",
+    backgroundColor: isHovered ? "#ffffff" : "#ffffff",
+  });
+
+  const titleStyle = {
+    color: "#16A085",
+    fontSize: "1.5rem",
+    fontWeight: "600",
+    marginBottom: "1rem",
+    textAlign: "center",
+  };
+
+  const cardBodyStyle = {
+    padding: "2rem",
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
+  };
+
+  const buttonStyle = {
+    backgroundColor: "#16A085",
+    border: "none",
+    marginTop: "auto",
+    transition: "all 0.3s ease",
+  };
 
   return (
-    <div style={{ fontFamily: "'Poppins', sans-serif" }}>
-      {/* Carousel Section */}
-      <Carousel className="my-5 px-5">
-        <Carousel.Item>
-          <img
-            className="d-block w-100"
-            src="/Pictures/Image1.png"
-            alt="First slide"
-            style={{
-              height: "30rem",
-              objectFit: "fill",
-              borderRadius: "8px",
-            }}
-          />
-        </Carousel.Item>
-        <Carousel.Item>
-          <img
-            className="d-block w-100"
-            src="/Pictures/Image2.png"
-            alt="Second slide"
-            style={{ height: "30rem", objectFit: "fill", borderRadius: "8px" }}
-          />
-        </Carousel.Item>
-        <Carousel.Item>
-          <img
-            className="d-block w-100"
-            src="/Pictures/Image3.jpg"
-            alt="Third slide"
-            style={{ height: "30rem", objectFit: "fill", borderRadius: "8px" }}
-          />
-        </Carousel.Item>
-      </Carousel>
-
-      {/* Mission, Vision, Values, and Service Pledge Section */}
-      <Container className="my-5">
-        <Row className="g-4">
-          <Col md={3}>
-            <Card
-              className="h-100"
-              style={{
-                border: "none",
-                borderRadius: "15px",
-                boxShadow: "0 5px 20px rgba(0, 0, 0, 0.1)",
-                transition: "transform 0.3s ease-in-out",
-                backgroundColor: "#F5F8FC",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = "scale(1.05)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = "scale(1)")
-              }
-            >
-              <Card.Header
+    <>
+      <main>
+        <section
+          id="hero"
+          className="hero section"
+          style={{
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundColor: "#009688",
+            color: "#fff",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          <div className="p-5">
+            <Row className="align-items-center justify-content-between">
+              <Col
+                lg={6}
+                className="order-2 order-lg-1"
                 style={{
-                  backgroundColor: "#003161",
-                  color: "#fff",
-                  textAlign: "start",
-                  fontSize: "1.5rem",
-                  fontWeight: "600",
-                  padding: "1.2rem",
-                  borderTopLeftRadius: "15px",
-                  borderTopRightRadius: "15px",
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible ? "translateY(0)" : "translateY(20px)",
+                  transition: "all 0.8s ease-out",
                 }}
               >
-                MISSION
-              </Card.Header>
-              <Card.Body style={{ padding: "25px" }}>
-                <Card.Text style={{ fontSize: "1.1rem", lineHeight: "1.6" }}>
-                  To provide safe, reliable, and affordable water services for
-                  our community.
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md={3}>
-            <Card
-              className="h-100"
-              style={{
-                border: "none",
-                borderRadius: "15px",
-                boxShadow: "0 5px 20px rgba(0, 0, 0, 0.1)",
-                transition: "transform 0.3s ease-in-out",
-                backgroundColor: "#F5F8FC",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = "scale(1.05)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = "scale(1)")
-              }
-            >
-              <Card.Header
-                style={{
-                  backgroundColor: "#003161",
-                  color: "#fff",
-                  textAlign: "start",
-                  fontSize: "1.5rem",
-                  fontWeight: "600",
-                  padding: "1.2rem",
-                  borderTopLeftRadius: "15px",
-                  borderTopRightRadius: "15px",
-                }}
-              >
-                VISION
-              </Card.Header>
-              <Card.Body style={{ padding: "25px" }}>
-                <Card.Text style={{ fontSize: "1.1rem", lineHeight: "1.6" }}>
-                  {showMoreVision
-                    ? "The Casiguran Water District works towards a dynamic, reliable, and self-sustaining water utility, using its resources for the optimum satisfaction of its concessionaires."
-                    : "The Casiguran Water District works towards a dynamic, reliable, and self-sustaining water utility..."}
-                  <span
+                <div style={{ paddingRight: "40px" }}>
+                  <h3
+                    className="display-4 fw-bold mb-4"
                     style={{
-                      cursor: "pointer",
-                      color: "#024CAA",
-                      fontWeight: "600",
+                      transition: "all 0.5s ease-out",
+                      animation: isVisible ? "fadeInUp 0.8s ease-out" : "none",
                     }}
-                    onClick={() => setShowMoreVision(!showMoreVision)}
                   >
-                    {showMoreVision ? " Read Less" : " Read More"}
-                  </span>
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md={3}>
-            <Card
-              className="h-100"
-              style={{
-                border: "none",
-                borderRadius: "15px",
-                boxShadow: "0 5px 20px rgba(0, 0, 0, 0.1)",
-                transition: "transform 0.3s ease-in-out",
-                backgroundColor: "#F5F8FC",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = "scale(1.05)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = "scale(1)")
-              }
-            >
-              <Card.Header
-                style={{
-                  backgroundColor: "#003161",
-                  color: "#fff",
-                  textAlign: "start",
-                  fontSize: "1.5rem",
-                  fontWeight: "600",
-                  padding: "1.2rem",
-                  borderTopLeftRadius: "15px",
-                  borderTopRightRadius: "15px",
-                }}
-              >
-                VALUES
-              </Card.Header>
-              <Card.Body style={{ padding: "25px" }}>
-                <Card.Text style={{ fontSize: "1.1rem", lineHeight: "1.6" }}>
-                  Integrity, Service Excellence, Accountability, Teamwork,
-                  Innovation
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col md={3}>
-            <Card
-              className="h-100"
-              style={{
-                border: "none",
-                borderRadius: "15px",
-                boxShadow: "0 5px 20px rgba(0, 0, 0, 0.1)",
-                transition: "transform 0.3s ease-in-out",
-                backgroundColor: "#F5F8FC",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = "scale(1.05)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = "scale(1)")
-              }
-            >
-              <Card.Header
-                style={{
-                  backgroundColor: "#003161",
-                  color: "#fff",
-                  textAlign: "start",
-                  fontSize: "1.5rem",
-                  fontWeight: "600",
-                  padding: "1.2rem",
-                  borderTopLeftRadius: "15px",
-                  borderTopRightRadius: "15px",
-                }}
-              >
-                SERVICE PLEDGE
-              </Card.Header>
-              <Card.Body style={{ padding: "25px" }}>
-                <Card.Text style={{ fontSize: "1.1rem", lineHeight: "1.6" }}>
-                  To provide quality water services to our customers with utmost
-                  responsibility, integrity, and dedication.
-                </Card.Text>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+                    Welcome to CWD Online Portal
+                  </h3>
+                  <p
+                    className="lead mb-4"
+                    style={{
+                      fontSize: "1.2rem",
+                      lineHeight: "1.8",
+                      transition: "all 0.5s ease-out",
+                      animation: isVisible ? "fadeInUp 1s ease-out" : "none",
+                    }}
+                  >
+                    Easily access your account, view your bills, and stay
+                    updated with SMS notifications for a seamless water service
+                    experience.
+                  </p>
+                  <div
+                    className="d-flex gap-3 flex-wrap"
+                    style={{
+                      transition: "all 0.5s ease-out",
+                      animation: isVisible ? "fadeInUp 1.2s ease-out" : "none",
+                    }}
+                  >
+                    <Button
+                      href="/register"
+                      size="sm" // Smaller button size
+                      style={{
+                        borderRadius: "10px",
+                        padding: "8px 16px", // Reduced padding for smaller buttons
+                        transition: "all 0.3s ease",
+                        backgroundColor: "#FFFFFF",
+                        color: "#00838F",
+                        border: "2px solid #FFFFFF",
+                        fontSize: "14px", // Smaller text size
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-3px)";
+                        e.currentTarget.style.backgroundColor = "#00838F";
+                        e.currentTarget.style.color = "#FFFFFF";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.backgroundColor = "#FFFFFF";
+                        e.currentTarget.style.color = "#00838F";
+                      }}
+                    >
+                      Register
+                    </Button>
+                    <Button
+                      href="/login"
+                      variant="outline-light"
+                      size="sm" // Smaller button size
+                      className="fw-semibold"
+                      style={{
+                        borderRadius: "10px",
+                        padding: "8px 20px", // Reduced padding for smaller buttons
+                        transition: "all 0.3s ease",
+                        backgroundColor: "transparent",
+                        color: "#FFFFFF",
+                        border: "2px solid #FFFFFF",
+                        fontSize: "14px", // Smaller text size
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateY(-3px)";
+                        e.currentTarget.style.backgroundColor = "#FFFFFF";
+                        e.currentTarget.style.color = "#00838F";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateY(0)";
+                        e.currentTarget.style.backgroundColor = "transparent";
+                        e.currentTarget.style.color = "#FFFFFF";
+                      }}
+                    >
+                      My Bills
+                    </Button>
+                  </div>
+                </div>
+              </Col>
 
-      {/* Scroll to Top Button */}
-      <div
-        onClick={scrollToTop}
+              {/* Right Image */}
+              <Col
+                lg={5}
+                className="order-1 order-lg-2 d-none d-lg-block"
+                style={{
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible ? "translateX(0)" : "translateX(50px)",
+                  transition: "all 1s ease-out",
+                }}
+              >
+                <img
+                  src="assets/img/file.png"
+                  className="img-fluid"
+                  alt="Hero Illustration"
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto",
+                    animation: isVisible
+                      ? "float 3s ease-in-out infinite"
+                      : "none",
+                  }}
+                />
+              </Col>
+            </Row>
+          </div>
+
+          <style>
+            {`
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(20px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+
+          @keyframes float {
+            0% {
+              transform: translateY(0px);
+            }
+            50% {
+              transform: translateY(-10px);
+            }
+            100% {
+              transform: translateY(0px);
+            }
+          }
+        `}
+          </style>
+        </section>
+
+        {/* Additional Information Section */}
+        <section className="mt-5">
+          <Container>
+            <Row className="justify-content-center">
+              <Col lg={8} className="text-center">
+                <div className="service-pledge-wrapper ">
+                  <h2
+                    className="mb-4 fw-bold"
+                    style={{ color: "#16A085", fontSize: "40px" }}
+                  >
+                    About Us
+                  </h2>
+                  <div className="pledge-content">
+                    <div className="mt-4">
+                      <hr
+                        className="mx-auto"
+                        style={{
+                          width: "50px",
+                          height: "3px",
+                          backgroundColor: "#16A085",
+                          opacity: "1",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          </Container>
+        </section>
+
+        <section className="py-5 ">
+          <Container>
+            <Row className="g-4">
+              {/* Mission Card */}
+              <Col lg={4}>
+                <div
+                  onMouseEnter={() => setHoveredCard("mission")}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  style={cardStyle(hoveredCard === "mission")}
+                >
+                  <Card.Body style={cardBodyStyle}>
+                    <h4 style={titleStyle}>Our Mission</h4>
+                    <Card.Text style={{ color: "#4a5568" }}>
+                      To provide clean and safe water to all communities in our
+                      service areas. We aim to ensure the health and well-being
+                      of our customers by delivering quality water with
+                      sustainable management practices.
+                    </Card.Text>
+                  </Card.Body>
+                </div>
+              </Col>
+
+              {/* Vision Card */}
+              <Col lg={4}>
+                <div
+                  onMouseEnter={() => setHoveredCard("vision")}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  style={cardStyle(hoveredCard === "vision")}
+                >
+                  <Card.Body style={cardBodyStyle}>
+                    <h4 style={titleStyle}>Our Vision</h4>
+                    <Card.Text style={{ color: "#4a5568" }}>
+                      To be the leading provider of water solutions, recognized
+                      for innovation, efficiency, and commitment to
+                      environmental sustainability. We envision a future where
+                      every individual has access to clean and affordable water.
+                    </Card.Text>
+                  </Card.Body>
+                </div>
+              </Col>
+
+              {/* Mandate Card */}
+              <Col lg={4}>
+                <div
+                  onMouseEnter={() => setHoveredCard("mandate")}
+                  onMouseLeave={() => setHoveredCard(null)}
+                  style={cardStyle(hoveredCard === "mandate")}
+                >
+                  <Card.Body style={cardBodyStyle}>
+                    <h4 style={titleStyle}>Our Mandate</h4>
+                    <Card.Text style={{ color: "#4a5568" }}>
+                      We are mandated to deliver a safe and sustainable water
+                      supply to our customers, promote responsible water use,
+                      and support the community through various programs and
+                      partnerships.
+                    </Card.Text>
+                    {showMoreMandate && (
+                      <Card.Text
+                        style={{ color: "#4a5568", marginTop: "1rem" }}
+                      >
+                        Our mandate extends to providing technical assistance to
+                        ensure optimal water management practices, investing in
+                        infrastructure to improve service, and fostering
+                        collaboration with stakeholders to address local water
+                        challenges.
+                      </Card.Text>
+                    )}
+                    <Button
+                      style={{
+                        ...buttonStyle,
+                        backgroundColor:
+                          hoveredCard === "mandate" ? "#147d6f" : "#16A085",
+                      }}
+                      onClick={() => setShowMoreMandate(!showMoreMandate)}
+                    >
+                      {showMoreMandate ? "Show Less" : "Show More"}
+                    </Button>
+                  </Card.Body>
+                </div>
+              </Col>
+            </Row>
+          </Container>
+        </section>
+
+        <section className="mt-5">
+          <Container>
+            <Row className="justify-content-center">
+              <Col lg={8} className="text-center">
+                <div className="service-pledge-wrapper">
+                  <h2
+                    className="mb-4 fw-bold"
+                    style={{ color: "#16A085", fontSize: "40px" }}
+                  >
+                    Board of Directors
+                  </h2>
+                  <div className="pledge-content">
+                    <div className="mt-4">
+                      <hr
+                        className="mx-auto"
+                        style={{
+                          width: "50px",
+                          height: "3px",
+                          backgroundColor: "#16A085",
+                          opacity: "1",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+            <Row className="mt-5">
+              {/* Card 1 */}
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/BoardofDirectors/Chairman of the Board.jpg"
+                    alt="Walter White"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Ruiz H. Jersey
+                  </h5>
+                  <p style={{ fontSize: "14px", color: "#555" }}>
+                    Chairman of the Board
+                  </p>
+                </div>
+              </Col>
+
+              {/* Card 2 */}
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/BoardofDirectors/Vice Chairman of the Board.jpg"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Mamerto D. Te
+                  </h5>
+                  <p style={{ fontSize: "14px", color: "#555" }}>
+                    Vice Chairman of the Board
+                  </p>
+                </div>
+              </Col>
+
+              {/* Card 3 */}
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/BoardofDirectors/Secretary of the board.jpg"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Brian B. Espedido
+                  </h5>
+                  <p style={{ fontSize: "14px", color: "#555" }}>
+                    Secretary of the board
+                  </p>
+                </div>
+              </Col>
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/BoardofDirectors/Member of the board.jpg"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Neney V. Labalan
+                  </h5>
+                  <p style={{ fontSize: "14px", color: "#555" }}>
+                    Member of the board
+                  </p>
+                </div>
+              </Col>
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/BoardofDirectors/Member of the board2.jpg"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Eduardo T. Frivaldo
+                  </h5>
+                  <p style={{ fontSize: "14px", color: "#555" }}>
+                    Member of the board
+                  </p>
+                </div>
+              </Col>
+            </Row>
+          </Container>
+        </section>
+
+        <section className="mt-5">
+          <Container>
+            <Row className="justify-content-center">
+              <Col lg={8} className="text-center">
+                <div className="service-pledge-wrapper">
+                  <h2
+                    className="mb-4 fw-bold"
+                    style={{ color: "#16A085", fontSize: "40px" }}
+                  >
+                    Management Officials
+                  </h2>
+                  <div className="pledge-content">
+                    <div className="mt-4">
+                      <hr
+                        className="mx-auto"
+                        style={{
+                          width: "50px",
+                          height: "3px",
+                          backgroundColor: "#16A085",
+                          opacity: "1",
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+            <Row className="mt-5">
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/Management Officials/EDUARDO-P-TEJADA.jpg"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    EDUARDO P. TEJADA
+                  </h5>
+                  <p style={{ fontSize: "14px", color: "#555" }}>
+                    General Manager C
+                  </p>
+                </div>
+              </Col>
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/Management Officials/LOUIE-H-RAFER.jpg"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Ralph Louie H. Rafer
+                  </h5>
+                  <p style={{ fontSize: "14px", color: "#555" }}>
+                    Senior Corporate Accountant C
+                  </p>
+                </div>
+              </Col>
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/Management Officials/Ruby1-240x300.jpg"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Ruby R. Buban
+                  </h5>
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Administrative/ General Service Officer A
+                  </p>
+                </div>
+              </Col>
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/Management Officials/CECILIO-E-HABALO.jpg"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Cecilio E. Habalo, Jr.
+                  </h5>
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Customer Service Officer A
+                  </p>
+                </div>
+              </Col>
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/Management Officials/duque1-267x300.jpg"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Leandro H. Duque
+                  </h5>
+                  <p style={{ fontSize: "14px", color: "#555" }}>Cashier A</p>
+                </div>
+              </Col>
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/Management Officials/ROBERTO-D-LACZA.jpg"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Roberto D. Lacza
+                  </h5>
+                  <p style={{ fontSize: "14px", color: "#555" }}>
+                    Senior Property Officer A
+                  </p>
+                </div>
+              </Col>
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/Management Officials/SIMEON-HABOC-231x300.jpg"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Simeon H. Haboc
+                  </h5>
+                  <p style={{ fontSize: "14px", color: "#555" }}>
+                    Water Maintenance Head
+                  </p>
+                </div>
+              </Col>
+              <Col lg={3} md={4} sm={6} className="mb-4">
+                <div
+                  className="board-card"
+                  style={{
+                    textAlign: "center",
+                    border: "1px solid #ddd",
+                    borderRadius: "10px",
+                    padding: "20px",
+                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                    backgroundColor: "#fff",
+                    transition: "transform 0.3s, box-shadow 0.3s",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-10px)";
+                    e.currentTarget.style.boxShadow =
+                      "0 6px 15px rgba(0, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow =
+                      "0 4px 8px rgba(0, 0, 0, 0.1)";
+                  }}
+                >
+                  <img
+                    src="../../../public/Management Officials/Jomar-257x300.jpg"
+                    style={{
+                      width: "100px",
+                      height: "100px",
+                      borderRadius: "50%",
+                      marginBottom: "15px",
+                    }}
+                  />
+                  <h5
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Engr. Jomar H. Venus
+                  </h5>
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      color: "#555",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    Utilities/ Customer Service Assistant A
+                  </p>
+                </div>
+              </Col>
+            </Row>
+          </Container>
+        </section>
+      </main>
+
+      <footer
         style={{
-          position: "fixed",
-          bottom: "20px",
-          right: "20px",
-          cursor: "pointer",
-          backgroundColor: "#003161",
+          backgroundColor: "#008374",
           color: "#fff",
-          borderRadius: "50%",
-          padding: "10px",
-          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.2)",
+          padding: "40px 0",
+          fontFamily: "Arial, sans-serif",
         }}
       >
-        <FiArrowUpCircle size={32} />
-      </div>
-    </div>
+        <div className="container">
+          <Row gutter={24}>
+            <Col lg={6} md={12} style={{ paddingRight: "20px" }}>
+              <div>
+                <a
+                  href="/"
+                  style={{
+                    fontSize: "26px",
+                    fontWeight: "bold",
+                    color: "#fff",
+                    textDecoration: "none",
+                    display: "inline-block",
+                  }}
+                >
+                  CWD Online Portal
+                </a>
+                <p
+                  style={{
+                    marginTop: "10px", // Reduced margin-top for better spacing
+                    opacity: "0.9",
+                    fontSize: "16px",
+                    lineHeight: "1.6",
+                    maxWidth: "450px",
+                    textAlign: "justify",
+                  }}
+                >
+                  Easily access your account, view your bills, and stay updated
+                  with SMS notifications for a seamless water service
+                  experience.
+                </p>
+
+                <div style={{ marginTop: "20px" }}>
+                  <a
+                    href="https://facebook.com"
+                    style={{ color: "#fff", marginRight: "15px" }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <i
+                      className="bi bi-facebook"
+                      style={{ fontSize: "24px" }}
+                    ></i>
+                  </a>
+                  <a
+                    href="https://facebook.com"
+                    style={{ color: "#fff", marginRight: "15px" }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <i className="bi bi-globe" style={{ fontSize: "24px" }}></i>
+                  </a>
+                </div>
+              </div>
+            </Col>
+
+            <Col lg={3} md={6} style={{ paddingRight: "20px" }}>
+              <div>
+                <h4
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    color: "#fff",
+                  }}
+                >
+                  Useful Links
+                </h4>
+                <ul
+                  style={{
+                    listStyleType: "none",
+                    paddingLeft: "0",
+                    marginBottom: "0",
+                  }}
+                >
+                  <li style={{ marginBottom: "10px" }}>
+                    <a
+                      href="/"
+                      style={{
+                        color: "#fff",
+                        textDecoration: "none",
+                        fontSize: "16px",
+                        transition: "color 0.3s",
+                      }}
+                    >
+                      Home
+                    </a>
+                  </li>
+                  <li style={{ marginBottom: "10px" }}>
+                    <a
+                      href="/about"
+                      style={{
+                        color: "#fff",
+                        textDecoration: "none",
+                        fontSize: "16px",
+                        transition: "color 0.3s",
+                      }}
+                    >
+                      About us
+                    </a>
+                  </li>
+                  <li style={{ marginBottom: "10px" }}>
+                    <a
+                      href="/services"
+                      style={{
+                        color: "#fff",
+                        textDecoration: "none",
+                        fontSize: "16px",
+                        transition: "color 0.3s",
+                      }}
+                    >
+                      Services
+                    </a>
+                  </li>
+                  <li style={{ marginBottom: "10px" }}>
+                    <a
+                      href="/terms"
+                      style={{
+                        color: "#fff",
+                        textDecoration: "none",
+                        fontSize: "16px",
+                        transition: "color 0.3s",
+                      }}
+                    >
+                      Terms of service
+                    </a>
+                  </li>
+                  <li style={{ marginBottom: "10px" }}>
+                    <a
+                      href="/privacy"
+                      style={{
+                        color: "#fff",
+                        textDecoration: "none",
+                        fontSize: "16px",
+                        transition: "color 0.3s",
+                      }}
+                    >
+                      Privacy policy
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </Col>
+            <Col lg={3} md={12} style={{ marginBottom: "20px" }}>
+              <div>
+                <h4
+                  style={{
+                    fontSize: "18px",
+                    fontWeight: "600",
+                    color: "#fff",
+                  }}
+                >
+                  Contact Us
+                </h4>
+                <p
+                  style={{
+                    fontSize: "16px",
+                    lineHeight: "1.6",
+                    marginBottom: "10px",
+                  }}
+                >
+                  L. Hapal Street
+                </p>
+                <p
+                  style={{
+                    fontSize: "16px",
+                    lineHeight: "1.6",
+                    marginBottom: "10px",
+                  }}
+                >
+                  Brgy. Central
+                </p>
+                <p
+                  style={{
+                    fontSize: "16px",
+                    lineHeight: "1.6",
+                    marginBottom: "10px",
+                  }}
+                >
+                  Casiguran, Sorsogon
+                </p>
+                <p
+                  style={{
+                    fontSize: "16px",
+                    lineHeight: "1.6",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <strong>Phone: </strong>
+                  <a
+                    href="tel:+639172095367"
+                    style={{ color: "#fff", textDecoration: "none" }}
+                  >
+                    +639172095367
+                  </a>
+                </p>
+                <p
+                  style={{
+                    fontSize: "16px",
+                    lineHeight: "1.6",
+                    marginBottom: "10px",
+                  }}
+                >
+                  <strong>Email: </strong>
+                  <a
+                    href="mailto:casiguranwd1988@gmail.com"
+                    style={{ color: "#fff", textDecoration: "none" }}
+                  >
+                    casiguranwd1988@gmail.com
+                  </a>
+                </p>
+              </div>
+            </Col>
+          </Row>
+        </div>
+      </footer>
+
+      <Button
+        onClick={scrollToTop}
+        className="position-fixed scroll-top"
+        style={{
+          bottom: "20px",
+          right: "20px",
+          backgroundColor: "#16A085",
+          borderRadius: "50%",
+          width: "45px",
+          height: "45px",
+          padding: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "none",
+        }}
+      >
+        <i className="bi bi-arrow-up-short fs-5"></i>
+      </Button>
+    </>
   );
 };
 

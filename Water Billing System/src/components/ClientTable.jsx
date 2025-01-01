@@ -295,6 +295,43 @@ const Table = () => {
     fetchClients();
   }, []);
 
+  const socket = useRef(null);
+  useEffect(() => {
+    const fetchClients = async () => {
+      const response = await fetch(`${backend}/client/clients`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("tkn")}`,
+        },
+      });
+      if (!response.ok) {
+        console.log({ error: "Invalid Credentials" });
+      }
+
+      const data = await response.json();
+      setClients(data);
+    };
+    socket.current = io(backend);
+    socket.current.on("connect", () => {
+      console.log("Connected to Socket.IO server");
+    });
+    socket.current.on("disconnect", () => {
+      console.log("Disconnected from Socket.IO server");
+    });
+
+    // Listen for paymentProcessed event
+    socket.current.on("paymentProcessed", (data) => {
+      console.log("Payment processed event received:", data);
+      // Update the state or fetch the latest data
+      fetchClients(); // Fetch the latest clients data
+    });
+
+    return () => {
+      socket.current.disconnect();
+    };
+  }, [backend]);
+
   //FIXME: FOR PAYMENT
   const handleSubmitPay = async (e) => {
     e.preventDefault();
@@ -369,11 +406,10 @@ const Table = () => {
         toast.success(result.message || "Payment successful", {
           autoClose: 1000, // Auto close after 1 second
         });
+        handleClose(); // Close the modal after successful payment
 
+        socket.current.emit("paymentProcessed", newPayment);
         // Trigger print after 1 second delay
-        setTimeout(() => {
-          handlePrint();
-        }, 1000);
       } else {
         toast.error(result.message || "Payment failed");
       }
@@ -515,39 +551,26 @@ const Table = () => {
   const customStyles = {
     table: {
       style: {
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        overflow: "auto",
-        height: "420px",
-      },
-    },
-    headRow: {
-      style: {
-        position: "sticky",
-        top: 0,
-        zIndex: 10,
-        backgroundColor: "#1F702C", // Consistent header background
+        overflow: "hidden",
+        borderRadius: "5px",
       },
     },
     headCells: {
       style: {
-        fontWeight: "bold",
-        backgroundColor: "transparent", // Inherits background from headRow
-        color: "white",
-        fontSize: "12px",
-        padding: "10px", // Adjust padding for aesthetics
+        backgroundColor: "#EEF1F8", // Lightest blue
+        color: "#333333", // Dark text for contrast
       },
     },
     rows: {
       style: {
-        minHeight: "45px",
+        minHeight: "40px",
         "&:hover": { backgroundColor: "#f1f1f1" },
       },
     },
     pagination: {
       style: {
         border: "none",
-        fontSize: "14px",
+        fontSize: "13px",
         color: "#000",
         backgroundColor: "#f7f7f7",
         minHeight: "50px",

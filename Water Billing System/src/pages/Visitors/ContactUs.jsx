@@ -1,5 +1,4 @@
 import React from "react";
-import image from "../../assets/bg.jpg";
 import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -11,10 +10,6 @@ const ContactUs = () => {
   return (
     <div
       style={{
-        backgroundImage: `url(${image})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
         height: "91vh",
         width: "100%",
       }}

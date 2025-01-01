@@ -17,8 +17,12 @@ const Sidebar = ({ role }) => {
   const sidebarStyle = {
     width: collapsed ? "60px" : "220px",
     transition: "width 0.3s",
-    height: "100vh",
     backgroundColor: "#091057",
+    position: "-webkit-sticky",
+    position: "sticky",
+    top: "0",
+    height: "100vh",
+    overflowY: "auto",
   };
 
   const linkStyle = (path) => ({
@@ -432,70 +436,87 @@ const Sidebar = ({ role }) => {
           <>
             <li className="nav-item">
               <Link
-                to="/clientdash"
-                style={linkStyle("/clientdash")}
+                to="/cs-dashboard"
+                style={linkStyle("/cs-dashboard")}
                 className="nav-link"
               >
                 <i
                   className="bi bi-house-door"
-                  style={iconStyle("/clientdash")}
+                  style={iconStyle("/cs-dashboard")}
                 ></i>
                 {!collapsed && "Dashboard"}
               </Link>
             </li>
             <li className="nav-item">
               <Link
-                to="/yourbills"
-                style={linkStyle("/yourbills")}
+                to="/cs-consumers"
+                style={linkStyle("/cs-consumers")}
                 className="nav-link"
               >
                 <i
                   className="bi bi-file-earmark-text"
-                  style={iconStyle("/yourbills")}
+                  style={iconStyle("/cs-consumers")}
                 ></i>
-                List of Consumers
+                {!collapsed && "List of Consumers"}
               </Link>
             </li>
             <li className="nav-item">
               <Link
-                to="/payments"
-                style={linkStyle("/payments")}
+                to="/bill-monitoring"
+                style={linkStyle("/bill-monitoring")}
                 className="nav-link"
               >
                 <i
                   className="bi bi-credit-card"
-                  style={iconStyle("/payments")}
+                  style={iconStyle("/bill-monitoring")}
                 ></i>
-                Bill Overview
+                {!collapsed && "Bill Monitoring"}
               </Link>
             </li>
             <li className="nav-item">
               <Link
-                to="/payments"
-                style={linkStyle("/payments")}
+                to="/profile"
+                style={linkStyle("/profile")}
                 className="nav-link"
               >
                 <i
-                  className="bi bi-credit-card"
-                  style={iconStyle("/payments")}
+                  className="bi bi-person-circle"
+                  style={iconStyle("/profile")}
                 ></i>
-                Complaints & Requests
+                {!collapsed && "Profile"}
               </Link>
             </li>
-            <li className="nav-item">
-              <Link
-                to="/payments"
-                style={linkStyle("/payments")}
-                className="nav-link"
-              >
-                <i
-                  className="bi bi-credit-card"
-                  style={iconStyle("/payments")}
-                ></i>
-                Complaints & Requests
-              </Link>
-            </li>
+          </>
+        )}
 
+        {role === "data entry staff" && (
+          <>
+            <li className="nav-item">
+              <Link
+                to="/uploadreadings"
+                style={linkStyle("/uploadreadings")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-cloud-upload"
+                  style={iconStyle("/uploadreadings")}
+                ></i>
+                Upload Readings
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/meterreadings"
+                style={linkStyle("/meterreadings")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-speedometer2"
+                  style={iconStyle("/meterreadings")}
+                ></i>
+                Meter Readings
+              </Link>
+            </li>
             <li className="nav-item">
               <Link
                 to="/profile"

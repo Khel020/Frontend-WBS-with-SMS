@@ -13,6 +13,7 @@ import BillerLayout from "./layouts/CashierLayout.jsx";
 import AdminLayout from "./layouts/AdminLayout.jsx";
 import StaffLayout from "./layouts/dataEntryLayout.jsx";
 import ITLayout from "./layouts/InfoLayout.jsx";
+import CSOfficer from "./layouts/CS_Layout.jsx";
 // TODO: Visitor Pages
 import AboutUS from "./pages/Visitors/About.jsx";
 import ContactUS from "./pages/Visitors/ContactUs.jsx";
@@ -20,6 +21,7 @@ import Home from "./pages/Visitors/Home.jsx";
 import Login from "./pages/Visitors/login.jsx";
 import Register from "./pages/Visitors/register.jsx";
 import OrgLogin from "./pages/Visitors/OrgLogin.jsx";
+import Landing from "./pages/Visitors/landing.jsx";
 
 //TODO: Portal Pages
 import DashClient from "./pages/Portal/ClientDash.jsx";
@@ -53,6 +55,9 @@ import DashboardStaff from "./pages/Data_Uploader/DataEntryDash.jsx";
 import Page404 from "./pages/Visitors/404.jsx";
 
 //TODO:CS OFFICER
+import CS_CustomerList from "./pages/CS_Officer/ListofConsumers.jsx";
+import CS_Dashboard from "./pages/CS_Officer/CS_Dashboard.jsx";
+import CS_BillMonitoring from "./pages/CS_Officer/BillMonitoring.jsx";
 //TODO: IT
 import IT_Dashboard from "./pages/IT/Dashboard.jsx";
 import IT_Userlist from "./pages/IT/userlist.jsx";
@@ -60,13 +65,14 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       //TODO: Customer Service OFFICER
-      <Route path="/" element={<VisitorLayout />}>
-        <Route index element={<Home />} />
-        <Route path="about-us" element={<AboutUS />} />
-        <Route path="contact-us" element={<ContactUS />} />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="cws-login" element={<OrgLogin />} />
+      <Route path="cs-consumers" element={<CSOfficer />}>
+        <Route index element={<CS_CustomerList />} />
+      </Route>
+      <Route path="cs-dashboard" element={<CSOfficer />}>
+        <Route index element={<CS_Dashboard />} />
+      </Route>
+      <Route path="bill-monitoring" element={<CSOfficer />}>
+        <Route index element={<CS_BillMonitoring />} />
       </Route>
       //TODO: VISITOR ROUTES
       <Route path="/" element={<VisitorLayout />}>
@@ -75,7 +81,9 @@ const router = createBrowserRouter(
         <Route path="contact-us" element={<ContactUS />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
-        <Route path="cws-login" element={<OrgLogin />} />
+        <Route path="cwd-login" element={<OrgLogin />} />
+        <Route path="index" element={<Landing />} />
+        Landing
       </Route>
       //TODO: Client ROUTES
       <Route path="clientdash" element={<ClientLayout />}>

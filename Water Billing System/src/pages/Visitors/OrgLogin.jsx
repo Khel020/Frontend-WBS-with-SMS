@@ -34,6 +34,8 @@ const OrgLogin = () => {
           navigate("/staff-dashboard");
         } else if (type === "Information Tech") {
           navigate("/it-dashboard");
+        } else if (type === "CS_Officer") {
+          navigate("/cs-consumers");
         } else {
           navigate("/login");
         }
@@ -47,83 +49,148 @@ const OrgLogin = () => {
   };
   return (
     <div>
-      <section className="vh-85" style={{ backgroundColor: "#fff" }}>
-        <div className="container py-5 vh-85">
-          <div className="row d-flex justify-content-center align-items-center h-100">
-            <div className="col col-xl-8">
-              <div
-                className="card mx-auto"
-                style={{
-                  borderRadius: "1rem",
-                  marginTop: "50px",
-                  maxWidth: "400px", // Adjust the card width
-                }}
-              >
-                <div className="row">
-                  <div>
-                    <div className="card-body p-4 p-lg-5 text-black">
-                      <form onSubmit={handleSubmit}>
-                        <div className="d-flex align-items-center mb-3 pb-1">
-                          <i
-                            className="fas fa-cubes fa-2x me-3"
-                            style={{ color: "#ff6219" }}
-                          ></i>
-                        </div>
-
-                        <h5
-                          className="fw-normal mb-3 pb-3"
-                          style={{ letterSpacing: "1px" }}
-                        >
-                          Sign into your account
-                        </h5>
-
-                        {/* Floating Label for Email */}
-                        <div className="form-floating mb-4">
-                          <input
-                            type="username"
-                            id="form2Example17"
-                            className="form-control"
-                            placeholder="Email address"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            required
-                          />
-                          <label htmlFor="form2Example17">Username</label>
-                        </div>
-
-                        {/* Floating Label for Password */}
-                        <div className="form-floating mb-4">
-                          <input
-                            type="password"
-                            id="form2Example27"
-                            className="form-control"
-                            placeholder="Password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                          />
-                          <label htmlFor="form2Example27">Password</label>
-                        </div>
-
-                        <div className="pt-1 mb-4">
-                          <button
-                            className="btn btn-dark btn-md btn-block w-100"
-                            type="submit"
+      <main>
+        <section style={{ backgroundColor: "#fff" }}>
+          <div className="container py-5 ">
+            <div className="row d-flex justify-content-center align-items-center h-100">
+              <div className="col col-xl-8">
+                <div
+                  className="card mx-auto"
+                  style={{
+                    borderRadius: "1rem",
+                    marginTop: "50px",
+                    maxWidth: "400px", // Adjust the card width
+                  }}
+                >
+                  <div className="row">
+                    <div>
+                      <div
+                        className="card-body px-4 py-5"
+                        style={{
+                          backgroundColor: "#f9f9f9",
+                          borderRadius: "15px",
+                          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
+                        }}
+                      >
+                        <form onSubmit={handleSubmit}>
+                          {/* Header Section */}
+                          <div className="d-flex align-items-center justify-content-center mb-4">
+                            <i
+                              className="fas fa-cubes fa-3x"
+                              style={{
+                                color: "#ff6219",
+                                backgroundColor: "#ffe6d3",
+                                borderRadius: "50%",
+                                padding: "10px",
+                              }}
+                            ></i>
+                          </div>
+                          <h2
+                            className="text-center fw-bold mb-3"
+                            style={{
+                              color: "#333",
+                              letterSpacing: "1px",
+                            }}
                           >
-                            Login
-                          </button>
-                        </div>
-                        <div className="text-center">
-                          <a href="">Forgot Password</a>
-                        </div>
-                      </form>
+                            Welcome Back
+                          </h2>
+                          <p
+                            className="text-center mb-4"
+                            style={{
+                              color: "#777",
+                              fontSize: "0.9rem",
+                            }}
+                          >
+                            Sign in to access your account.
+                          </p>
+
+                          {/* Username Input */}
+                          <div className="form-floating mb-3">
+                            <input
+                              type="text"
+                              id="username"
+                              className="form-control rounded-pill"
+                              style={{
+                                backgroundColor: "#fff",
+                                borderColor: "#ddd",
+                                boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)",
+                              }}
+                              placeholder="Enter your username"
+                              value={username}
+                              onChange={(e) => setUsername(e.target.value)}
+                              required
+                            />
+                            <label
+                              htmlFor="username"
+                              style={{ paddingLeft: "20px" }}
+                            >
+                              Username
+                            </label>
+                          </div>
+
+                          {/* Password Input */}
+                          <div className="form-floating mb-4">
+                            <input
+                              type="password"
+                              id="password"
+                              className="form-control rounded-pill"
+                              style={{
+                                backgroundColor: "#fff",
+                                borderColor: "#ddd",
+                                boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)",
+                              }}
+                              placeholder="Enter your password"
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              required
+                            />
+                            <label
+                              htmlFor="password"
+                              style={{ paddingLeft: "20px" }}
+                            >
+                              Password
+                            </label>
+                          </div>
+
+                          {/* Login Button */}
+                          <div className="d-grid mb-4">
+                            <button
+                              className="btn btn-primary btn-md rounded-pill"
+                              type="submit"
+                              style={{
+                                background: "#008374",
+                                border: "none",
+                                color: "#fff",
+                                transition: "background 0.3s",
+                              }}
+                            >
+                              Login
+                            </button>
+                          </div>
+
+                          {/* Forgot Password Link */}
+                          <div className="text-center">
+                            <a
+                              href="#"
+                              className="text-decoration-none"
+                              style={{
+                                color: "#008374",
+                                fontWeight: "500",
+                              }}
+                            >
+                              Forgot Password?
+                            </a>
+                          </div>
+                        </form>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
       <ToastContainer
         position="top-right"
         autoClose={1800}

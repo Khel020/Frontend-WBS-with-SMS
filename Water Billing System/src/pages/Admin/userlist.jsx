@@ -174,18 +174,17 @@ function Userlist() {
   const customStyles = {
     table: {
       style: {
-        border: "1px solid #ddd",
-        borderRadius: "8px",
         overflow: "hidden",
+        borderRadius: "5px",
       },
     },
     headCells: {
       style: {
-        fontWeight: "bold",
-        backgroundColor: "#1F702C",
-        color: "white",
+        backgroundColor: "#EEF1F8", // Lightest blue
+        color: "#333333", // Dark text for contrast
       },
     },
+
     rows: {
       style: {
         minHeight: "35px",
@@ -205,7 +204,7 @@ function Userlist() {
 
   const columns = [
     {
-      name: "Acc Name:",
+      name: "Account Name",
       sortable: true,
       selector: (row) => row.name,
     },
@@ -215,12 +214,12 @@ function Userlist() {
       selector: (row) => formatDate(row.dateCreated),
     },
     {
-      name: "Email.",
+      name: "Email",
       sortable: true,
       selector: (row) => row.email,
     },
     {
-      name: "Contact No.",
+      name: "Contact No",
       sortable: true,
       selector: (row) => row.contact,
     },
@@ -234,12 +233,24 @@ function Userlist() {
           ? "Admin"
           : row.usertype === "cashier"
           ? "Cashier"
+          : row.usertype === "CS_Officer"
+          ? "Customer Service"
           : "Data Entry",
     },
     {
       name: "Status",
       sortable: true,
-      selector: (row) => row.status,
+      selector: (row) => {
+        return row.status === "active" ? (
+          <span className="badge bg-success-subtle text-success-emphasis rounded-pill">
+            Active
+          </span>
+        ) : (
+          <span className="badge bg-danger-subtle text-danger-emphasis rounded-pill">
+            Inactive
+          </span>
+        );
+      },
     },
     {
       name: "Action",
@@ -303,6 +314,9 @@ function Userlist() {
       case "dataStaff":
         endpoint = "/admin/addDataEntry";
         break;
+      case "cs_officer":
+        endpoint = "/admin/addDataEntry";
+        break;
       default:
         console.error("Invalid role selected");
         return;
@@ -364,49 +378,77 @@ function Userlist() {
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded">
           <h1 className="h2">Manage Accounts</h1>
         </div>
-        <div className="row align-items-center">
-          <div className="mb-2 col-sm-2">
+        <div className="row align-items-center mb-3">
+          <div className="col-sm-2 position-relative">
             <select
               value={selectedRole}
               onChange={handleStatusChange}
-              className="form-control form-control-sm" // Added form-control-sm
+              className="form-control form-control-sm"
               style={{
-                border: "1px solid #ced4da", // Default border color
+                border: "1px solid #ced4da",
                 borderRadius: "4px",
+                padding: "5px 30px 5px 10px", // Add padding to make space for the icon
                 outline: "none",
                 transition: "border-color 0.3s ease",
               }}
-              onFocus={(e) => (e.target.style.borderColor = "#61b390")} // Highlight color on focus
-              onBlur={(e) => (e.target.style.borderColor = "#ced4da")} // Revert color on blur
+              onFocus={(e) => (e.target.style.borderColor = "#61b390")}
+              onBlur={(e) => (e.target.style.borderColor = "#ced4da")}
             >
               <option value="">Filter by Role</option>
               <option value="admin">Admin</option>
               <option value="users">User</option>
               <option value="cashier">Cashier</option>
             </select>
+            <i
+              className="bi bi-funnel-fill position-absolute"
+              style={{
+                right: "15px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                fontSize: "16px",
+                color: "#61b390",
+              }}
+            ></i>
           </div>
 
-          <div className="mb-2 col-sm-3">
+          <div className="col-sm-2 position-relative">
             <input
               type="text"
-              placeholder="Search by name..."
+              placeholder="Search in table..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="form-control form-control-sm" // Added form-control-sm
+              className="form-control form-control-sm"
               style={{
-                border: "1px solid #ced4da", // Default border color
+                border: "1px solid #ced4da",
                 borderRadius: "4px",
                 outline: "none",
+                padding: "5px 30px 5px 10px", // Add padding to make space for the icon
                 transition: "border-color 0.3s ease",
               }}
-              onFocus={(e) => (e.target.style.borderColor = "#61b390")} // Highlight color on focus
-              onBlur={(e) => (e.target.style.borderColor = "#ced4da")} // Revert color on blur
+              onFocus={(e) => (e.target.style.borderColor = "#61b390")}
+              onBlur={(e) => (e.target.style.borderColor = "#ced4da")}
             />
+            <i
+              className="bi bi-search position-absolute"
+              style={{
+                right: "15px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                fontSize: "16px",
+                color: "#61b390",
+              }}
+            ></i>
           </div>
 
-          <div className="col-sm-7 text-end">
-            <button className="btn btn-primary btn-sm" onClick={handleShow}>
-              Add Account
+          <div className="col-sm-8 text-end">
+            <button className="btn btn-success btn-sm" onClick={handleShow}>
+              <i
+                className="bi bi-person-plus-fill"
+                style={{ fontSize: "15px" }}
+              ></i>
+              <span className="ms-2" style={{ fontSize: "13px" }}>
+                New Account
+              </span>
             </button>
           </div>
         </div>
@@ -424,133 +466,159 @@ function Userlist() {
         />
       </main>
 
-      <Modal show={show} onHide={handleClose}>
+      <Modal
+        show={show}
+        onHide={handleClose}
+        centered
+        size="md"
+        style={{ border: "none" }}
+      >
         <Modal.Header closeButton>
-          <Modal.Title>Add New Account</Modal.Title>
+          <Modal.Title className="text-primary">
+            <i
+              class="bi bi-person-circle me-2"
+              style={{ fontSize: "30px" }}
+            ></i>
+            Account Account
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
+            {/* Section 1: Personal Information */}
+            <h5 className="text-secondary mb-3">Personal Information</h5>
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="formFirstName">
                   <Form.Label>First Name</Form.Label>
                   <Form.Control
+                    className="bg-light"
                     type="text"
-                    placeholder="Enter first name"
+                    placeholder="Enter First name"
                     name="fname"
                     value={formData.fname}
                     onChange={handleChange}
-                    size="sm"
+                    size="md"
+                    isInvalid={!!errors.fname}
                     required
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.fname}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="formLastName">
                   <Form.Label>Last Name</Form.Label>
                   <Form.Control
+                    className="bg-light"
                     type="text"
-                    placeholder="Enter last name"
+                    placeholder="Enter Last name"
                     name="lastname"
                     value={formData.lastname}
                     onChange={handleChange}
-                    size="sm"
+                    size="md"
+                    isInvalid={!!errors.lastname}
                     required
                   />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.lastname}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
             </Row>
+
+            {/* Section 2: Account Information */}
+            <h5 className="text-secondary mb-3">Account Information</h5>
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="formUsername">
                   <Form.Label>Username</Form.Label>
                   <Form.Control
+                    className="bg-light"
                     type="text"
-                    placeholder="Enter username"
+                    placeholder="Enter Username"
                     name="username"
                     value={formData.username}
                     onChange={handleChange}
-                    size="sm"
+                    size="md"
+                    isInvalid={!!errors.username}
                     required
                   />
-                  {errors.username && (
-                    <div className="text-danger">{errors.username}</div>
-                  )}
+                  <Form.Control.Feedback type="invalid">
+                    {errors.username}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="formPassword">
                   <Form.Label>Password</Form.Label>
                   <Form.Control
+                    className="bg-light"
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder="Enter Password"
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    size="sm"
+                    size="md"
                     required
                   />
                 </Form.Group>
               </Col>
             </Row>
 
+            {/* Section 3: Contact Information */}
+            <h5 className="text-secondary mb-3">Contact Information</h5>
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="formContact">
-                  <Form.Label>Contact</Form.Label>
+                  <Form.Label>Contact Number</Form.Label>
                   <Form.Control
+                    className="bg-light"
                     type="text"
-                    placeholder="Enter contact number"
+                    placeholder="63+"
                     name="contact"
                     value={formData.contact}
                     onChange={handleChange}
-                    size="sm"
+                    size="md"
                     required
                   />
                 </Form.Group>
               </Col>
-              <Col md={6}>
-                <Form.Group className="mb-3" controlId="formAddress">
-                  <Form.Label>Address</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter address"
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    size="sm"
-                    required
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="formEmail">
-                  <Form.Label>Email address</Form.Label>
+                  <Form.Label>Email Address</Form.Label>
                   <Form.Control
+                    className="bg-light"
                     type="email"
-                    placeholder="Email Address"
+                    placeholder="@gmail.com"
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    size="sm"
+                    size="md"
+                    isInvalid={!!errors.email}
                     required
                   />
-                  {errors.email && (
-                    <div className="text-danger">{errors.email}</div>
-                  )}
+
+                  <Form.Control.Feedback type="invalid">
+                    {errors.email}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </Col>
+            </Row>
+
+            {/* Section 4: Role and Address */}
+            <h5 className="text-secondary mb-3">Other Details</h5>
+            <Row>
               <Col md={6}>
                 <Form.Group className="mb-3" controlId="formRole">
                   <Form.Label>Role</Form.Label>
                   <Form.Select
+                    className="bg-light"
                     aria-label="Select role"
                     name="role"
                     value={formData.role}
                     onChange={handleChange}
-                    size="sm"
+                    size="md"
                     required
                   >
                     <option value="">Select a role</option>
@@ -558,16 +626,34 @@ function Userlist() {
                     <option value="user">User</option>
                     <option value="cashier">Cashier</option>
                     <option value="dataStaff">Data Entry</option>
+                    <option value="meterReader">Meter Reader</option>
+                    <option value="customerService">Customer Service</option>
                   </Form.Select>
                 </Form.Group>
               </Col>
+              <Col md={6}>
+                <Form.Group className="mb-3" controlId="formAddress">
+                  <Form.Label>Address</Form.Label>
+                  <Form.Control
+                    className="bg-light"
+                    type="text"
+                    placeholder="Enter Address"
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    size="md"
+                    required
+                  />
+                </Form.Group>
+              </Col>
             </Row>
+
             <Modal.Footer>
               <Button variant="secondary" size="sm" onClick={handleClose}>
-                Close
+                Cancel
               </Button>
               <Button variant="primary" size="sm" type="submit">
-                Add Account
+                Create Account
               </Button>
             </Modal.Footer>
           </Form>

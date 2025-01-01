@@ -6,7 +6,7 @@ import Swal from "sweetalert2";
 const CS_Layout = () => {
   const token = localStorage.getItem("type");
   const usertype = token;
-  if (usertype === "CustomerService") {
+  if (usertype === "CS_Officer") {
     return (
       <div>
         <main>

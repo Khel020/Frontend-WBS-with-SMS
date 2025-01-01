@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import DataTable, { defaultThemes } from "react-data-table-component";
-import { Modal, ListGroup, Button } from "react-bootstrap";
+import { Modal, ListGroup, Row, Form, Button } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import * as XLSX from "xlsx";
@@ -129,13 +129,12 @@ function BillTable() {
       name: "Bill No.",
       selector: (row) => row.billNumber,
       sortable: true,
-      width: "100px", // Adjust width as needed
+      width: "100px",
     },
     {
       name: "Reading Date",
       selector: (row) => formatDate(row.reading_date),
       sortable: true,
-      width: "150px", // Adjust width as needed
     },
     {
       name: "Due Date",
@@ -152,31 +151,26 @@ function BillTable() {
         );
       },
       sortable: true,
-      width: "150px", // Adjust width as needed
     },
     {
       name: "Account Name",
       selector: (row) => row.accountName,
       sortable: true,
-      width: "200px", // Adjust width as needed
     },
     {
       name: "Status",
       selector: (row) => row.payment_status,
       sortable: true,
-      width: "120px", // Adjust width as needed
     },
     {
       name: "Amount",
       selector: (row) => "₱ " + row.currentBill.toFixed(2),
       sortable: true,
-      width: "130px", // Adjust width as needed
     },
     {
       name: "Penalty",
       selector: (row) => "₱ " + row.p_charge.toFixed(2),
       sortable: true,
-      width: "120px", // Adjust width as needed
     },
     {
       name: "Action",
@@ -187,7 +181,7 @@ function BillTable() {
             title="View Bill"
             onClick={() => handleShow(row.billNumber)}
           >
-            <AiFillEye style={{ fontSize: "20px" }} />
+            <AiFillEye style={{ fontSize: "15px" }} />
           </button>
 
           {/* Button to Edit Bill */}
@@ -196,7 +190,7 @@ function BillTable() {
             onClick={() => handleEdit(row)}
             title="Edit Bill"
           >
-            <AiFillEdit style={{ fontSize: "20px" }} />
+            <AiFillEdit style={{ fontSize: "15px" }} />
           </button>
 
           {/* Button to Download Bill */}
@@ -205,7 +199,7 @@ function BillTable() {
             onClick={() => handleDownload(row)}
             title="Download Bill"
           >
-            <AiFillFilePdf style={{ fontSize: "20px" }} />
+            <AiFillFilePdf style={{ fontSize: "15px" }} />
           </button>
         </div>
       ),
@@ -216,30 +210,26 @@ function BillTable() {
   const customStyles = {
     table: {
       style: {
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-
-        height: "420px",
+        overflow: "hidden",
+        borderRadius: "5px",
       },
     },
     headCells: {
       style: {
-        fontWeight: "bold",
-        backgroundColor: "#1F702C",
-        color: "white",
-        fontSize: "12px",
+        backgroundColor: "#EEF1F8", // Lightest blue
+        color: "#333333", // Dark text for contrast
       },
     },
     rows: {
       style: {
-        minHeight: "45px",
+        minHeight: "40px",
         "&:hover": { backgroundColor: "#f1f1f1" },
       },
     },
     pagination: {
       style: {
         border: "none",
-        fontSize: "14px",
+        fontSize: "13px",
         color: "#000",
         backgroundColor: "#f7f7f7",
         minHeight: "50px",
