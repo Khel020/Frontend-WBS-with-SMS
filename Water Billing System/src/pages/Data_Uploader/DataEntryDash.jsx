@@ -6,7 +6,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import DataTable from "react-data-table-component";
 import { FaFileExport } from "react-icons/fa"; // Importing an icon for export button
 import DatePicker from "react-datepicker";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../components/sidebar";
 const DataEntryDash = () => {
   const backend = import.meta.env.VITE_BACKEND;
   const [uploadData, setUploadData] = useState(null);

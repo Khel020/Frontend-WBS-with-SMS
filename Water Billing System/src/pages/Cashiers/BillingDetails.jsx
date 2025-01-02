@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DETAILS from "../../components/BCDetails.jsx";
-import Sidebar from "../../components/Sidebar.jsx";
+import Sidebar from "../../components/sidebar.jsx";
 import { useParams } from "react-router-dom";
 
 const BillingDetails = () => {

@@ -18,7 +18,6 @@ const Sidebar = ({ role }) => {
     width: collapsed ? "60px" : "220px",
     transition: "width 0.3s",
     backgroundColor: "#091057",
-    position: "-webkit-sticky",
     position: "sticky",
     top: "0",
     height: "100vh",

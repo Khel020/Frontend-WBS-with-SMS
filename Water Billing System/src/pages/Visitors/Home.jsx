@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
-
+import { useNavigate } from "react-router-dom";
 const Home = () => {
+  const backend = import.meta.env.VITE_BACKEND;
+  const navigate = useNavigate();
   const scrollToTop = () => {
     window.scrollTo({
       top: 0,
@@ -15,6 +17,64 @@ const Home = () => {
   }, []);
   const [showMoreMandate, setShowMoreMandate] = useState(false);
   const [hoveredCard, setHoveredCard] = useState(null);
+
+  useEffect(() => {
+    const validateToken = async () => {
+      const token = localStorage.getItem("tkn");
+
+      if (!token) {
+        navigate("/");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${backend}/token/tokenCheck`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${localStorage.getItem("tkn")}`,
+          },
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          switch (data.usertype) {
+            case "admin":
+              navigate("/admin-dashboard");
+              break;
+            case "cashier":
+              navigate("/bill-dashboard");
+              break;
+            case "data entry staff":
+              navigate("/staff-dashboard");
+              break;
+            case "Information Tech":
+              navigate("/it-dashboard");
+              break;
+            case "CS_Officer":
+              navigate("/cs-consumers");
+              break;
+            case "users":
+              navigate("/clientdash");
+              break;
+            default:
+              localStorage.clear();
+              navigate("/");
+          }
+        } else {
+          localStorage.clear();
+          navigate("/");
+        }
+      } catch (err) {
+        console.error("Error during token validation:", err);
+        localStorage.clear();
+        navigate("/");
+      }
+    };
+
+    validateToken();
+  }, [navigate]);
 
   const linkStyle = {
     color: "white",
@@ -1069,6 +1129,315 @@ const Home = () => {
               </Col>
             </Row>
           </Container>
+        </section>
+        <section
+          style={{
+            backgroundColor: "#f9f9f9",
+            padding: "40px 20px",
+            borderRadius: "8px",
+            marginBottom: "50px",
+          }}
+        >
+          <h2
+            style={{
+              textAlign: "center",
+              marginBottom: "20px",
+              color: "#333",
+            }}
+          >
+            Why Choose Our System?
+          </h2>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              gap: "20px",
+            }}
+          >
+            {/* Feature 1 */}
+            <div
+              style={{
+                background: "white",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                padding: "20px",
+                textAlign: "center",
+                width: "250px",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              }}
+            >
+              <img
+                src="/icons/bill-management.png"
+                alt="Bill Management"
+                style={{ maxWidth: "80px", marginBottom: "15px" }}
+              />
+              <h3
+                style={{
+                  color: "#555",
+                  fontSize: "1.2rem",
+                  marginBottom: "10px",
+                }}
+              >
+                Bill Management Made Easy
+              </h3>
+              <p style={{ color: "#777", fontSize: "0.9rem" }}>
+                View and download your water bills anytime, anywhere.
+              </p>
+            </div>
+
+            {/* Feature 2 */}
+            <div
+              style={{
+                background: "white",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                padding: "20px",
+                textAlign: "center",
+                width: "250px",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              }}
+            >
+              <img
+                src="/icons/sms-alerts.png"
+                alt="SMS Alerts"
+                style={{ maxWidth: "80px", marginBottom: "15px" }}
+              />
+              <h3
+                style={{
+                  color: "#555",
+                  fontSize: "1.2rem",
+                  marginBottom: "10px",
+                }}
+              >
+                Real-Time SMS Alerts
+              </h3>
+              <p style={{ color: "#777", fontSize: "0.9rem" }}>
+                Get instant notifications for due dates, payments, and updates.
+              </p>
+            </div>
+
+            {/* Feature 3 */}
+            <div
+              style={{
+                background: "white",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                padding: "20px",
+                textAlign: "center",
+                width: "250px",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              }}
+            >
+              <img
+                src="/icons/usage-tracking.png"
+                alt="Usage Tracking"
+                style={{ maxWidth: "80px", marginBottom: "15px" }}
+              />
+              <h3
+                style={{
+                  color: "#555",
+                  fontSize: "1.2rem",
+                  marginBottom: "10px",
+                }}
+              >
+                Usage Tracking
+              </h3>
+              <p style={{ color: "#777", fontSize: "0.9rem" }}>
+                Analyze your water consumption trends month-by-month.
+              </p>
+            </div>
+
+            {/* Feature 4 */}
+            <div
+              style={{
+                background: "white",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                padding: "20px",
+                textAlign: "center",
+                width: "250px",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              }}
+            >
+              <img
+                src="/icons/security.png"
+                alt="Secure and Reliable"
+                style={{ maxWidth: "80px", marginBottom: "15px" }}
+              />
+              <h3
+                style={{
+                  color: "#555",
+                  fontSize: "1.2rem",
+                  marginBottom: "10px",
+                }}
+              >
+                Secure & Reliable
+              </h3>
+              <p style={{ color: "#777", fontSize: "0.9rem" }}>
+                Your account data is protected with top-notch security measures.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* How It Works Section */}
+        <section
+          style={{
+            backgroundColor: "#f9f9f9",
+            padding: "40px 20px",
+            borderRadius: "8px",
+          }}
+        >
+          <h2
+            style={{
+              textAlign: "center",
+              marginBottom: "20px",
+              color: "#333",
+            }}
+          >
+            How to Get Started
+          </h2>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "center",
+              gap: "20px",
+            }}
+          >
+            {/* Step 1 */}
+            <div
+              style={{
+                background: "white",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                padding: "20px",
+                textAlign: "center",
+                width: "250px",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              }}
+            >
+              <img
+                src="/icons/register.png"
+                alt="Register"
+                style={{ maxWidth: "80px", marginBottom: "15px" }}
+              />
+              <h3
+                style={{
+                  color: "#555",
+                  fontSize: "1.2rem",
+                  marginBottom: "10px",
+                }}
+              >
+                Create an Account
+              </h3>
+              <p style={{ color: "#777", fontSize: "0.9rem" }}>
+                Register using your account number and name.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div
+              style={{
+                background: "white",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                padding: "20px",
+                textAlign: "center",
+                width: "250px",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              }}
+            >
+              <img
+                src="/icons/login.png"
+                alt="Login"
+                style={{ maxWidth: "80px", marginBottom: "15px" }}
+              />
+              <h3
+                style={{
+                  color: "#555",
+                  fontSize: "1.2rem",
+                  marginBottom: "10px",
+                }}
+              >
+                Login Anytime
+              </h3>
+              <p style={{ color: "#777", fontSize: "0.9rem" }}>
+                Access your dashboard to view bills and updates.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div
+              style={{
+                background: "white",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                padding: "20px",
+                textAlign: "center",
+                width: "250px",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              }}
+            >
+              <img
+                src="/icons/notifications.png"
+                alt="Notifications"
+                style={{ maxWidth: "80px", marginBottom: "15px" }}
+              />
+              <h3
+                style={{
+                  color: "#555",
+                  fontSize: "1.2rem",
+                  marginBottom: "10px",
+                }}
+              >
+                Receive Notifications
+              </h3>
+              <p style={{ color: "#777", fontSize: "0.9rem" }}>
+                Stay informed about due dates via SMS alerts.
+              </p>
+            </div>
+
+            {/* Step 4 */}
+            <div
+              style={{
+                background: "white",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                padding: "20px",
+                textAlign: "center",
+                width: "250px",
+                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+              }}
+            >
+              <img
+                src="/icons/monitor-pay.png"
+                alt="Monitor and Pay"
+                style={{ maxWidth: "80px", marginBottom: "15px" }}
+              />
+              <h3
+                style={{
+                  color: "#555",
+                  fontSize: "1.2rem",
+                  marginBottom: "10px",
+                }}
+              >
+                Monitor and Pay
+              </h3>
+              <p style={{ color: "#777", fontSize: "0.9rem" }}>
+                Track your water usage and settle your bills conveniently.
+              </p>
+            </div>
+          </div>
         </section>
       </main>
 

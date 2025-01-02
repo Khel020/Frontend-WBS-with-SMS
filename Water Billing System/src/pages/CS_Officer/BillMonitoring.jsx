@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Bills from "../../components/BillTable";
-import Sidebar from "../../components/Sidebar.jsx";
+import Sidebar from "../../components/sidebar.jsx";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import {
   FaFileInvoiceDollar,

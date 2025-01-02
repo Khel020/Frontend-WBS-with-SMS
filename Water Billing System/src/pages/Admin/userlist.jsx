@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../../components/Sidebar.jsx";
+import Sidebar from "../../components/sidebar.jsx";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import DataTable, { defaultThemes } from "react-data-table-component";

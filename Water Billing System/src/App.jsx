@@ -61,6 +61,7 @@ import CS_BillMonitoring from "./pages/CS_Officer/BillMonitoring.jsx";
 //TODO: IT
 import IT_Dashboard from "./pages/IT/Dashboard.jsx";
 import IT_Userlist from "./pages/IT/userlist.jsx";
+import IT_Content from "./pages/IT/webContent.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -83,7 +84,7 @@ const router = createBrowserRouter(
         <Route path="register" element={<Register />} />
         <Route path="cwd-login" element={<OrgLogin />} />
         <Route path="index" element={<Landing />} />
-        Landing
+        <Route path="contents" element={<IT_Content />} />
       </Route>
       //TODO: Client ROUTES
       <Route path="clientdash" element={<ClientLayout />}>

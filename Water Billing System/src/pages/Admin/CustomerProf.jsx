@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../components/sidebar";
 import { useParams } from "react-router-dom";
 import { Container, Button, Modal } from "react-bootstrap";
 import axios from "axios";

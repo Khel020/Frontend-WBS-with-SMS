@@ -10,7 +10,7 @@ const Header = () => {
   return (
     <header
       style={{
-        backgroundColor: "#008374",
+        backgroundColor: "#00695C",
         position: "sticky",
         top: "0",
         zIndex: "1000",
@@ -76,13 +76,13 @@ const Header = () => {
         </div>
       </div>
       {/* Main Header with Navigation */}
-      <div className="shadow-sm" style={{ backgroundColor: "#008374" }}>
-        <div className="px-5">
+      <div className="shadow-sm" style={{ backgroundColor: "#00695C" }}>
+        <div className="px-4">
           <div className="navbar navbar-expand-lg navbar-light py-3">
             <a href="/" className="navbar-brand">
-              <h1 className="h5 mb-0 text-white">
+              <h5 className="mb-0 text-white">
                 Casiguran Water District Portal
-              </h1>
+              </h5>
             </a>
 
             {/* Navbar Toggler for mobile */}

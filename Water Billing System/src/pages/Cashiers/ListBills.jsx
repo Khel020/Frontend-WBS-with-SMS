@@ -7,7 +7,7 @@ import {
   FaFileInvoice,
 } from "react-icons/fa";
 import Bills from "../../components/BillTable.jsx";
-import Sidebar from "../../components/Sidebar.jsx";
+import Sidebar from "../../components/sidebar.jsx";
 
 function ListBills() {
   const backend = import.meta.env.VITE_BACKEND;
