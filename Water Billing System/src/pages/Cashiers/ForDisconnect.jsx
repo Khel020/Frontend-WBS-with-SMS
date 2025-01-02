@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Button } from "react-bootstrap";
-import Sidebar from "../../components/sidebar";
+import Sidebar from "../../components/Sidebar.jsx";
 import DataTable from "react-data-table-component";
 import axios from "axios";
 import * as XLSX from "xlsx";

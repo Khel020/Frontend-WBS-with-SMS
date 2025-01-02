@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/sidebar";
+import Sidebar from "../../components/Sidebar.jsx";
 import CustomerTBL from "../../components/CustomerTbl";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { FaUserCheck, FaUserTimes, FaClock } from "react-icons/fa"; // Import icons

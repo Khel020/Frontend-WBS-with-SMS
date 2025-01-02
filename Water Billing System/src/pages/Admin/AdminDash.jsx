@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/sidebar";
+import Sidebar from "../../components/Sidebar.jsx";
 import Dropdown from "react-bootstrap/Dropdown";
 import Countdown from "react-countdown";
 import { Button, Card, Modal } from "react-bootstrap";

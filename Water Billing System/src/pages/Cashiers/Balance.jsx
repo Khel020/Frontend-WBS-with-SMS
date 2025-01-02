@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../components/Sidebar.jsx";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import * as XLSX from "xlsx";
 import { FaFileExport } from "react-icons/fa"; // Importing an icon for export button

@@ -1,5 +1,5 @@
 import React from "react";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../components/Sidebar.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import Countdown from "react-countdown";
 import Dropdown from "react-bootstrap/Dropdown";
