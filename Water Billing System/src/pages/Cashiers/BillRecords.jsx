@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../../components/sidebar.jsx";
+import Sidebar from "../../components/Sidebar.jsx";
 import { Link, useParams } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { Modal, Button, Form, Row, Col, ListGroup } from "react-bootstrap";

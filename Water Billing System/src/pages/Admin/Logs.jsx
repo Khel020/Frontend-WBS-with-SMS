@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import Sidebar from "../../components/sidebar.jsx";
+import Sidebar from "../../components/Sidebar.jsx";
 import DataTable, { defaultThemes } from "react-data-table-component";
 const Logs = () => {
   const backend = import.meta.env.VITE_BACKEND;

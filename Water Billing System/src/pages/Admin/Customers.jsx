@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/sidebar.jsx";
+import Sidebar from "../../components/Sidebar.jsx";
 import CusTable from "../../components/CustomerTbl";
 import {
   Container,

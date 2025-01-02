@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/sidebar.jsx";
+import Sidebar from "../../components/Sidebar.jsx";
 import ClientTable from "../../components/ClientTable.jsx";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

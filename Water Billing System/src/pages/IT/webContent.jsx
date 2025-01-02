@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Sidebar from "../../components/sidebar.jsx";
+import Sidebar from "../../components/Sidebar.jsx";
 
 const webContent = () => {
   const usertype = localStorage.getItem("type");
