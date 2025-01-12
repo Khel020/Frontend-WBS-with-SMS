@@ -468,7 +468,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/BoardofDirectors/Chairman of the Board.jpg"
+                    src="/BoardofDirectors/Chairman of the Board.jpg"
                     alt="Walter White"
                     style={{
                       width: "100px",
@@ -519,7 +519,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/BoardofDirectors/Vice Chairman of the Board.jpg"
+                    src="/BoardofDirectors/Vice Chairman of the Board.jpg"
                     style={{
                       width: "100px",
                       height: "100px",
@@ -569,7 +569,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/BoardofDirectors/Secretary of the board.jpg"
+                    src="/BoardofDirectors/Secretary of the board.jpg"
                     style={{
                       width: "100px",
                       height: "100px",
@@ -617,7 +617,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/BoardofDirectors/Member of the board.jpg"
+                    src="/BoardofDirectors/Member of the Board.jpg"
                     style={{
                       width: "100px",
                       height: "100px",
@@ -665,7 +665,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/BoardofDirectors/Member of the board2.jpg"
+                    src="/BoardofDirectors/Member of the board2.jpg"
                     style={{
                       width: "100px",
                       height: "100px",
@@ -745,7 +745,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/Management Officials/EDUARDO-P-TEJADA.jpg"
+                    src="/Management Officials/EDUARDO-P-TEJADA.jpg"
                     style={{
                       width: "100px",
                       height: "100px",
@@ -793,7 +793,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/Management Officials/LOUIE-H-RAFER.jpg"
+                    src="/Management Officials/LOUIE-H-RAFER.jpg"
                     style={{
                       width: "100px",
                       height: "100px",
@@ -841,7 +841,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/Management Officials/Ruby1-240x300.jpg"
+                    src="/Management Officials/Ruby1-240x300.jpg"
                     style={{
                       width: "100px",
                       height: "100px",
@@ -897,7 +897,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/Management Officials/CECILIO-E-HABALO.jpg"
+                    src="/Management Officials/CECILIO-E-HABALO.jpg"
                     style={{
                       width: "100px",
                       height: "100px",
@@ -953,7 +953,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/Management Officials/duque1-267x300.jpg"
+                    src="/Management Officials/duque1-267x300.jpg"
                     style={{
                       width: "100px",
                       height: "100px",
@@ -999,7 +999,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/Management Officials/ROBERTO-D-LACZA.jpg"
+                    src="/Management Officials/ROBERTO-D-LACZA.jpg"
                     style={{
                       width: "100px",
                       height: "100px",
@@ -1047,7 +1047,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/Management Officials/SIMEON-HABOC-231x300.jpg"
+                    src="/Management Officials/SIMEON-HABOC-231x300.jpg"
                     style={{
                       width: "100px",
                       height: "100px",
@@ -1095,7 +1095,7 @@ const Home = () => {
                   }}
                 >
                   <img
-                    src="../../../public/Management Officials/Jomar-257x300.jpg"
+                    src="/Management Officials/Jomar-257x300.jpg"
                     style={{
                       width: "100px",
                       height: "100px",
