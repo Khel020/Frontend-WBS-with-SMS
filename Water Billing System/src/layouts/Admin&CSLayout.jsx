@@ -2,11 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import Swal from "sweetalert2";
-
-const InfoLayout = () => {
+const AdminCSLayout = () => {
   const token = localStorage.getItem("type");
   const usertype = token;
-  if (usertype === "Information Tech") {
+  if (usertype === "admin" || usertype === "CS_Officer") {
     return (
       <div>
         <main>
@@ -52,4 +51,4 @@ const InfoLayout = () => {
   }
 };
 
-export default InfoLayout;
+export default AdminCSLayout;

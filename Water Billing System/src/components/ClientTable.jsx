@@ -113,7 +113,6 @@ const Table = () => {
         category: data.client_type || "",
       });
     }
-
     setShowAddBill(true);
   };
 

@@ -14,6 +14,7 @@ import AdminLayout from "./layouts/AdminLayout.jsx";
 import StaffLayout from "./layouts/dataEntryLayout.jsx";
 import ITLayout from "./layouts/InfoLayout.jsx";
 import CSOfficer from "./layouts/CS_Layout.jsx";
+import AdminCSLayout from "./layouts/Admin&CSLayout.jsx";
 // TODO: Visitor Pages
 import AboutUS from "./pages/Visitors/About.jsx";
 import ContactUS from "./pages/Visitors/ContactUs.jsx";
@@ -65,6 +66,12 @@ import IT_Content from "./pages/IT/webContent.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
+      <Route
+        path="customer/:acc_number/:accountName"
+        element={<AdminCSLayout />}
+      >
+        <Route index element={<CustomersProfile />} />
+      </Route>
       //TODO: Customer Service OFFICER
       <Route path="cs-consumers" element={<CSOfficer />}>
         <Route index element={<CS_CustomerList />} />
@@ -153,9 +160,6 @@ const router = createBrowserRouter(
       </Route>
       <Route path="customers" element={<AdminLayout />}>
         <Route index element={<Customers />} />
-      </Route>
-      <Route path="customer/:acc_number/:accountName" element={<AdminLayout />}>
-        <Route index element={<CustomersProfile />} />
       </Route>
       <Route path="logs" element={<AdminLayout />}>
         <Route index element={<Logs />} />

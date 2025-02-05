@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const Sidebar = ({ role }) => {
   const location = useLocation();
@@ -484,6 +486,47 @@ const Sidebar = ({ role }) => {
                 ></i>
                 {!collapsed && "Profile"}
               </Link>
+            </li>
+
+            <li className="nav-item dropdown" style={{ marginTop: "20px" }}>
+              <a
+                href="#"
+                className="nav-link dropdown-toggle"
+                id="reportsDropdown"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                style={linkStyle("/reports")}
+              >
+                <i
+                  className="bi bi-bar-chart"
+                  style={iconStyle("/reports")}
+                ></i>
+                {!collapsed && "Reports"}
+              </a>
+              <ul className="dropdown-menu" aria-labelledby="reportsDropdown">
+                <li>
+                  <Link to="/reports/billing" className="dropdown-item">
+                    Billing
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/reports/disconnection-list"
+                    className="dropdown-item"
+                  >
+                    List for Disconnection
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/reports/outstanding-balance"
+                    className="dropdown-item"
+                  >
+                    Outstanding Balance
+                  </Link>
+                </li>
+              </ul>
             </li>
           </>
         )}

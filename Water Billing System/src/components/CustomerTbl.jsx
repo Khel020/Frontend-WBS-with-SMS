@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import DataTable, { defaultThemes } from "react-data-table-component";
 import { Container, Button, Modal } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
+
 import axios from "axios";
 
 const CustomerTbl = () => {
+  const usertype = localStorage.getItem("type");
   const [clients, setClients] = useState([]);
   const backend = import.meta.env.VITE_BACKEND;
   const [filterUsers, setFilterUsers] = useState([]);
@@ -16,6 +18,7 @@ const CustomerTbl = () => {
   const [acc_num, setAccNum] = useState("");
   const [meter_num, setMeterNum] = useState("");
   const [contact, setContact] = useState("");
+  const [barangay, setBarangay] = useState("");
   const [pipe_size, setPipe] = useState("");
   const [client_type, setType] = useState("");
   const [initial_read, setInitial] = useState("");
@@ -106,32 +109,7 @@ const CustomerTbl = () => {
   };
 
   // Handle installation date change and compute activation date
-  const handleInstallDateChange = (e) => {
-    const installDate = new Date(e.target.value);
-    const day = installDate.getDate();
-    let activationDate;
 
-    if (day >= 1 && day <= 15) {
-      // If installation date is between 1-15, activation date is the 1st of the next month
-      activationDate = new Date(
-        installDate.getFullYear(),
-        installDate.getMonth() + 1, // Next month
-        day
-      );
-    } else if (day >= 16) {
-      // If installation date is between 16-30, activation date is the 1st of the month after next
-      activationDate = new Date(
-        installDate.getFullYear(),
-        installDate.getMonth() + 2, // Month after next
-        day
-      );
-    }
-    // Convert the activation date to a string in YYYY-MM-DD format
-    const activationDateString = activationDate.toISOString().split("T")[0];
-
-    // Update the state
-    setActivationDate(activationDateString);
-  };
   useEffect(() => {
     // Automatically set pipe size based on client type
     if (
@@ -148,36 +126,10 @@ const CustomerTbl = () => {
   }, [client_type]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (zone && client_type) {
-        const data = {
-          zone: zone,
-          c_type: client_type,
-        };
-        try {
-          const response = await fetch(`${backend}/admin/generate_accNum`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              authorization: `Bearer ${localStorage.getItem("tkn")}`,
-            },
-            body: JSON.stringify(data),
-          });
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const result = await response.json();
-          setAccNum(result.result.acc_num);
-          setSeqNum(result.result.seq_num);
-          setBook(result.result.book);
-        } catch (err) {
-          console.error("Fetch error:", err);
-          setError(err.message);
-        }
-      }
-    };
-
-    fetchData();
+    if (zone && client_type && seq_num) {
+      const acc_number = `${zone}-${client_type}-${seq_num}`;
+      setAccNum(acc_number);
+    }
   }, [zone, client_type]);
 
   function formatDate(dateString) {
@@ -367,11 +319,14 @@ const CustomerTbl = () => {
             <option value="Pending">Pending</option>
           </select>
         </div>
-        <div className="col-7 d-flex justify-content-end">
-          <Button variant="success" size="sm" onClick={handleShow}>
-            <i className="bi bi-person-plus"></i> Add Customer
-          </Button>
-        </div>
+
+        {usertype === "CS_Officer" && (
+          <div className="col-7 d-flex justify-content-end">
+            <Button variant="success" size="sm" onClick={handleShow}>
+              <i className="bi bi-person-plus"></i> Add Customer
+            </Button>
+          </div>
+        )}
       </div>
       <div>
         <DataTable
@@ -386,7 +341,7 @@ const CustomerTbl = () => {
           noDataComponent={<div>No Record Found</div>}
         />
       </div>
-
+      {/* TODO:  ADD CLIENT MODAL*/}
       <Modal show={show} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>Add New Customer</Modal.Title>
@@ -395,9 +350,21 @@ const CustomerTbl = () => {
           <Modal.Body>
             <div className="px-3">
               <div className="row mt-2">
-                {/* Account Name */}
-
-                <div className="col-md-4 mb-3">
+                <div className="col-md-2 mb-3">
+                  <label htmlFor="accountName" className="form-label fw-bold">
+                    Acc No.
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="accountName"
+                    disabled
+                    required
+                    value={acc_num}
+                    onChange={(e) => setAccName(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-3 mb-3">
                   <label htmlFor="accountName" className="form-label fw-bold">
                     Account Name
                   </label>
@@ -410,41 +377,7 @@ const CustomerTbl = () => {
                     onChange={(e) => setAccName(e.target.value)}
                   />
                 </div>
-
-                {/* Account Number */}
-                <div className="col-md-4 mb-3">
-                  <label htmlFor="acc_num" className="form-label fw-bold">
-                    Account Number
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="acc_num"
-                    required
-                    disabled
-                    value={acc_num}
-                  />
-                </div>
-                <div className="col-md-4 mb-3">
-                  <label htmlFor="address" className="form-label fw-bold">
-                    Address
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="address"
-                    placeholder="130, Purok 4, Barangay Timbayog"
-                    required
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="row">
-                {/* Address */}
-
-                {/* Client Type */}
-                <div className="col-md-4 mb-3">
+                <div className="col-md-3 mb-3">
                   <label htmlFor="client_type" className="form-label fw-bold">
                     Client Type
                   </label>
@@ -456,7 +389,7 @@ const CustomerTbl = () => {
                     onChange={(e) => setType(e.target.value)}
                   >
                     <option value="" disabled>
-                      Select a type
+                      Select Type
                     </option>
                     <option value="Residential">Residential</option>
                     <option value="Government">Government</option>
@@ -469,7 +402,8 @@ const CustomerTbl = () => {
                   </select>
                 </div>
 
-                <div className="col-md-4 mb-3">
+                {/* Zone */}
+                <div className="col-md-2 mb-3">
                   <label htmlFor="zone" className="form-label fw-bold">
                     Zone
                   </label>
@@ -481,7 +415,7 @@ const CustomerTbl = () => {
                     onChange={(e) => setZone(e.target.value)}
                   >
                     <option value="" disabled>
-                      Select a zone
+                      Select
                     </option>
                     <option value="01">Zone 01</option>
                     <option value="02">Zone 02</option>
@@ -489,29 +423,67 @@ const CustomerTbl = () => {
                     <option value="04">Zone 04</option>
                     <option value="05">Zone 05</option>
                     <option value="06">Zone 06</option>
-                    {/* Add more zones as needed */}
                   </select>
                 </div>
 
-                <div className="col-md-4 mb-3">
-                  <label htmlFor="contact" className="form-label fw-bold">
-                    Contact No.
+                <div className="col-md-2 mb-3">
+                  <label htmlFor="zone" className="form-label fw-bold">
+                    House No.
                   </label>
                   <input
-                    type="number"
+                    type="text"
+                    className="form-control"
+                    id="houseNo"
+                    placeholder="000"
+                    required
+                    value={seq_num}
+                    onChange={(e) => setSeqNum(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="row mt-2">
+                <div className="col-md-4 mb-3">
+                  <label htmlFor="contact" className="form-label fw-bold">
+                    Contact
+                  </label>
+                  <input
+                    type="text"
                     className="form-control"
                     id="contact"
+                    placeholder="+63"
                     required
                     value={contact}
                     onChange={(e) => setContact(e.target.value)}
                   />
                 </div>
+                <div className="col-md-4 mb-3">
+                  <label htmlFor="address" className="form-label fw-bold">
+                    Address
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="address"
+                    required
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-4 mb-3">
+                  <label htmlFor="telephone" className="form-label fw-bold">
+                    Telephone Number
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="telephone"
+                    required
+                  />
+                </div>
               </div>
-
-              {/* Installation Details */}
               <hr />
               <div className="row mt-2">
-                {/* Installation Date */}
                 <div className="col-md-6 col-lg-4 mb-3">
                   <label htmlFor="install_date" className="form-label fw-bold">
                     Installation Date
@@ -524,7 +496,6 @@ const CustomerTbl = () => {
                     value={install_date}
                     onChange={(e) => {
                       setInstallDate(e.target.value);
-                      handleInstallDateChange(e); // Call the function here
                     }}
                   />
                 </div>
@@ -542,8 +513,9 @@ const CustomerTbl = () => {
                     className="form-control"
                     id="activation_date"
                     value={activationDate}
-                    onChange={handleInstallDateChange}
-                    disabled
+                    onChange={(e) => {
+                      setActivationDate(e.target.value);
+                    }}
                   />
                 </div>
 
@@ -562,19 +534,42 @@ const CustomerTbl = () => {
                   />
                 </div>
 
-                {/* Brand Number */}
+                {/* Meter Brand Dropdown */}
                 <div className="col-md-6 col-lg-4 mb-3">
                   <label htmlFor="meterBrand" className="form-label fw-bold">
                     Meter Brand
                   </label>
-                  <input
-                    type="text"
-                    className="form-control"
+                  <select
+                    className="form-select"
                     id="meterBrand"
                     required
                     value={meterBrand}
                     onChange={(e) => setMeterBrand(e.target.value)}
-                  />
+                  >
+                    <option value="" disabled>
+                      Select meter brand
+                    </option>
+                    <option value="ABB Water Meters">ABB Water Meters</option>
+                    <option value="Ace">Ace</option>
+                    <option value="Actaris">Actaris</option>
+                    <option value="Aquametro">Aquametro</option>
+                    <option value="Aquajet">Aquajet</option>
+                    <option value="Badger">Badger</option>
+                    <option value="Baylan">Baylan</option>
+                    <option value="Diehl Metering">Diehl Metering</option>
+                    <option value="Elster">Elster</option>
+                    <option value="Ever">Ever</option>
+                    <option value="Far">Far</option>
+                    <option value="GSD8">GSD8 (Golden Sun Development)</option>
+                    <option value="Itron">Itron</option>
+                    <option value="Kent">Kent</option>
+                    <option value="Neptune">Neptune</option>
+                    <option value="NWM">NWM (Ningbo Water Meter)</option>
+                    <option value="Precision">Precision</option>
+                    <option value="Sensus">Sensus</option>
+                    <option value="Terasaki">Terasaki</option>
+                    <option value="Zenner">Zenner</option>
+                  </select>
                 </div>
 
                 {/* Initial Reading */}
@@ -617,7 +612,6 @@ const CustomerTbl = () => {
                 </div>
               </div>
 
-              {/* Address */}
               <hr />
 
               {/* Fees */}
@@ -638,22 +632,6 @@ const CustomerTbl = () => {
                     onChange={(e) => setInstallationFee(e.target.value)}
                   />
                 </div>
-                <div className="col-md-4">
-                  <label
-                    htmlFor="meter_installer"
-                    className="form-label fw-bold"
-                  >
-                    Meter Installer
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="meter_installer"
-                    required
-                    value={meter_installer}
-                    onChange={(e) => setMeterInstaller(e.target.value)}
-                  />
-                </div>
               </div>
             </div>
           </Modal.Body>
@@ -664,6 +642,7 @@ const CustomerTbl = () => {
           </Modal.Footer>
         </form>
       </Modal>
+
       <ToastContainer />
     </>
   );

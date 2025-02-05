@@ -23,7 +23,9 @@ const BillerLayout = () => {
       timer: 4000,
       background: "#f5f5f5 url(/images/trees.png)",
       timerProgressBar: true,
-
+      allowOutsideClick: false, // Prevents clicking outside
+      allowEscapeKey: false, // Prevents ESC key
+      showConfirmButton: false, // Removes the confirm button
       didOpen: () => {
         Swal.showLoading();
         const timer = Swal.getPopup().querySelector("b");

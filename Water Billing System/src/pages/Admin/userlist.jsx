@@ -299,32 +299,9 @@ function Userlist() {
   }
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    let endpoint;
-    switch (formData.role) {
-      case "admin":
-        endpoint = "/admin/add";
-        break;
-      case "user":
-        endpoint = "/user/newUser";
-        break;
-      case "cashier":
-        endpoint = "/biller/addBiller";
-        break;
-      case "dataStaff":
-        endpoint = "/admin/addDataEntry";
-        break;
-      case "cs_officer":
-        endpoint = "/admin/addDataEntry";
-        break;
-      default:
-        console.error("Invalid role selected");
-        return;
-    }
-
-    // Perform the POST request to the appropriate endpoint
+    console.log("Form Data", formData);
     try {
-      const response = await fetch(`${backend}${endpoint}`, {
+      const response = await fetch(`${backend}/admin/addAccounts`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -625,9 +602,9 @@ function Userlist() {
                     <option value="admin">Admin</option>
                     <option value="user">User</option>
                     <option value="cashier">Cashier</option>
-                    <option value="dataStaff">Data Entry</option>
+                    <option value="uploader">Data Uploader</option>
                     <option value="meterReader">Meter Reader</option>
-                    <option value="customerService">Customer Service</option>
+                    <option value="cs_officer">Customer Service</option>
                   </Form.Select>
                 </Form.Group>
               </Col>
