@@ -59,7 +59,7 @@ const Sidebar = ({ role }) => {
     <div className="d-flex flex-column flex-shrink-0 p-3" style={sidebarStyle}>
       <div className="d-flex align-items-center justify-content-between">
         <i
-          class={collapsed ? "" : "bi bi-droplet-half mt-3"}
+          className={collapsed ? "" : "bi bi-droplet-half mt-3"}
           style={{
             backgroundColor: "transparent",
             border: "none",

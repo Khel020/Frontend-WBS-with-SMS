@@ -55,25 +55,25 @@ function ClientLogin() {
         padding: "20px",
       }}
     >
-      <div className="container">
+      <div className="container-fluid">
         <div className="row align-items-center justify-content-center">
           {/* Left Content */}
-          <div className="col-12 col-lg-6 text-start p-5 mx-5  fade-in">
+          <div className="col-12 col-lg-6 text-start p-5 mx-5 fade-in d-none d-sm-block">
             <h1
-              className="hero-text text-primary fw-bold fade-in"
-              style={{ fontSize: "2.5rem" }}
+              className="hero-text fw-bold fade-in"
+              style={{ fontSize: "2.5rem", color: "#16A085" }}
             >
               Casiguran Water District
             </h1>
             <p
               className="welcome-message fade-in"
-              style={{ fontSize: "1.2rem", color: "#555" }}
+              style={{ fontSize: "1.2rem", color: "#16A085" }}
             >
               "Serbisyong Bulahos Para sa Gabos"
             </p>
             <p
-              className="additional-info d-none d-lg-block fade-in" // Hide this paragraph on mobile
-              style={{ fontSize: "1rem", color: "#666" }}
+              className="additional-info d-none d-lg-block fade-in"
+              style={{ fontSize: "1.2rem", color: "#666" }}
             >
               Welcome to the Casiguran Water District Customer Portal. Easily
               access your account, view your bills, and stay updated with SMS
@@ -87,7 +87,7 @@ function ClientLogin() {
               style={{
                 width: "100%",
                 maxWidth: "28rem",
-                backgroundColor: "#78A7FF",
+                backgroundColor: "#f9f9f9",
                 padding: "20px",
                 borderRadius: "10px",
                 boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
@@ -96,33 +96,46 @@ function ClientLogin() {
               <Card.Body>
                 <main className="form-signin w-100">
                   <form onSubmit={handleSubmit}>
-                    <h1 className="h3 mb-4 fw-bold text-center text-dark">
+                    <h1
+                      className="h3 mb-4 fw-bold text-center "
+                      style={{ color: "#16A085" }}
+                    >
                       Login Form
                     </h1>
 
                     <div className="form-floating mb-3">
                       <input
                         type="text"
-                        className="form-control"
+                        className="form-control rounded-pill"
                         id="floatingUsername"
                         placeholder="Username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
                         aria-label="Account Name"
+                        style={{
+                          backgroundColor: "#fff",
+                          borderColor: "#ddd",
+                          boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)",
+                        }}
                       />
-                      <label htmlFor="floatingUsername">Account Name</label>
+                      <label htmlFor="floatingUsername">Account Name:</label>
                     </div>
 
                     <div className="form-floating mb-3">
                       <input
                         type="password"
-                        className="form-control"
+                        className="form-control rounded-pill"
                         id="floatingPassword"
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        style={{
+                          backgroundColor: "#fff",
+                          borderColor: "#ddd",
+                          boxShadow: "inset 0 1px 3px rgba(0, 0, 0, 0.1)",
+                        }}
                         aria-label="Password"
                       />
                       <label htmlFor="floatingPassword">Password</label>
@@ -139,19 +152,26 @@ function ClientLogin() {
                     </div>
 
                     <button
-                      className="btn btn-primary w-100 py-2"
+                      className="btn w-100 py-2 "
                       type="submit"
+                      style={{
+                        backgroundColor: "#008374",
+                        color: "#fff",
+                        borderRadius: "30px",
+                      }}
                     >
                       Sign in
                     </button>
 
                     <div className="text-center mt-4">
                       <p className="mb-0">
-                        New to CWD My Water bill?{" "}
+                        Don't have an Account?{" "}
                         <Link
                           to="/register"
-                          className="text-dark fw-bold"
-                          style={{ textDecoration: "underline" }}
+                          style={{
+                            textDecoration: "underline",
+                            color: "#008374",
+                          }}
                         >
                           Sign up
                         </Link>

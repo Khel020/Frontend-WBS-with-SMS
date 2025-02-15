@@ -27,14 +27,15 @@ const CustomerTbl = () => {
   const [meter_installer, setMeterInstaller] = useState("");
   const [zone, setZone] = useState("");
   const [seq_num, setSeqNum] = useState("");
-  const [book, setBook] = useState("");
   const [address, setAddress] = useState("");
   const [meterBrand, setMeterBrand] = useState("");
   const [search, setSearch] = useState("");
   const [errors, setErrors] = useState("");
+
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  // TODO: Clients
   useEffect(() => {
     const fetchClients = async () => {
       try {
@@ -60,6 +61,7 @@ const CustomerTbl = () => {
     fetchClients();
   }, [backend]);
 
+  // TODO: Add new client
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (acc_num) {
@@ -108,28 +110,66 @@ const CustomerTbl = () => {
     }
   };
 
-  // Handle installation date change and compute activation date
+  const handleInstallDateChange = (e) => {
+    const installDate = new Date(e.target.value);
+    const day = installDate.getDate();
+    let activationDate;
 
-  useEffect(() => {
-    // Automatically set pipe size based on client type
-    if (
-      client_type === "Residential" ||
-      client_type === "Commercial" ||
-      client_type === "Commercial_A" ||
-      client_type === "Commercial_B" ||
-      client_type === "Commercial_C"
-    ) {
-      setPipe("1/2"); // Set to 1/2 inch
-    } else {
-      setPipe("3/4"); // Set to 3/4 inch
+    if (day >= 1 && day <= 15) {
+      // If installation date is between 1-15, activation date is the 1st of the next month
+      activationDate = new Date(
+        installDate.getFullYear(),
+        installDate.getMonth() + 1, // Next month
+        day
+      );
+    } else if (day >= 16) {
+      // If installation date is between 16-30, activation date is the 1st of the month after next
+      activationDate = new Date(
+        installDate.getFullYear(),
+        installDate.getMonth() + 2, // Month after next
+        day
+      );
     }
-  }, [client_type]);
+    // Convert the activation date to a string in YYYY-MM-DD format
+    const activationDateString = activationDate.toISOString().split("T")[0];
 
+    // Update the state
+    setActivationDate(activationDateString);
+  };
+
+  //TODO: Generate Account Number
   useEffect(() => {
-    if (zone && client_type && seq_num) {
-      const acc_number = `${zone}-${client_type}-${seq_num}`;
-      setAccNum(acc_number);
-    }
+    const fetchData = async () => {
+      if (zone && client_type) {
+        const data = {
+          zone: zone,
+          c_type: client_type,
+          house_no: seq_num,
+        };
+        try {
+          const response = await fetch(`${backend}/admin/generate_accNum`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${localStorage.getItem("tkn")}`,
+            },
+            body: JSON.stringify(data),
+          });
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          const result = await response.json();
+          setAccNum(result.result.acc_num);
+          setSeqNum(result.result.seq_num);
+          setBook(result.result.book);
+        } catch (err) {
+          console.error("Fetch error:", err);
+          setError(err.message);
+        }
+      }
+    };
+
+    fetchData();
   }, [zone, client_type]);
 
   function formatDate(dateString) {
@@ -392,38 +432,45 @@ const CustomerTbl = () => {
                       Select Type
                     </option>
                     <option value="Residential">Residential</option>
+                    <option value="Res-Boton">Res-Boton</option>
+                    <option value="Res-Inlagadian">Res-Inlagadian</option>
                     <option value="Government">Government</option>
-                    <option value="Bulk">Bulk</option>
-                    <option value="Industrial">Industrial</option>
-                    <option value="Commercial">Commercial</option>
+                    <option value="Commercial/Industial">
+                      Commercial/Industrial
+                    </option>
                     <option value="Commercial_A">Commercial A</option>
                     <option value="Commercial_B">Commercial B</option>
                     <option value="Commercial_C">Commercial C</option>
+                    <option value="Bulk">Bulk</option>
+                    <option value="Bulk1">Bulk1</option>
+                    <option value="Bulk2">Bulk2</option>
                   </select>
                 </div>
 
                 {/* Zone */}
                 <div className="col-md-2 mb-3">
                   <label htmlFor="zone" className="form-label fw-bold">
-                    Zone
+                    Barangay
                   </label>
-                  <select
-                    className="form-select"
+                  <input
+                    type="number"
+                    className="form-control"
                     id="zone"
+                    placeholder="000"
                     required
                     value={zone}
-                    onChange={(e) => setZone(e.target.value)}
-                  >
-                    <option value="" disabled>
-                      Select
-                    </option>
-                    <option value="01">Zone 01</option>
-                    <option value="02">Zone 02</option>
-                    <option value="03">Zone 03</option>
-                    <option value="04">Zone 04</option>
-                    <option value="05">Zone 05</option>
-                    <option value="06">Zone 06</option>
-                  </select>
+                    max={25} // Added max attribute
+                    min={0} // Added max attribute
+                    onChange={(e) => {
+                      let value = parseInt(e.target.value, 10);
+
+                      // Ensure value is within the min and max range
+                      if (value > 25) value = 25;
+                      if (value < 0) value = 0;
+
+                      setZone(value); // Update state with the corrected value
+                    }}
+                  ></input>
                 </div>
 
                 <div className="col-md-2 mb-3">
@@ -496,6 +543,7 @@ const CustomerTbl = () => {
                     value={install_date}
                     onChange={(e) => {
                       setInstallDate(e.target.value);
+                      handleInstallDateChange(e); // Call the function here
                     }}
                   />
                 </div>
@@ -545,6 +593,7 @@ const CustomerTbl = () => {
                     required
                     value={meterBrand}
                     onChange={(e) => setMeterBrand(e.target.value)}
+                    style={{ height: "38px", overflow: "hidden" }}
                   >
                     <option value="" disabled>
                       Select meter brand
@@ -593,7 +642,7 @@ const CustomerTbl = () => {
                 {/* Pipe Size */}
                 <div className="col-md-6 col-lg-4 mb-3">
                   <label htmlFor="pipe_size" className="form-label fw-bold">
-                    Pipe Size
+                    Pipe Size / Meter Size
                   </label>
                   <select
                     className="form-select"
@@ -601,13 +650,20 @@ const CustomerTbl = () => {
                     required
                     value={pipe_size}
                     onChange={(e) => setPipe(e.target.value)}
-                    disabled
                   >
                     <option value="" disabled>
                       Select pipe size
                     </option>
+
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
                     <option value="1/2">1/2 inch</option>
+                    <option value="1-1/2">1-1/2</option>
+                    <option value="1-1/4">1-1/4</option>
+                    <option value="2-1/2">2-1/2</option>
                     <option value="3/4">3/4 inch</option>
+                    <option value="6">6</option>
                   </select>
                 </div>
               </div>

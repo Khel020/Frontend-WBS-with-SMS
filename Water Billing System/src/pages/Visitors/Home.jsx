@@ -1132,7 +1132,6 @@ const Home = () => {
         </section>
         <section
           style={{
-            backgroundColor: "#f9f9f9",
             padding: "40px 20px",
             borderRadius: "8px",
             marginBottom: "50px",
@@ -1142,7 +1141,7 @@ const Home = () => {
             style={{
               textAlign: "center",
               marginBottom: "20px",
-              color: "#333",
+              color: "#16A085",
             }}
           >
             Why Choose Our System?
@@ -1168,11 +1167,14 @@ const Home = () => {
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
             >
-              <img
-                src="/icons/bill-management.png"
-                alt="Bill Management"
-                style={{ maxWidth: "80px", marginBottom: "15px" }}
-              />
+              <i
+                className="bi bi-file-earmark-text"
+                style={{
+                  fontSize: "2rem",
+                  marginBottom: "15px",
+                  color: "#16A085",
+                }}
+              ></i>
               <h3
                 style={{
                   color: "#555",
@@ -1200,11 +1202,14 @@ const Home = () => {
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
             >
-              <img
-                src="/icons/sms-alerts.png"
-                alt="SMS Alerts"
-                style={{ maxWidth: "80px", marginBottom: "15px" }}
-              />
+              <i
+                className="bi bi-chat-dots"
+                style={{
+                  fontSize: "2rem",
+                  marginBottom: "15px",
+                  color: "#16A085",
+                }}
+              ></i>
               <h3
                 style={{
                   color: "#555",
@@ -1232,11 +1237,14 @@ const Home = () => {
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
             >
-              <img
-                src="/icons/usage-tracking.png"
-                alt="Usage Tracking"
-                style={{ maxWidth: "80px", marginBottom: "15px" }}
-              />
+              <i
+                className="bi bi-graph-up"
+                style={{
+                  fontSize: "2rem",
+                  marginBottom: "15px",
+                  color: "#16A085",
+                }}
+              ></i>
               <h3
                 style={{
                   color: "#555",
@@ -1264,11 +1272,14 @@ const Home = () => {
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
             >
-              <img
-                src="/icons/security.png"
-                alt="Secure and Reliable"
-                style={{ maxWidth: "80px", marginBottom: "15px" }}
-              />
+              <i
+                className="bi bi-shield-lock"
+                style={{
+                  fontSize: "2rem",
+                  marginBottom: "15px",
+                  color: "#16A085",
+                }}
+              ></i>
               <h3
                 style={{
                   color: "#555",
@@ -1285,19 +1296,18 @@ const Home = () => {
           </div>
         </section>
 
-        {/* How It Works Section */}
         <section
           style={{
-            backgroundColor: "#f9f9f9",
             padding: "40px 20px",
             borderRadius: "8px",
+            marginBottom: "50px",
           }}
         >
           <h2
             style={{
               textAlign: "center",
               marginBottom: "20px",
-              color: "#333",
+              color: "#16A085",
             }}
           >
             How to Get Started
@@ -1323,11 +1333,14 @@ const Home = () => {
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
             >
-              <img
-                src="/icons/register.png"
-                alt="Register"
-                style={{ maxWidth: "80px", marginBottom: "15px" }}
-              />
+              <i
+                className="bi bi-person-plus"
+                style={{
+                  fontSize: "2rem",
+                  marginBottom: "15px",
+                  color: "#16A085",
+                }}
+              ></i>
               <h3
                 style={{
                   color: "#555",
@@ -1355,11 +1368,14 @@ const Home = () => {
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
             >
-              <img
-                src="/icons/login.png"
-                alt="Login"
-                style={{ maxWidth: "80px", marginBottom: "15px" }}
-              />
+              <i
+                className="bi bi-box-arrow-in-right"
+                style={{
+                  fontSize: "2rem",
+                  marginBottom: "15px",
+                  color: "#16A085",
+                }}
+              ></i>
               <h3
                 style={{
                   color: "#555",
@@ -1387,11 +1403,14 @@ const Home = () => {
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
             >
-              <img
-                src="/icons/notifications.png"
-                alt="Notifications"
-                style={{ maxWidth: "80px", marginBottom: "15px" }}
-              />
+              <i
+                className="bi bi-bell"
+                style={{
+                  fontSize: "2rem",
+                  marginBottom: "15px",
+                  color: "#16A085",
+                }}
+              ></i>
               <h3
                 style={{
                   color: "#555",
@@ -1419,11 +1438,14 @@ const Home = () => {
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
             >
-              <img
-                src="/icons/monitor-pay.png"
-                alt="Monitor and Pay"
-                style={{ maxWidth: "80px", marginBottom: "15px" }}
-              />
+              <i
+                className="bi bi-credit-card"
+                style={{
+                  fontSize: "2rem",
+                  marginBottom: "15px",
+                  color: "#16A085",
+                }}
+              ></i>
               <h3
                 style={{
                   color: "#555",
@@ -1450,8 +1472,8 @@ const Home = () => {
         }}
       >
         <div className="container">
-          <Row gutter={24}>
-            <Col lg={6} md={12} style={{ paddingRight: "20px" }}>
+          <Row>
+            <Col lg={4} md={6} sm={12} className="mb-4">
               <div>
                 <a
                   href="/"
@@ -1467,7 +1489,7 @@ const Home = () => {
                 </a>
                 <p
                   style={{
-                    marginTop: "10px", // Reduced margin-top for better spacing
+                    marginTop: "10px",
                     opacity: "0.9",
                     fontSize: "16px",
                     lineHeight: "1.6",
@@ -1479,10 +1501,9 @@ const Home = () => {
                   with SMS notifications for a seamless water service
                   experience.
                 </p>
-
                 <div style={{ marginTop: "20px" }}>
                   <a
-                    href="https://facebook.com"
+                    href="https://www.facebook.com/CasiguranWD.official/"
                     style={{ color: "#fff", marginRight: "15px" }}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -1493,18 +1514,29 @@ const Home = () => {
                     ></i>
                   </a>
                   <a
-                    href="https://facebook.com"
+                    href="https://casiguranwd.gov.ph/"
                     style={{ color: "#fff", marginRight: "15px" }}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <i className="bi bi-globe" style={{ fontSize: "24px" }}></i>
                   </a>
+                  <a
+                    href="https://casiguranwd.gov.ph/"
+                    style={{ color: "#fff", marginRight: "15px" }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <i
+                      className="bi bi-envelope"
+                      style={{ fontSize: "24px" }}
+                    ></i>
+                  </a>
                 </div>
               </div>
             </Col>
 
-            <Col lg={3} md={6} style={{ paddingRight: "20px" }}>
+            <Col lg={3} md={6} sm={12} className="mb-4">
               <div>
                 <h4
                   style={{
@@ -1590,7 +1622,8 @@ const Home = () => {
                 </ul>
               </div>
             </Col>
-            <Col lg={3} md={12} style={{ marginBottom: "20px" }}>
+
+            <Col lg={5} md={12} sm={12} className="mb-4">
               <div>
                 <h4
                   style={{

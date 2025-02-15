@@ -138,6 +138,7 @@ function ListExample() {
     })
       .then((response) => response.json())
       .then((res) => {
+        console.log("Response", res);
         if (res.success) {
           toast.success("Account Successfully Created!", {
             onClose: () => navigate("/login"),
@@ -152,8 +153,10 @@ function ListExample() {
             });
           }
 
-          // Handle other potential errors
-          if (res.message) {
+          // Handle specific error message
+          if (res.message === "Your are not a consumer") {
+            toast.error("You are not a consumer. Please contact support.");
+          } else if (res.message) {
             toast.error(res.message);
           } else {
             toast.error("An error occurred while creating the account.");
@@ -171,32 +174,35 @@ function ListExample() {
 
   return (
     <div
+      className="container-fluid"
       style={{
         background: "#DBDFFF",
-        height: "90vh",
-        maxHeight: "90vh",
+        minHeight: "90vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: "20px",
       }}
     >
-      <div className="container mt-2">
+      <div className="container-fluid">
         <div className="row align-items-center ">
-          <div
-            className="col-12 col-lg-6 mb-lg-0 text-start p-5 mx-5 fade-in"
-            style={{ marginBottom: "2rem" }}
-          >
+          <div className="col-12 col-lg-6 text-start p-5 mx-5 fade-in d-none d-sm-block">
             <h1
-              className="text-primary fw-bold show"
-              style={{ fontSize: "2.5rem" }}
+              className="hero-text fw-bold fade-in"
+              style={{ fontSize: "2.5rem", color: "#16A085" }}
             >
               Casiguran Water District
             </h1>
-            <p style={{ fontSize: "1.2rem", color: "#555" }}>
+            <p
+              className="welcome-message fade-in"
+              style={{ fontSize: "1.2rem", color: "#16A085" }}
+            >
               "Serbisyong Bulahos Para sa Gabos"
             </p>
-            <p style={{ fontSize: "1rem", color: "#666" }}>
+            <p
+              className="additional-info d-none d-lg-block fade-in"
+              style={{ fontSize: "1.2rem", color: "#666" }}
+            >
               Welcome to the Casiguran Water District Customer Portal. Easily
               access your account, view your bills, and stay updated with SMS
               notifications for a seamless water service experience.
@@ -207,19 +213,23 @@ function ListExample() {
             <Card
               style={{
                 width: "100%",
-                maxWidth: "30rem",
-                backgroundColor: "#78A7FF",
-                padding: "5px",
+                maxWidth: "28rem",
+                backgroundColor: "#f9f9f9",
+                padding: "20px",
                 borderRadius: "10px",
+                boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
               }}
             >
               <Card.Body>
-                <h4 style={{ textAlign: "center" }} className="mb-2">
-                  Register
-                </h4>
-                <form className="row g-3" onSubmit={handleSubmit}>
+                <h1
+                  className="h3 mb-4 fw-bold text-center "
+                  style={{ color: "#16A085" }}
+                >
+                  Register Now
+                </h1>
+                <form className="row g-2" onSubmit={handleSubmit}>
                   <div className="col-12 col-md-6">
-                    <label htmlFor="username" className="form-label">
+                    <label htmlFor="username" className="form-label ">
                       Account Name
                     </label>
                     <div className="input-group">
@@ -227,7 +237,6 @@ function ListExample() {
                         type="text"
                         name="username"
                         className="form-control"
-                        placeholder="Ex. John Doe"
                         id="username"
                         value={formData.username}
                         onChange={handleChange}
@@ -302,6 +311,9 @@ function ListExample() {
                       value={formData.fname}
                       onChange={handleChange}
                     />
+                    {errors.name && (
+                      <div className="text-danger">{errors.name}</div>
+                    )}
                   </div>
                   <div className="col-12 col-md-6">
                     <label htmlFor="lastname" className="form-label">
@@ -315,8 +327,8 @@ function ListExample() {
                       value={formData.lastname}
                       onChange={handleChange}
                     />
-                    {errors.contact && (
-                      <div className="text-danger">{errors.contact}</div>
+                    {errors.name && (
+                      <div className="text-danger">{errors.name}</div>
                     )}
                   </div>
                   <div className="col-12 col-md-6">
@@ -363,7 +375,7 @@ function ListExample() {
                       name="email"
                       className="form-control"
                       id="Email"
-                      placeholder="Your Email Address"
+                      placeholder="@gmail.com"
                       value={formData.email}
                       onChange={handleChange}
                     />
@@ -373,17 +385,30 @@ function ListExample() {
                   </div>
 
                   <div className="col-12 mt-3">
-                    <hr />
                     <button
-                      className="btn btn-primary w-100 py-2"
+                      className="btn  w-100 py-2"
                       type="submit"
+                      style={{
+                        backgroundColor: "#008374",
+                        color: "#fff",
+                        borderRadius: "30px",
+                      }}
                     >
                       Sign up
                     </button>
                   </div>
                   <div className="col-12 text-center mt-3">
                     <p>
-                      Already have an account? <Link to="/login">Sign in</Link>
+                      Already have an account?{" "}
+                      <Link
+                        to="/login"
+                        style={{
+                          textDecoration: "underline",
+                          color: "#008374",
+                        }}
+                      >
+                        Sign in
+                      </Link>
                     </p>
                   </div>
                 </form>
@@ -392,6 +417,7 @@ function ListExample() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }

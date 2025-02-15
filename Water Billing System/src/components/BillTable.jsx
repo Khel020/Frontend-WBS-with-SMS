@@ -241,6 +241,9 @@ function BillTable() {
     <div style={{ overflow: "visible" }}>
       <div className="row mb-3">
         <div className="col-9 d-flex align-items-center">
+          <span className="me-2">
+            <i className="bi bi-funnel-fill me-1"></i> Filter
+          </span>
           <DatePicker
             selected={startDate}
             onChange={(date) => setStartDate(date)}
