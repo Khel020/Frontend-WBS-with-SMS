@@ -59,6 +59,7 @@ import Page404 from "./pages/Visitors/404.jsx";
 import CS_CustomerList from "./pages/CS_Officer/ListofConsumers.jsx";
 import CS_Dashboard from "./pages/CS_Officer/CS_Dashboard.jsx";
 import CS_BillMonitoring from "./pages/CS_Officer/BillMonitoring.jsx";
+import CS_NewConsumer from "./pages/CS_Officer/newConnection.jsx";
 //TODO: IT
 import IT_Dashboard from "./pages/IT/Dashboard.jsx";
 import IT_Userlist from "./pages/IT/userlist.jsx";
@@ -66,11 +67,15 @@ import IT_Content from "./pages/IT/webContent.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
+      //TODO: admin and cs officer
       <Route
         path="customer/:acc_number/:accountName"
         element={<AdminCSLayout />}
       >
         <Route index element={<CustomersProfile />} />
+      </Route>
+      <Route path="bill-summary" element={<AdminCSLayout />}>
+        <Route index element={<BillSummary />} />
       </Route>
       //TODO: Customer Service OFFICER
       <Route path="cs-consumers" element={<CSOfficer />}>
@@ -81,6 +86,15 @@ const router = createBrowserRouter(
       </Route>
       <Route path="bill-monitoring" element={<CSOfficer />}>
         <Route index element={<CS_BillMonitoring />} />
+      </Route>
+      <Route path="balances" element={<CSOfficer />}>
+        <Route index element={<Balance />} />
+      </Route>
+      <Route path="disconnection" element={<CSOfficer />}>
+        <Route index element={<ForDC />} />
+      </Route>
+      <Route path="new-connection" element={<CSOfficer />}>
+        <Route index element={<CS_NewConsumer />} />
       </Route>
       //TODO: VISITOR ROUTES
       <Route path="/" element={<VisitorLayout />}>
@@ -133,17 +147,8 @@ const router = createBrowserRouter(
       >
         <Route index element={<ReceivePayments />} />
       </Route>
-      <Route path="balances" element={<BillerLayout />}>
-        <Route index element={<Balance />} />
-      </Route>
-      <Route path="disconnection" element={<BillerLayout />}>
-        <Route index element={<ForDC />} />
-      </Route>
       <Route path="cus_reports" element={<BillerLayout />}>
         <Route index element={<CusReport />} />
-      </Route>
-      <Route path="bill-summary" element={<BillerLayout />}>
-        <Route index element={<BillSummary />} />
       </Route>
       <Route path="collections" element={<BillerLayout />}>
         <Route index element={<Collections />} />

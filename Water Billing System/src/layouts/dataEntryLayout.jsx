@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 const EntryStaffLayout = () => {
   const token = localStorage.getItem("type");
   const usertype = token;
-  if (usertype === "data entry staff") {
+  if (usertype === "Uploader") {
     return (
       <div>
         <main>

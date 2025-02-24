@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import DataTable, { defaultThemes } from "react-data-table-component";
-import { Container, Button, Modal } from "react-bootstrap";
+import { Form, Container, Button, Modal } from "react-bootstrap";
 import { toast, ToastContainer } from "react-toastify";
-
-import axios from "axios";
-
+import Select from "react-select";
 const CustomerTbl = () => {
   const usertype = localStorage.getItem("type");
   const [clients, setClients] = useState([]);
@@ -24,16 +22,58 @@ const CustomerTbl = () => {
   const [initial_read, setInitial] = useState("");
   const [install_date, setInstallDate] = useState("");
   const [installation_fee, setInstallationFee] = useState("");
-  const [meter_installer, setMeterInstaller] = useState("");
-  const [zone, setZone] = useState("");
-  const [seq_num, setSeqNum] = useState("");
+  const [inspection_fee, setInspecFee] = useState("");
+
+  const [inspec_date, setInspecDate] = useState("");
+  const [house_no, setHouseNum] = useState("");
   const [address, setAddress] = useState("");
   const [meterBrand, setMeterBrand] = useState("");
   const [search, setSearch] = useState("");
-  const [errors, setErrors] = useState("");
+  const [date_applied, setDateApplied] = useState("");
+  const [civilStatus, setCivilStatus] = useState("");
+  const [gender, setGender] = useState("");
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const handleCloseSched = () => setShowSchedule(false);
+  const hanldeShowSched = () => setShowSchedule(true);
+  const barangayOptions = [
+    { value: "1A", label: "Tulay" },
+    { value: "1B", label: "Boton" },
+    { value: "02", label: "Cawit" },
+    { value: "03", label: "Central 1" },
+    { value: "04", label: "Central 2" },
+    { value: "05", label: "Somal-OT" },
+    { value: "06", label: "Timbayog" },
+    { value: "7A", label: "Casay" },
+    { value: "7B", label: "Inlagadian/Escuala" },
+    { value: "08", label: "Colambis" },
+    { value: "9A", label: "San Juan" },
+    { value: "9B", label: "Gogon" },
+    { value: "10A", label: "Rizal/Tiris" },
+    { value: "10B", label: "Burgos" },
+    { value: "11", label: "San Isidro/Tigbao" },
+    { value: "12A", label: "Ponong" },
+    { value: "12B", label: "Sta.Cruz/San Pascual" },
+    { value: "13", label: "San Antonino, Adovis" },
+    { value: "14A", label: "Storom" },
+    { value: "14B", label: "Trece Martires" },
+    { value: "15A", label: "Cagdagat" },
+    { value: "15B", label: "Boton" },
+  ];
+  const clientTypeOptions = [
+    { value: "Residential", label: "Residential" },
+    { value: "Res-Boton", label: "Res-Boton" },
+    { value: "Res-Inlagadian", label: "Res-Inlagadian" },
+    { value: "Government", label: "Government" },
+    { value: "Commercial/Industrial", label: "Commercial/Industrial" },
+    { value: "Commercial_A", label: "Commercial A" },
+    { value: "Commercial_B", label: "Commercial B" },
+    { value: "Commercial_C", label: "Commercial C" },
+    { value: "Bulk", label: "Bulk" },
+    { value: "Bulk1", label: "Bulk1" },
+    { value: "Bulk2", label: "Bulk2" },
+  ];
 
   // TODO: Clients
   useEffect(() => {
@@ -70,42 +110,42 @@ const CustomerTbl = () => {
         {
           accountNumber,
           accountName,
-          meter_num,
-          pipe_size,
-          contact,
-          initial_read,
-          address,
           client_type,
+          barangay,
+          house_no,
+          contact,
+          address,
+          date_applied,
+          inspec_date,
           install_date,
           activationDate,
+          meter_num,
           meterBrand,
+          initial_read,
+          pipe_size,
+          inspection_fee,
           installation_fee,
-          meter_installer,
-          zone,
-          seq_num,
-          book,
         },
       ];
-      try {
-        const response = await axios.post(
-          `${backend}/admin/newclient/`,
-          newClient
-        );
+      const response = await fetch(`${backend}/csofficer/newConsumer`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${localStorage.getItem("tkn")}`,
+        },
+        body: JSON.stringify(newClient),
+      });
 
-        // Access response.data directly
-        const data = response.data;
-
-        if (data.success) {
-          toast.success(data.message, {
-            autoClose: 1000, // Auto close after 1 second
-          });
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        }
-      } catch (err) {
-        console.error(err);
-        toast.error("Error saving the client"); // Optional: Show an error message
+      // Access response.data directly
+      const data = await response.json();
+      console.log("DATA", data);
+      if (data.success) {
+        toast.success(data.message, {
+          autoClose: 1000, // Auto close after 1 second
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
       }
     }
   };
@@ -116,20 +156,21 @@ const CustomerTbl = () => {
     let activationDate;
 
     if (day >= 1 && day <= 15) {
-      // If installation date is between 1-15, activation date is the 1st of the next month
+      // Activation date is the same day but in the next month
       activationDate = new Date(
         installDate.getFullYear(),
         installDate.getMonth() + 1, // Next month
-        day
+        day + 1
       );
     } else if (day >= 16) {
-      // If installation date is between 16-30, activation date is the 1st of the month after next
+      // Activation date is the same day but in the month after next
       activationDate = new Date(
         installDate.getFullYear(),
         installDate.getMonth() + 2, // Month after next
-        day
+        day + 1
       );
     }
+
     // Convert the activation date to a string in YYYY-MM-DD format
     const activationDateString = activationDate.toISOString().split("T")[0];
 
@@ -140,11 +181,11 @@ const CustomerTbl = () => {
   //TODO: Generate Account Number
   useEffect(() => {
     const fetchData = async () => {
-      if (zone && client_type) {
+      if (barangay && client_type && house_no) {
         const data = {
-          zone: zone,
+          barangay: barangay,
           c_type: client_type,
-          house_no: seq_num,
+          houseNum: house_no,
         };
         try {
           const response = await fetch(`${backend}/admin/generate_accNum`, {
@@ -160,8 +201,6 @@ const CustomerTbl = () => {
           }
           const result = await response.json();
           setAccNum(result.result.acc_num);
-          setSeqNum(result.result.seq_num);
-          setBook(result.result.book);
         } catch (err) {
           console.error("Fetch error:", err);
           setError(err.message);
@@ -170,7 +209,7 @@ const CustomerTbl = () => {
     };
 
     fetchData();
-  }, [zone, client_type]);
+  }, [barangay, client_type, house_no]);
 
   function formatDate(dateString) {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -181,6 +220,11 @@ const CustomerTbl = () => {
   }
 
   const columns = [
+    {
+      name: "Acct. No.",
+      selector: (row) => row.acc_num,
+      sortable: true,
+    },
     {
       name: "Account Name",
       selector: (row) => (
@@ -194,7 +238,9 @@ const CustomerTbl = () => {
                   ? "bg-danger-subtle  text-danger-emphasis"
                   : row.status === "Pending"
                   ? "bg-warning-subtle text-warning-emphasis"
-                  : "bg-secondary"
+                  : row.status === "New"
+                  ? "bg-primary-subtle text-primary-emphasis"
+                  : ""
               }`}
             >
               {row.status}
@@ -206,11 +252,7 @@ const CustomerTbl = () => {
       sortable: true,
       width: "250px",
     },
-    {
-      name: "Acct. No.",
-      selector: (row) => row.acc_num,
-      sortable: true,
-    },
+
     {
       name: "Contact", // Column name
       selector: (row) => row.contact,
@@ -222,6 +264,9 @@ const CustomerTbl = () => {
         if (row.status === "Pending") {
           return <span className="text-muted">N/A</span>;
         }
+        if (row.status === "New") {
+          return <span className="text-muted">N/A</span>;
+        }
         return row.last_billDate ? (
           formatDate(row.last_billDate)
         ) : (
@@ -230,7 +275,6 @@ const CustomerTbl = () => {
       },
       sortable: true,
     },
-
     {
       name: "Balance", // Column name
       selector: (row) => {
@@ -242,6 +286,13 @@ const CustomerTbl = () => {
             return <span className="text-success fw-bold">New</span>;
           }
           return `₱${parseFloat(row.totalBalance).toFixed(2)}`;
+        }
+        if (row.status === "New") {
+          return (
+            <span className="text-muted">
+              ₱{parseFloat(row.totalBalance).toFixed(2)}
+            </span>
+          );
         }
         return "N/A"; // Default return if none of the conditions match
       },
@@ -259,6 +310,9 @@ const CustomerTbl = () => {
           }
           return `₱${parseFloat(row.advancePayment).toFixed(2)}`;
         }
+        if (row.advancePayment === null) {
+          return `₱${parseFloat(row.advancePayment).toFixed(2)}`;
+        }
         return "N/A"; // Default return if none of the conditions match
       },
       sortable: true,
@@ -266,17 +320,21 @@ const CustomerTbl = () => {
     {
       name: "Action",
       cell: (row) => (
-        <div>
-          {/* View Details Button */}
-          <Button
-            variant="success"
-            size="sm"
-            as={Link}
-            to={`/customer/${row.acc_num}/${row.accountName}`}
-            className="mx-1"
-          >
-            View Profile
-          </Button>
+        <div className="d-flex gap-2">
+          {row.status === "New Consumer" ? (
+            <Button variant="success" size="sm">
+              <i className="bi bi-calendar me-1"></i> Schedule
+            </Button>
+          ) : (
+            <Button
+              variant="success"
+              size="sm"
+              as={Link}
+              to={`/customer/${row.acc_num}/${row.accountName}`}
+            >
+              <i className="bi bi-person me-1"></i> View Profile
+            </Button>
+          )}
         </div>
       ),
     },
@@ -363,7 +421,7 @@ const CustomerTbl = () => {
         {usertype === "CS_Officer" && (
           <div className="col-7 d-flex justify-content-end">
             <Button variant="success" size="sm" onClick={handleShow}>
-              <i className="bi bi-person-plus"></i> Add Customer
+              <i className="bi bi-person-plus"></i> Add Consumer
             </Button>
           </div>
         )}
@@ -381,27 +439,29 @@ const CustomerTbl = () => {
           noDataComponent={<div>No Record Found</div>}
         />
       </div>
-      {/* TODO:  ADD CLIENT MODAL*/}
       <Modal show={show} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
-          <Modal.Title>Add New Customer</Modal.Title>
+          <Modal.Title style={{ fontWeight: "bold", color: "#007bff" }}>
+            Add New Consumer
+          </Modal.Title>
         </Modal.Header>
         <form className="row g-3" onSubmit={handleSubmit}>
           <Modal.Body>
             <div className="px-3">
+              {/* Row 1 */}
               <div className="row mt-2">
-                <div className="col-md-2 mb-3">
-                  <label htmlFor="accountName" className="form-label fw-bold">
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="accNum" className="form-label fw-bold">
                     Acc No.
                   </label>
                   <input
                     type="text"
                     className="form-control"
-                    id="accountName"
+                    id="accNum"
                     disabled
                     required
                     value={acc_num}
-                    onChange={(e) => setAccName(e.target.value)}
+                    style={{ backgroundColor: "#e9ecef" }}
                   />
                 </div>
                 <div className="col-md-3 mb-3">
@@ -419,63 +479,59 @@ const CustomerTbl = () => {
                 </div>
                 <div className="col-md-3 mb-3">
                   <label htmlFor="client_type" className="form-label fw-bold">
-                    Client Type
+                    Classification
                   </label>
-                  <select
-                    className="form-select"
-                    id="client_type"
-                    required
-                    value={client_type}
-                    onChange={(e) => setType(e.target.value)}
-                  >
-                    <option value="" disabled>
-                      Select Type
-                    </option>
-                    <option value="Residential">Residential</option>
-                    <option value="Res-Boton">Res-Boton</option>
-                    <option value="Res-Inlagadian">Res-Inlagadian</option>
-                    <option value="Government">Government</option>
-                    <option value="Commercial/Industial">
-                      Commercial/Industrial
-                    </option>
-                    <option value="Commercial_A">Commercial A</option>
-                    <option value="Commercial_B">Commercial B</option>
-                    <option value="Commercial_C">Commercial C</option>
-                    <option value="Bulk">Bulk</option>
-                    <option value="Bulk1">Bulk1</option>
-                    <option value="Bulk2">Bulk2</option>
-                  </select>
+                  <Select
+                    options={clientTypeOptions}
+                    value={clientTypeOptions.find(
+                      (option) => option.value === setType
+                    )} // Find selected value
+                    onChange={(selectedOption) => setType(selectedOption.value)} // Get only value
+                    placeholder="Select Type"
+                    isSearchable
+                    styles={{
+                      menu: (provided) => ({
+                        ...provided,
+                        maxHeight: "150px",
+                        overflowY: "auto",
+                      }),
+                    }}
+                  />
                 </div>
-
-                {/* Zone */}
-                <div className="col-md-2 mb-3">
-                  <label htmlFor="zone" className="form-label fw-bold">
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="barangay" className="form-label fw-bold">
                     Barangay
                   </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="zone"
-                    placeholder="000"
-                    required
-                    value={zone}
-                    max={25} // Added max attribute
-                    min={0} // Added max attribute
-                    onChange={(e) => {
-                      let value = parseInt(e.target.value, 10);
-
-                      // Ensure value is within the min and max range
-                      if (value > 25) value = 25;
-                      if (value < 0) value = 0;
-
-                      setZone(value); // Update state with the corrected value
+                  <Select
+                    options={barangayOptions}
+                    value={barangayOptions.find(
+                      (option) => option.value === barangay
+                    )}
+                    onChange={(selectedOption) =>
+                      setBarangay(selectedOption.value)
+                    }
+                    placeholder=" Barangay"
+                    isSearchable
+                    styles={{
+                      control: (provided) => ({
+                        ...provided,
+                        width: "100%",
+                      }),
+                      menu: (provided) => ({
+                        ...provided,
+                        maxHeight: "150px",
+                        overflowY: "auto",
+                      }),
                     }}
-                  ></input>
+                  />
                 </div>
+              </div>
 
-                <div className="col-md-2 mb-3">
-                  <label htmlFor="zone" className="form-label fw-bold">
-                    House No.
+              {/* Row 2 */}
+              <div className="row mt-2">
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="houseNo" className="form-label fw-bold">
+                    House #
                   </label>
                   <input
                     type="text"
@@ -483,14 +539,16 @@ const CustomerTbl = () => {
                     id="houseNo"
                     placeholder="000"
                     required
-                    value={seq_num}
-                    onChange={(e) => setSeqNum(e.target.value)}
+                    value={house_no}
+                    onChange={(e) => {
+                      const value = e.target.value.toUpperCase();
+                      if (/^\d{0,3}[A-Za-z]{0,1}$/.test(value)) {
+                        setHouseNum(value);
+                      }
+                    }}
                   />
                 </div>
-              </div>
-
-              <div className="row mt-2">
-                <div className="col-md-4 mb-3">
+                <div className="col-md-3 mb-3">
                   <label htmlFor="contact" className="form-label fw-bold">
                     Contact
                   </label>
@@ -504,7 +562,7 @@ const CustomerTbl = () => {
                     onChange={(e) => setContact(e.target.value)}
                   />
                 </div>
-                <div className="col-md-4 mb-3">
+                <div className="col-md-3 mb-3">
                   <label htmlFor="address" className="form-label fw-bold">
                     Address
                   </label>
@@ -517,21 +575,38 @@ const CustomerTbl = () => {
                     onChange={(e) => setAddress(e.target.value)}
                   />
                 </div>
-                <div className="col-md-4 mb-3">
-                  <label htmlFor="telephone" className="form-label fw-bold">
-                    Telephone Number
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="date_applied" className="form-label fw-bold">
+                    Date Applied
                   </label>
                   <input
-                    type="text"
+                    type="date"
                     className="form-control"
-                    id="telephone"
+                    id="date_applied"
                     required
+                    value={date_applied}
+                    onChange={(e) => setDateApplied(e.target.value)}
+                    style={{ cursor: "pointer" }}
                   />
                 </div>
               </div>
               <hr />
               <div className="row mt-2">
-                <div className="col-md-6 col-lg-4 mb-3">
+                <div className="col-md-3 mb-3">
+                  <label htmlFor="inspec_date" className="form-label fw-bold">
+                    Inspection Date
+                  </label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    id="inspec_date"
+                    required
+                    value={inspec_date}
+                    onChange={(e) => setInspecDate(e.target.value)}
+                    style={{ cursor: "pointer" }}
+                  />
+                </div>
+                <div className="col-md-3 mb-3">
                   <label htmlFor="install_date" className="form-label fw-bold">
                     Installation Date
                   </label>
@@ -549,7 +624,7 @@ const CustomerTbl = () => {
                 </div>
 
                 {/* Activation Date */}
-                <div className="col-md-6 col-lg-4 mb-3">
+                <div className="col-md-3 mb-3">
                   <label
                     htmlFor="activation_date"
                     className="form-label fw-bold"
@@ -568,7 +643,7 @@ const CustomerTbl = () => {
                 </div>
 
                 {/* Meter Number */}
-                <div className="col-md-6 col-lg-4 mb-3">
+                <div className="col-md-3 mb-3">
                   <label htmlFor="meter_num" className="form-label fw-bold">
                     Meter Number
                   </label>
@@ -583,6 +658,8 @@ const CustomerTbl = () => {
                 </div>
 
                 {/* Meter Brand Dropdown */}
+              </div>
+              <div className="row mt-2">
                 <div className="col-md-6 col-lg-4 mb-3">
                   <label htmlFor="meterBrand" className="form-label fw-bold">
                     Meter Brand
@@ -593,7 +670,6 @@ const CustomerTbl = () => {
                     required
                     value={meterBrand}
                     onChange={(e) => setMeterBrand(e.target.value)}
-                    style={{ height: "38px", overflow: "hidden" }}
                   >
                     <option value="" disabled>
                       Select meter brand
@@ -672,30 +748,54 @@ const CustomerTbl = () => {
 
               {/* Fees */}
               <div className="row">
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <label
-                    htmlFor="installation_fee"
+                    htmlFor="inspection_fee"
                     className="form-label fw-bold"
                   >
+                    Inspection Fee
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    id="inspection_fee"
+                    required
+                    value={inspection_fee}
+                    onChange={(e) => setInspecFee(e.target.value)}
+                  />
+                </div>
+                <div className="col-md-3">
+                  <label htmlFor="installFee" className="form-label fw-bold">
                     Installation Fee
                   </label>
                   <input
                     type="number"
                     className="form-control"
-                    id="installation_fee"
+                    id="installFee"
                     required
                     value={installation_fee}
                     onChange={(e) => setInstallationFee(e.target.value)}
                   />
                 </div>
               </div>
+
+              {/* Submit Button */}
+              <div className="d-flex justify-content-end">
+                <button
+                  type="submit"
+                  className="btn btn-md btn-primary mt-3"
+                  onMouseOver={(e) =>
+                    (e.target.style.backgroundColor = "#0056b3")
+                  }
+                  onMouseOut={(e) =>
+                    (e.target.style.backgroundColor = "#007bff")
+                  }
+                >
+                  Add Consumer
+                </button>
+              </div>
             </div>
           </Modal.Body>
-          <Modal.Footer>
-            <button type="submit" className="btn btn-primary">
-              Add Client
-            </button>
-          </Modal.Footer>
         </form>
       </Modal>
 

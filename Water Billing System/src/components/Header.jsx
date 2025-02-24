@@ -122,7 +122,7 @@ const Header = () => {
                   </a>
                 </li>
                 <li className="nav-item">
-                  <a href="/about-us" className="nav-link text-white">
+                  <a href="#about" className="nav-link text-white">
                     <i
                       className="bi bi-info-circle me-1"
                       style={{ fontSize: "15px" }}

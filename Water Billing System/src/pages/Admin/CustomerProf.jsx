@@ -2,8 +2,24 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/Sidebar.jsx";
 import { useParams } from "react-router-dom";
 import { Container, Button, Modal } from "react-bootstrap";
+
 import axios from "axios";
 const CustomerProf = () => {
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    // Event listeners para ma-detect kung online o offline
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
   const { acc_number } = useParams();
   const [customers, setCustomer] = useState([]);
   const [editCustomer, setEditCustomer] = useState({
@@ -127,22 +143,42 @@ const CustomerProf = () => {
             <div class="row">
               <div class="col-md-4">
                 <div class="card mb-3">
-                  <div class="card-body text-center">
-                    <img
-                      src="https://via.placeholder.com/150"
-                      alt="Profile Picture"
-                      class="rounded-circle mb-3"
-                    />
-                    <h5 class="card-title">{customer.accountName}</h5>
-                    <p class="card-text">{customer.email}</p>
-                    <p class="card-text">{customer.c_address}</p>
-                    <button
-                      type="button"
-                      class="btn btn-link"
-                      onClick={() => handleEditModal(customer)}
-                    >
-                      Edit Profile
-                    </button>
+                  <div className="card-body text-center">
+                    {isOnline ? (
+                      <img
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          customer.accountName || "Customer"
+                        )}&background=random&color=fff&size=120`}
+                        alt="Profile"
+                        className="rounded-circle img-thumbnail"
+                        width="120"
+                        height="120"
+                      />
+                    ) : (
+                      <img
+                        src="/assets/default-avatar.png"
+                        alt="Profile"
+                        className="rounded-circle img-thumbnail"
+                        width="120"
+                        height="120"
+                      />
+                    )}
+                    <h4 className="card-title fw-bold text-primary">
+                      {customer.accountName}
+                    </h4>
+                    <p className="card-text text-muted mb-1">
+                      {customer.email || "No email available"}
+                    </p>
+                    <p className="card-text text-muted">{customer.c_address}</p>
+                    {usertype === "CS_Officer" && (
+                      <button
+                        type="button"
+                        className="btn btn-outline-primary btn-sm mt-2"
+                        onClick={() => handleEditModal(customer)}
+                      >
+                        Edit Profile
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -176,29 +212,31 @@ const CustomerProf = () => {
                   </div>
                 </div>
               </div>
-              <div class="col-md-8">
-                <div class="row">
+              <div class="col-md-8 ">
+                <div class="row mb-3">
                   <div class="col-md-4">
-                    <div class="card mb-3">
-                      <div class="card-body text-center">
-                        <h5 class="card-title">Average Monthly Consumption</h5>
-                        <p class="card-text display-4">4.5</p>
+                    <div class="card mb-3 h-100">
+                      <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <h4 class="card-title">Latest Water Consumption</h4>
+                        <p class="card-text display-6">4.5</p>
                       </div>
                     </div>
                   </div>
                   <div class="col-md-4">
-                    <div class="card mb-3">
-                      <div class="card-body text-center">
-                        <h5 class="card-title">Estimated Monthly Cost:</h5>
-                        <p class="card-text display-4">89%</p>
+                    <div class="card mb-3 h-100">
+                      <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <h4 class="card-title">Classification Type</h4>
+                        <p class="card-text display-6">
+                          {customer.client_type}
+                        </p>
                       </div>
                     </div>
                   </div>
                   <div class="col-md-4">
-                    <div class="card mb-3">
-                      <div class="card-body text-center">
-                        <h5 class="card-title mb-3">Present Bill Status:</h5>
-                        <p class="card-text display-4 mb-3">Unpaid</p>
+                    <div class="card mb-3 h-100">
+                      <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <h4 class="card-title mb-4">Present Bill Status:</h4>
+                        <p class="card-text display-6 ">Unpaid</p>
                       </div>
                     </div>
                   </div>

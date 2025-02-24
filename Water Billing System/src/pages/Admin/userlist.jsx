@@ -603,7 +603,6 @@ function Userlist() {
                     <option value="user">User</option>
                     <option value="cashier">Cashier</option>
                     <option value="uploader">Data Uploader</option>
-                    <option value="meterReader">Meter Reader</option>
                     <option value="cs_officer">Customer Service</option>
                   </Form.Select>
                 </Form.Group>

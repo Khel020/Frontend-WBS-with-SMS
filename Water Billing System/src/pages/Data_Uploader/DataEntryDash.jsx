@@ -240,7 +240,6 @@ const DataEntryDash = () => {
       className="d-flex flex-column flex-md-row"
       style={{ height: "100vh", overflow: "hidden" }}
     >
-      <Sidebar role={usertype} />
       <main
         className="flex-grow-1 px-md-4 py-4"
         style={{ backgroundColor: "#f8f9fa" }}

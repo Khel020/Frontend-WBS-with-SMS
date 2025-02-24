@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar.jsx";
-import DataTable, { defaultThemes } from "react-data-table-component";
+import DataTable from "react-data-table-component";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Button } from "@mui/material";
 import { Link, useParams } from "react-router-dom";
 import { Popover, OverlayTrigger } from "react-bootstrap";
-import { FaEllipsisV } from "react-icons/fa"; // Import the ellipsis icon
+import { FaEllipsisV } from "react-icons/fa";
+
 const PaymentHistory = () => {
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
-  const [payments, setPayments] = useState("");
-  const { acc_num } = useParams();
-  const { accountName } = useParams();
-  const [acc_name, setName] = useState("");
+  const [payments, setPayments] = useState([]);
+  const { acc_num, accountName } = useParams();
+
   useEffect(() => {
     const fetchPayment = async () => {
       try {
@@ -23,39 +23,68 @@ const PaymentHistory = () => {
         if (response.ok) {
           const data = await response.json();
           setPayments(data);
-          setName(data.accountName);
         } else {
           throw new Error("Failed to fetch payments");
         }
-      } catch {}
+      } catch (error) {
+        console.error(error);
+      }
     };
     fetchPayment();
   }, [acc_num, backend]);
-  const formatDateTime = (date) => {
-    const options = {
-      year: "numeric",
-      month: "short", // Short month format (e.g., Jan)
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true, // Use 12-hour format with AM/PM
-    };
 
-    const formattedDate = new Date(date).toLocaleString("en-US", options); // Use en-US locale for AM/PM formatting
-    return formattedDate.replace(",", ""); // Remove comma if present
+  const formatDateTime = (date) => {
+    return new Date(date)
+      .toLocaleString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      })
+      .replace(",", "");
+  };
+
+  const generateReceipt = (payment) => {
+    return `\n\n========== PAYMENT RECEIPT ==========
+    \nDate: ${formatDateTime(payment.paymentDate)}
+    \nAccount Name: ${accountName}
+    \nAccount Number: ${acc_num}
+    \n----------------------------------
+    \nTotal Due: ₱${payment.amountDue.toFixed(2)}
+    \nPayment Received: ₱${payment.tendered.toFixed(2)}
+    \nChange Given: ₱${payment.change.toFixed(2)}
+    \nNotes: ${payment.notes || "N/A"}
+    \n==================================\n`;
+  };
+
+  const handleViewReceipt = (payment) => {
+    alert(generateReceipt(payment));
+  };
+
+  const handlePrintReceipt = (payment) => {
+    const receiptContent = generateReceipt(payment);
+    const printWindow = window.open("", "", "width=600,height=600");
+    printWindow.document.write(`<pre>${receiptContent}</pre>`);
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  const handleDownloadReceipt = (payment) => {
+    const receiptContent = generateReceipt(payment);
+    const blob = new Blob([receiptContent], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `receipt_${payment.id}.txt`;
+    link.click();
   };
 
   const columns = [
-    {
-      name: "OR No.",
-      selector: (row) => row.OR_NUM,
-      sortable: true,
-      width: "100px",
-    },
+    { name: "OR No.", selector: (row, index) => index + 1, width: "100px" },
     {
       name: "Payment Date",
       selector: (row) => formatDateTime(row.paymentDate),
-      sortable: true,
       width: "200px",
     },
     {
@@ -66,19 +95,9 @@ const PaymentHistory = () => {
     {
       name: "Payment Received",
       selector: (row) => `₱${row.tendered.toFixed(2)}`,
-      sortable: true,
     },
-    {
-      name: "Notes",
-      selector: (row) => row.notes || "N/A", // Default to "N/A" if no notes exist
-      sortable: false,
-    },
-    {
-      name: "Change Given",
-      selector: (row) => `₱${row.change.toFixed(2)}`,
-      sortable: true,
-    },
-
+    { name: "Notes", selector: (row) => row.notes || "N/A" },
+    { name: "Change Given", selector: (row) => `₱${row.change.toFixed(2)}` },
     {
       name: "Action",
       cell: (row) => (
@@ -90,88 +109,66 @@ const PaymentHistory = () => {
               <Popover id="popover-basic">
                 <Popover.Header as="h3">Actions</Popover.Header>
                 <Popover.Body>
-                  <Link
-                    to={`/billing-records/${row.acc_num}/${row.accountName}`}
-                    className="d-block mb-2"
+                  <button
+                    className="d-block mb-2 btn btn-link"
+                    onClick={() => handleViewReceipt(row)}
                   >
-                    View Bills
-                  </Link>
-                  <Link
-                    to={`/billing-records/${row.acc_num}/${row.accountName}/adjustments`}
-                    className="d-block mb-2"
+                    View Receipt
+                  </button>
+                  <button
+                    className="d-block mb-2 btn btn-link"
+                    onClick={() => handlePrintReceipt(row)}
                   >
-                    Adjustments
-                  </Link>
-                  <Link
-                    to={`/billing-records/${row.acc_num}/${row.accountName}/full-bill`}
-                    className="d-block mb-2"
+                    Print Receipt
+                  </button>
+                  <button
+                    className="d-block mb-2 btn btn-link"
+                    onClick={() => handleDownloadReceipt(row)}
                   >
-                    View Full Bill
-                  </Link>
-                  <a
-                    href={`/billing-records/${row.acc_num}/${row.accountName}/print-bill`}
-                    className="d-block mb-2"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Print Bill
-                  </a>
+                    Download Receipt
+                  </button>
                 </Popover.Body>
               </Popover>
             }
           >
             <button className="btn btn-link p-0">
-              <FaEllipsisV size={20} /> {/* Adjust size as needed */}
+              <FaEllipsisV size={20} />
             </button>
           </OverlayTrigger>
         </div>
       ),
-      width: "130px", // Adjusted width
+      width: "180px",
     },
   ];
-
   const customStyles = {
     table: {
       style: {
-        border: "1px solid #ddd",
-        borderRadius: "8px",
         overflow: "hidden",
-      },
-    },
-    headRow: {
-      style: {
-        position: "sticky",
-        top: 0,
-        zIndex: 10,
-        backgroundColor: "#1F702C", // Consistent header background
+        borderRadius: "5px",
       },
     },
     headCells: {
       style: {
-        fontWeight: "bold",
-        backgroundColor: "transparent", // Inherits background from headRow
-        color: "white",
-        fontSize: "12px",
-        padding: "10px", // Adjust padding for aesthetics
+        backgroundColor: "#EEF1F8", // Lightest blue
+        color: "#333333", // Dark text for contrast
       },
     },
     rows: {
       style: {
-        minHeight: "45px",
+        minHeight: "40px",
         "&:hover": { backgroundColor: "#f1f1f1" },
       },
     },
     pagination: {
       style: {
         border: "none",
-        fontSize: "14px",
+        fontSize: "13px",
         color: "#000",
         backgroundColor: "#f7f7f7",
         minHeight: "50px",
       },
     },
   };
-
   return (
     <div className="d-flex">
       <Sidebar role={usertype} />

@@ -33,6 +33,7 @@
     "react-pro-sidebar": "^1.1.0",
     "react-responsive": "^10.0.0",
     "react-router-dom": "^6.24.1",
+    "react-select": "^5.10.0",
     "react-social-media-embed": "^2.5.13",
     "react-to-print": "^2.15.1",
     "react-toastify": "^10.0.5",

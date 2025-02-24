@@ -301,7 +301,7 @@ const Home = () => {
         </section>
 
         {/* Additional Information Section */}
-        <section className="mt-5">
+        <section className="mt-5" id="about">
           <Container>
             <Row className="justify-content-center">
               <Col lg={8} className="text-center">
@@ -1162,7 +1162,7 @@ const Home = () => {
                 borderRadius: "8px",
                 padding: "20px",
                 textAlign: "center",
-                width: "250px",
+                width: "300px",
                 boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
@@ -1197,7 +1197,7 @@ const Home = () => {
                 borderRadius: "8px",
                 padding: "20px",
                 textAlign: "center",
-                width: "250px",
+                width: "300px",
                 boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
@@ -1232,7 +1232,7 @@ const Home = () => {
                 borderRadius: "8px",
                 padding: "20px",
                 textAlign: "center",
-                width: "250px",
+                width: "300px",
                 boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                 transition: "transform 0.3s ease, box-shadow 0.3s ease",
               }}
@@ -1256,41 +1256,6 @@ const Home = () => {
               </h3>
               <p style={{ color: "#777", fontSize: "0.9rem" }}>
                 Analyze your water consumption trends month-by-month.
-              </p>
-            </div>
-
-            {/* Feature 4 */}
-            <div
-              style={{
-                background: "white",
-                border: "1px solid #ddd",
-                borderRadius: "8px",
-                padding: "20px",
-                textAlign: "center",
-                width: "250px",
-                boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                transition: "transform 0.3s ease, box-shadow 0.3s ease",
-              }}
-            >
-              <i
-                className="bi bi-shield-lock"
-                style={{
-                  fontSize: "2rem",
-                  marginBottom: "15px",
-                  color: "#16A085",
-                }}
-              ></i>
-              <h3
-                style={{
-                  color: "#555",
-                  fontSize: "1.2rem",
-                  marginBottom: "10px",
-                }}
-              >
-                Secure & Reliable
-              </h3>
-              <p style={{ color: "#777", fontSize: "0.9rem" }}>
-                Your account data is protected with top-notch security measures.
               </p>
             </div>
           </div>
@@ -1386,7 +1351,7 @@ const Home = () => {
                 Login Anytime
               </h3>
               <p style={{ color: "#777", fontSize: "0.9rem" }}>
-                Access your dashboard to view bills and updates.
+                Access your account anytime anyware
               </p>
             </div>
 
@@ -1453,10 +1418,10 @@ const Home = () => {
                   marginBottom: "10px",
                 }}
               >
-                Monitor and Pay
+                Monitor Your Account
               </h3>
               <p style={{ color: "#777", fontSize: "0.9rem" }}>
-                Track your water usage and settle your bills conveniently.
+                Track your water usage, bills and trasactions
               </p>
             </div>
           </div>

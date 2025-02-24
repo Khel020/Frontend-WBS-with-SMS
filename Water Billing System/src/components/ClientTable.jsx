@@ -15,13 +15,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "../styles/clientTBL.css";
 import { useReactToPrint } from "react-to-print";
 import ReceiptComponent from "./receipt"; // Import the receipt component
-
 const Table = () => {
-  const [show, setShow] = useState(false);
-  const handleClose = () => {
-    setShow(false);
-    setShowAddBill(false);
-  };
   const [selectedFilter, setSelectedFilter] = useState("");
   const handleShow = () => setShow(true);
   //TODO: GET ALL Consumers
@@ -53,7 +47,7 @@ const Table = () => {
   });
 
   const [address, setAddress] = useState("");
-  const [totalChange, setTotalChange] = useState("");
+  const [totalChange, setTotalChange] = useState(0);
   const [advTotalAmount, setAdvance] = useState("");
   const [details, setDetails] = useState({});
   //TODO: Filtered data based on search input
@@ -75,6 +69,9 @@ const Table = () => {
     others: "",
     remarks: "",
   });
+  const [paymentType, setPaymentType] = useState("Balance"); // Set default to "balance"
+  const [inspec_fee, setInspectionFee] = useState("");
+  const [install_fee, setInstallFee] = useState("");
   const handleCloseBill = () => setShowAddBill(false);
   const handleShowAddBill = async (data) => {
     const response = await fetch(
@@ -114,6 +111,38 @@ const Table = () => {
       });
     }
     setShowAddBill(true);
+  };
+  const [show, setShow] = useState(false);
+  const handleClose = () => {
+    setShow(false);
+    setShowAddBill(false);
+
+    // Reset form fields
+    setAccounts("");
+    setAccNum("");
+    setAccName("");
+    setPaymentType("");
+    setInspectionFee("");
+    setInstallFee("");
+    setTotalPenalty("");
+    setTotalBalance("");
+    setTendered("");
+    setPdate(new Date().toISOString().split("T")[0]); // Reset to current date
+    setTotalChange("");
+  };
+  const handleClear = () => {
+    setBillAmount("");
+    setAccounts("");
+    setAccNum("");
+    setAccName("");
+    setPaymentType("");
+    setInspectionFee("");
+    setInstallFee("");
+    setTotalPenalty("");
+    setTotalBalance("");
+    setTendered("");
+    setPdate(new Date().toISOString().split("T")[0]); // Reset to current date
+    setTotalChange("");
   };
 
   const handleChangePresentReading = (e) => {
@@ -215,64 +244,25 @@ const Table = () => {
   };
 
   useEffect(() => {
-    CalculateChange(tendered);
-  }, [tendered, advTotalAmount]);
+    if (tendered) {
+      // Convert values to floats to avoid NaN errors
+      const tenderedAmount = parseFloat(tendered) || 0;
+      const totalBalance = parseFloat(balance) || 0; // Stored in state
 
-  const handlePaymentAmountChange = (e) => {
-    const amount = parseFloat(e.target.value);
-    console.log("Setting payment amount to:", amount);
-    setTendered(amount);
-    CalculateChange(amount); // Pass the latest amount directly
-  };
-  const handleAdvancePaymentChange = (e) => {
-    const advancePayment = parseFloat(e.target.value);
-    setAdvance(advancePayment);
-    CalculateChange(tendered); // Recalculate change with the updated advance payment
-  };
-  const CalculateChange = async (amount) => {
-    if (amount) {
-      try {
-        // Prepare the payload for the request
-        const payload = {
-          acc_num: acc_num,
-          tendered: amount,
-        };
+      // Compute change (tendered - total balance) and round to the nearest integer
+      const finalChange = Math.max(
+        Math.round(tenderedAmount - totalBalance),
+        0
+      ); // Ensure non-negative and rounded value
 
-        console.log("Data to calculate change:", payload);
+      console.log("Total Balance:", totalBalance);
+      console.log("Tendered Amount:", tenderedAmount);
+      console.log("Final Change:", finalChange);
 
-        // Make the API call to calculate the change
-        const response = await fetch(`${backend}/biller/calculateChange`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            authorization: `Bearer ${localStorage.getItem("tkn")}`,
-          },
-          body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-          console.error("Failed to calculate change");
-        } else {
-          const data = await response.json();
-
-          // Calculate the final change after deducting advance payment
-          const rawChange = parseFloat(data.change || 0);
-          console.log("Change before advance payment:", rawChange);
-
-          const advancePayment = parseFloat(advTotalAmount) || 0; // Handle potential NaN value
-          const finalChange = Math.max(rawChange - advancePayment, 0); // Ensure non-negative change
-
-          console.log("Advance payment:", advancePayment);
-          console.log("Final change:", finalChange);
-
-          // Log the final change and set it in the state
-          setTotalChange(finalChange);
-        }
-      } catch (error) {
-        console.error("Error calculating change:", error);
-      }
+      // Update state
+      setTotalChange(finalChange);
     }
-  };
+  }, [tendered, balance]);
 
   //TODO: FETCH ALL CLIENT
   useEffect(() => {
@@ -352,6 +342,7 @@ const Table = () => {
       (parseFloat(amountPaid) || 0) + (parseFloat(tendered) || 0)
     ).toFixed(2);
 
+    console.log("ADDRESS", address);
     // Create the payment object
     const newPayment = {
       billNo,
@@ -364,6 +355,7 @@ const Table = () => {
       tendered: totalTendered, // Use the combined amount here
       advTotalAmount,
       totalChange,
+      paymentType, // Include payment type
     };
 
     console.log("newPayment", newPayment);
@@ -379,13 +371,13 @@ const Table = () => {
       });
 
       const result = await response.json();
-
+      console.log(result);
       if (result.success) {
         const paymentData = result.data[0]; // Assuming the first object is what you need
-
+        console.log("CAOCA", paymentData);
         // Set the payment details to state
         setDetails({
-          acc_number: paymentData.paymentResult.acc_num || "N/A",
+          acc_num: paymentData.paymentResult.acc_num || "N/A",
           name: paymentData.paymentResult.accountName || "N/A",
           balance: paymentData.paymentResult.balance || "0",
           address: paymentData.paymentResult.address || "0",
@@ -402,10 +394,13 @@ const Table = () => {
         setTendered(paymentData.change || "0");
         setPdate(new Date().toLocaleDateString());
 
-        toast.success(result.message || "Payment successful", {
+        toast.success(result.data.message || "Payment successful", {
           autoClose: 1000, // Auto close after 1 second
         });
-        handleClose(); // Close the modal after successful payment
+        // Trigger print after 1 second delay
+        setTimeout(() => {
+          handlePrint();
+        }, 1000);
 
         socket.current.emit("paymentProcessed", newPayment);
         // Trigger print after 1 second delay
@@ -503,19 +498,25 @@ const Table = () => {
     },
 
     {
-      name: "Type",
-      selector: (row) => row.client_type,
+      name: "Inspec Fee",
+      selector: (row) => `₱${parseFloat(row.inspec_fee || 0).toFixed(2)}`,
       sortable: true,
       width: "150px", // Adjust width as needed
     },
     {
-      name: "Address",
-      selector: (row) => row.c_address,
+      name: "Install Fee",
+      selector: (row) => `₱${parseFloat(row.install_fee || 0).toFixed(2)}`,
       sortable: true,
-      width: "200px", // Adjust width as needed
+      width: "150px", // Adjust widt
     },
     {
-      name: "Total Balance",
+      name: "Penalty",
+      selector: (row) => `₱${parseFloat(row.p_charge || 0).toFixed(2)}`,
+      sortable: true,
+      width: "150px", // Adjust widt
+    },
+    {
+      name: " Balance",
       selector: (row) => `₱${parseFloat(row.totalBalance || 0).toFixed(2)}`,
       sortable: true,
     },
@@ -528,14 +529,6 @@ const Table = () => {
               <AiFillFileText style={{ fontSize: "20px" }} />
             </button>
           </Link>
-
-          <button
-            className="btn btn-outline-success btn-sm ms-2"
-            onClick={() => handleShowAddBill(row)}
-            disabled={row.status === "Inactive"} // Disable if status is Inactive
-          >
-            <AiOutlineFileAdd style={{ fontSize: "20px" }} />
-          </button>
 
           <button
             className="btn btn-outline-warning btn-sm ms-2"
@@ -829,8 +822,8 @@ const Table = () => {
                     placeholder="Enter amount"
                     step="0.01"
                     value={tendered}
-                    onChange={handlePaymentAmountChange}
                     style={{ color: "#333" }} // Removed fontWeight
+                    onChange={(e) => setTendered(e.target.value)}
                   />
                 </div>
               </Form.Group>
@@ -851,23 +844,6 @@ const Table = () => {
 
           <div className="row mt-2">
             <div className="col-6">
-              <Form.Group controlId="advancePayment">
-                <Form.Label className="fw-bold">
-                  Advance Payment (Optional):
-                </Form.Label>
-                <div className="input-group">
-                  <span className="input-group-text">₱</span>
-                  <Form.Control
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    value={advTotalAmount}
-                    onChange={handleAdvancePaymentChange}
-                  />
-                </div>
-              </Form.Group>
-            </div>
-            <div className="col-6">
               <Form.Group controlId="totalChange">
                 <Form.Label className="fw-bold">Total Change:</Form.Label>
                 <div className="input-group">
@@ -884,13 +860,28 @@ const Table = () => {
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="success"
-            onClick={handleSubmitPay}
-            className="col-12"
-          >
-            Proceed to payment <i className="bi bi-arrow-right"></i>
-          </Button>
+          <div className="container">
+            <div className="row g-2">
+              <div className="col-6">
+                <Button
+                  variant="secondary"
+                  onClick={handleClear}
+                  className="w-100"
+                >
+                  Clear <i className="bi bi-x-circle"></i>
+                </Button>
+              </div>
+              <div className="col-6">
+                <Button
+                  variant="success"
+                  onClick={handleSubmitPay}
+                  className="w-100"
+                >
+                  Proceed to payment <i className="bi bi-arrow-right"></i>
+                </Button>
+              </div>
+            </div>
+          </div>
         </Modal.Footer>
       </Modal>
 

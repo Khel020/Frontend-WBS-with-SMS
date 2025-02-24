@@ -46,13 +46,14 @@ function ListBills() {
     fetchBillStatus();
   }, []);
   return (
-    <>
+    <div>
       <div
-        className="d-flex flex-column flex-md-row"
+        className="userlist d-flex flex-column flex-md-row"
         style={{
           backgroundColor: "white",
           height: "100vh",
           maxHeight: "100vh",
+          overflow: "hidden",
         }}
       >
         <Sidebar role={usertype} />
@@ -173,7 +174,7 @@ function ListBills() {
           <ToastContainer />
         </main>
       </div>
-    </>
+    </div>
   );
 }
 

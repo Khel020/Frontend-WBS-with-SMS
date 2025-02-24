@@ -209,26 +209,13 @@ const BillRecords = () => {
       cell: (row) => (
         <div className="d-flex">
           <button
-            className="btn btn-outline-success btn-sm ms-2"
-            onClick={() => handleShow(row)}
-          >
-            <i
-              className="bi bi-pencil-square"
-              style={{
-                fontSize: "20px",
-              }}
-              title="Adjustment" // Tooltip
-            ></i>
-          </button>
-
-          <button
             className="btn btn-outline-primary btn-sm ms-2 "
             onClick={() => handleViewBill(row.billNumber)} // Function to handle viewing the bill
           >
             <i
               className="bi bi-eye-fill"
               style={{
-                fontSize: "20px",
+                fontSize: "15px",
               }}
               title="View Bill"
             ></i>
@@ -242,38 +229,26 @@ const BillRecords = () => {
   const customStyles = {
     table: {
       style: {
-        border: "1px solid #ddd",
-        borderRadius: "8px",
         overflow: "hidden",
-      },
-    },
-    headRow: {
-      style: {
-        position: "sticky",
-        top: 0,
-        zIndex: 10,
-        backgroundColor: "#1F702C", // Consistent header background
+        borderRadius: "5px",
       },
     },
     headCells: {
       style: {
-        fontWeight: "bold",
-        backgroundColor: "transparent", // Inherits background from headRow
-        color: "white",
-        fontSize: "12px",
-        padding: "10px", // Adjust padding for aesthetics
+        backgroundColor: "#EEF1F8", // Lightest blue
+        color: "#333333", // Dark text for contrast
       },
     },
     rows: {
       style: {
-        minHeight: "45px",
+        minHeight: "40px",
         "&:hover": { backgroundColor: "#f1f1f1" },
       },
     },
     pagination: {
       style: {
         border: "none",
-        fontSize: "14px",
+        fontSize: "13px",
         color: "#000",
         backgroundColor: "#f7f7f7",
         minHeight: "50px",

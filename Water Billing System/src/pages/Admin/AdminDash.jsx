@@ -27,6 +27,7 @@ import {
 } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
 import DataTable, { defaultThemes } from "react-data-table-component";
+
 const AdminDash = () => {
   const backend = import.meta.env.VITE_BACKEND;
   const [show, setShow] = useState(false);
@@ -280,6 +281,72 @@ const AdminDash = () => {
       day: "numeric",
     });
   }
+
+  const exportToExcel = (data, fileName) => {
+    try {
+      const workbook = XLSX.utils.book_new();
+      const worksheet = XLSX.utils.json_to_sheet(data);
+
+      // Add styling to headers
+      const range = XLSX.utils.decode_range(worksheet["!ref"]);
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const address = XLSX.utils.encode_cell({ r: 0, c: C });
+        if (!worksheet[address]) continue;
+        worksheet[address].s = {
+          font: { bold: true },
+          fill: { fgColor: { rgb: "ECECEC" } },
+        };
+      }
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Revenue Report");
+      XLSX.writeFile(workbook, fileName);
+    } catch (error) {
+      console.error("Error exporting to Excel:", error);
+      // You might want to add a toast notification here
+    }
+  };
+
+  const exportPaymentStatus = (data, fileName) => {
+    try {
+      const workbook = XLSX.utils.book_new();
+
+      // Handle the nested structure for payment status data
+      const exportData = data.TotalPaymentStatus
+        ? data.TotalPaymentStatus
+        : data;
+
+      const worksheet = XLSX.utils.json_to_sheet(exportData);
+
+      // Add styling to headers
+      const range = XLSX.utils.decode_range(worksheet["!ref"]);
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const address = XLSX.utils.encode_cell({ r: 0, c: C });
+        if (!worksheet[address]) continue;
+        worksheet[address].s = {
+          font: { bold: true },
+          fill: { fgColor: { rgb: "ECECEC" } },
+        };
+      }
+
+      // Format numbers to include commas and 2 decimal places
+      for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+        ["paid", "unpaid"].forEach((field) => {
+          const address = XLSX.utils.encode_cell({
+            r: R,
+            c: Object.keys(exportData[0]).indexOf(field),
+          });
+          if (worksheet[address]) {
+            worksheet[address].z = "#,##0.00";
+          }
+        });
+      }
+
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Payment Status");
+      XLSX.writeFile(workbook, fileName);
+    } catch (error) {
+      console.error("Error exporting to Excel:", error);
+    }
+  };
   return (
     <div
       className="d-flex"
@@ -430,7 +497,7 @@ const AdminDash = () => {
                       exportToExcel(revenueData, "revenue_report.xlsx")
                     }
                     className="btn btn-sm btn-light d-flex align-items-center"
-                    style={{ backgroundColor: "#f8f9fa" }} // Light gray background
+                    style={{ backgroundColor: "#f8f9fa" }}
                   >
                     <i
                       className="bi bi-download"
@@ -474,7 +541,7 @@ const AdminDash = () => {
                   <span>Payment Status</span>
                   <button
                     onClick={() =>
-                      exportToExcel(
+                      exportPaymentStatus(
                         paymentStatusData,
                         "payment_status_report.xlsx"
                       )

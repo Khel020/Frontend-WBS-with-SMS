@@ -110,10 +110,10 @@ function Rtable() {
     },
     {
       name: "Penalties",
-      selector: (row) => row.p_charge,
+      selector: (row) => row.totalPenalties,
       sortable: true,
       cell: (row) => {
-        const penalties = parseFloat(row.p_charge);
+        const penalties = parseFloat(row.totalPenalties);
         return <span>₱{isNaN(penalties) ? "0.00" : penalties.toFixed(2)}</span>;
       },
     },
@@ -140,29 +140,26 @@ function Rtable() {
   const customStyles = {
     table: {
       style: {
-        border: "1px solid #ddd",
-        borderRadius: "8px",
         overflow: "hidden",
+        borderRadius: "5px",
       },
     },
     headCells: {
       style: {
-        fontWeight: "bold",
-        backgroundColor: "#1F702C",
-        color: "white",
-        fontSize: "12px",
+        backgroundColor: "#EEF1F8", // Lightest blue
+        color: "#333333", // Dark text for contrast
       },
     },
     rows: {
       style: {
-        minHeight: "45px",
+        minHeight: "40px",
         "&:hover": { backgroundColor: "#f1f1f1" },
       },
     },
     pagination: {
       style: {
         border: "none",
-        fontSize: "14px",
+        fontSize: "13px",
         color: "#000",
         backgroundColor: "#f7f7f7",
         minHeight: "50px",

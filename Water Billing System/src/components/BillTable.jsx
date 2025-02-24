@@ -175,31 +175,13 @@ function BillTable() {
     {
       name: "Action",
       cell: (row) => (
-        <div className="d-flex">
+        <div className="d-flex align-items-end">
           <button
-            className="btn btn-outline-primary btn-sm"
+            className="btn btn-outline-primary btn-sm text-end"
             title="View Bill"
             onClick={() => handleShow(row.billNumber)}
           >
             <AiFillEye style={{ fontSize: "15px" }} />
-          </button>
-
-          {/* Button to Edit Bill */}
-          <button
-            className="btn btn-outline-warning btn-sm ms-2"
-            onClick={() => handleEdit(row)}
-            title="Edit Bill"
-          >
-            <AiFillEdit style={{ fontSize: "15px" }} />
-          </button>
-
-          {/* Button to Download Bill */}
-          <button
-            className="btn btn-outline-success btn-sm ms-2"
-            onClick={() => handleDownload(row)}
-            title="Download Bill"
-          >
-            <AiFillFilePdf style={{ fontSize: "15px" }} />
           </button>
         </div>
       ),

@@ -29,8 +29,8 @@ const OrgLogin = () => {
         if (type === "admin") {
           navigate("/admin-dashboard");
         } else if (type === "cashier") {
-          navigate("/bill-dashboard");
-        } else if (type === "data entry staff") {
+          navigate("/listclient");
+        } else if (type === "Uploader") {
           navigate("/staff-dashboard");
         } else if (type === "Information Tech") {
           navigate("/it-dashboard");
