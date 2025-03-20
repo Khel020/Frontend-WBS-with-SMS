@@ -113,38 +113,29 @@ const Dashboard = () => {
         return;
       }
 
-      // ✅ Subukan munang kumuha ng available ports
-      const ports = await navigator.serial.getPorts();
-      let port = ports.length > 0 ? ports[0] : null;
-
-      // ✅ Kung walang existing port, tsaka lang hihingi ng permission
-      if (!port) {
-        port = await navigator.serial.requestPort();
-      }
+      // ✅ Get the first available port or request one
+      let [port] = await navigator.serial.getPorts();
+      if (!port) port = await navigator.serial.requestPort();
 
       await port.open({ baudRate: 9600 });
 
       const writer = port.writable.getWriter();
       const encoder = new TextEncoder();
 
-      // ✅ Diretso na gamit ang number mula sa `selectedClient.contact`
-      const recipientNumber = selectedClient.contact;
-
-      // ✅ Function para sa pag-send ng AT commands (tulad ng sa Arduino)
-      const sendATCommand = async (command, delayTime = 1000) => {
+      // ✅ Function to send AT commands with delay
+      const sendCommand = async (command, delayTime = 1000) => {
         await writer.write(encoder.encode(command + "\r"));
         await new Promise((resolve) => setTimeout(resolve, delayTime));
       };
 
-      // ✅ Initialize SIM800L (katulad ng setup sa Arduino)
-      await sendATCommand("AT");
-      await sendATCommand("AT+CMGF=1"); // Set SMS mode to text
-      await sendATCommand('AT+CSCS="GSM"'); // Set character encoding
-      await sendATCommand("AT+CNMI=1,2,0,0,0"); // Configure message reception
+      // ✅ Initialize SIM800L (similar to Arduino)
+      await sendCommand("AT"); // Check if module is responsive
+      await sendCommand("AT+CMGF=1"); // Set SMS text mode
+      await sendCommand("AT+CSQ"); // Check signal quality
 
-      // ✅ Send SMS (katulad ng `sendSMS` function sa Arduino)
-      await sendATCommand(`AT+CMGS="${recipientNumber}"`, 500);
-      await sendATCommand(selectedClient.message, 500);
+      // ✅ Send SMS
+      await sendCommand(`AT+CMGS="${selectedClient.contact}"`);
+      await sendCommand(message, 2000); // Send message body
       await writer.write(encoder.encode(String.fromCharCode(26))); // CTRL+Z to send
       await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for SMS processing
 
