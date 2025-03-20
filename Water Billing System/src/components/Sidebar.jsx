@@ -98,6 +98,19 @@ const Sidebar = ({ role }) => {
           <>
             <li className="nav-item">
               <Link
+                to="/new-applicant"
+                style={linkStyle("/new-applicant")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-person-badge"
+                  style={iconStyle("/new-applicant")}
+                ></i>
+                {!collapsed && "Applicants"}
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
                 to="/listclient"
                 style={linkStyle("/listclient")}
                 className="nav-link"
@@ -354,7 +367,19 @@ const Sidebar = ({ role }) => {
                 {!collapsed && "Dashboard"}
               </Link>
             </li>
-
+            <li className="nav-item">
+              <Link
+                to="/new-applicant"
+                style={linkStyle("new-applicant")}
+                className="nav-link"
+              >
+                <i
+                  className="bi bi-file-earmark-text"
+                  style={iconStyle("new-applicant")}
+                ></i>
+                {!collapsed && "Applicants"}
+              </Link>
+            </li>
             <li className="nav-item">
               <Link
                 to="/cs-consumers"

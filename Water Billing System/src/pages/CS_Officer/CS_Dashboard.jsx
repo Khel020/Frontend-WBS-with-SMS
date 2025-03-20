@@ -102,34 +102,56 @@ const Dashboard = () => {
   };
 
   const handleSendSMS = async () => {
-    setLoading(true); // Start loading
+    setLoading(true);
 
     try {
-      const response = await fetch(`${backend}/send-sms`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          acc_num: selectedClient.acc_num,
-          contact: selectedClient.contact,
-          message,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to send SMS");
+      if (!("serial" in navigator)) {
+        toast.error("Web Serial API is not supported in this browser.", {
+          position: "top-right",
+        });
+        setLoading(false);
+        return;
       }
 
+      // ✅ Subukan munang kumuha ng available ports
+      const ports = await navigator.serial.getPorts();
+      let port = ports.length > 0 ? ports[0] : null;
+
+      // ✅ Kung walang existing port, tsaka lang hihingi ng permission
+      if (!port) {
+        port = await navigator.serial.requestPort();
+      }
+
+      await port.open({ baudRate: 9600 });
+
+      const writer = port.writable.getWriter();
+      const encoder = new TextEncoder();
+
+      const formattedNumber = selectedClient.contact.startsWith("+63")
+        ? selectedClient.contact
+        : "+63" + selectedClient.contact.substring(1);
+
+      const messageCommand = `AT+CMGS="${formattedNumber}"\r`;
+      const textMessage = `${selectedClient.message}\r`;
+      const endCommand = String.fromCharCode(26);
+
+      await writer.write(encoder.encode(messageCommand));
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      await writer.write(encoder.encode(textMessage));
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      await writer.write(encoder.encode(endCommand));
+
       toast.success("SMS sent successfully!", { position: "top-right" });
-      setTimeout(() => {
-        handleCloseModal();
-      }, 1000);
+
+      writer.releaseLock();
+      await port.close();
     } catch (error) {
       console.error("Error sending SMS:", error);
       toast.error("Failed to send SMS. Please try again.", {
         position: "top-right",
       });
     } finally {
-      setLoading(false); // Stop loading
+      setLoading(false);
     }
   };
 

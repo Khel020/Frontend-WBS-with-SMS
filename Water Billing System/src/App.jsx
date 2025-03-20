@@ -15,6 +15,7 @@ import StaffLayout from "./layouts/dataEntryLayout.jsx";
 import ITLayout from "./layouts/InfoLayout.jsx";
 import CSOfficer from "./layouts/CS_Layout.jsx";
 import AdminCSLayout from "./layouts/Admin&CSLayout.jsx";
+import CashierCSLayout from "./layouts/CashierCSLayout.jsx";
 // TODO: Visitor Pages
 import AboutUS from "./pages/Visitors/About.jsx";
 import ContactUS from "./pages/Visitors/ContactUs.jsx";
@@ -59,7 +60,7 @@ import Page404 from "./pages/Visitors/404.jsx";
 import CS_CustomerList from "./pages/CS_Officer/ListofConsumers.jsx";
 import CS_Dashboard from "./pages/CS_Officer/CS_Dashboard.jsx";
 import CS_BillMonitoring from "./pages/CS_Officer/BillMonitoring.jsx";
-import CS_NewConsumer from "./pages/CS_Officer/newConnection.jsx";
+import CS_NewApplicant from "./pages/CS_Officer/newApplicant.jsx";
 //TODO: IT
 import IT_Dashboard from "./pages/IT/Dashboard.jsx";
 import IT_Userlist from "./pages/IT/userlist.jsx";
@@ -77,6 +78,10 @@ const router = createBrowserRouter(
       <Route path="bill-summary" element={<AdminCSLayout />}>
         <Route index element={<BillSummary />} />
       </Route>
+      //TODO: CASHIERCS
+      <Route path="new-applicant" element={<CashierCSLayout />}>
+        <Route index element={<CS_NewApplicant />} />
+      </Route>
       //TODO: Customer Service OFFICER
       <Route path="cs-consumers" element={<CSOfficer />}>
         <Route index element={<CS_CustomerList />} />
@@ -92,9 +97,6 @@ const router = createBrowserRouter(
       </Route>
       <Route path="disconnection" element={<CSOfficer />}>
         <Route index element={<ForDC />} />
-      </Route>
-      <Route path="new-connection" element={<CSOfficer />}>
-        <Route index element={<CS_NewConsumer />} />
       </Route>
       //TODO: VISITOR ROUTES
       <Route path="/" element={<VisitorLayout />}>
