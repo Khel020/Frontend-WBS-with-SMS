@@ -127,19 +127,26 @@ const Dashboard = () => {
       const writer = port.writable.getWriter();
       const encoder = new TextEncoder();
 
-      const formattedNumber = selectedClient.contact.startsWith("+63")
-        ? selectedClient.contact
-        : "+63" + selectedClient.contact.substring(1);
+      // ✅ Diretso na gamit ang number mula sa `selectedClient.contact`
+      const recipientNumber = selectedClient.contact;
 
-      const messageCommand = `AT+CMGS="${formattedNumber}"\r`;
-      const textMessage = `${selectedClient.message}\r`;
-      const endCommand = String.fromCharCode(26);
+      // ✅ Function para sa pag-send ng AT commands (tulad ng sa Arduino)
+      const sendATCommand = async (command, delayTime = 1000) => {
+        await writer.write(encoder.encode(command + "\r"));
+        await new Promise((resolve) => setTimeout(resolve, delayTime));
+      };
 
-      await writer.write(encoder.encode(messageCommand));
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      await writer.write(encoder.encode(textMessage));
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      await writer.write(encoder.encode(endCommand));
+      // ✅ Initialize SIM800L (katulad ng setup sa Arduino)
+      await sendATCommand("AT");
+      await sendATCommand("AT+CMGF=1"); // Set SMS mode to text
+      await sendATCommand('AT+CSCS="GSM"'); // Set character encoding
+      await sendATCommand("AT+CNMI=1,2,0,0,0"); // Configure message reception
+
+      // ✅ Send SMS (katulad ng `sendSMS` function sa Arduino)
+      await sendATCommand(`AT+CMGS="${recipientNumber}"`, 500);
+      await sendATCommand(selectedClient.message, 500);
+      await writer.write(encoder.encode(String.fromCharCode(26))); // CTRL+Z to send
+      await new Promise((resolve) => setTimeout(resolve, 3000)); // Wait for SMS processing
 
       toast.success("SMS sent successfully!", { position: "top-right" });
 
