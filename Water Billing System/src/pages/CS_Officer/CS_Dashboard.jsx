@@ -238,7 +238,7 @@ const Dashboard = () => {
       <Sidebar role={usertype} />
       <main className="flex-grow-1 ms-sm-auto px-md-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded p-1">
-          <h1 className="h2">Customer Profile</h1>
+          <h1 className="h2">Dashboard</h1>
           <Dropdown align="end">
             <Dropdown.Toggle
               id="profileDropdown"

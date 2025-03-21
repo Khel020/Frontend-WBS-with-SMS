@@ -10,7 +10,7 @@ const CustomerTbl = () => {
   const backend = import.meta.env.VITE_BACKEND;
   const [filterUsers, setFilterUsers] = useState([]);
   const [filterStatus, setFilterStatus] = useState("");
-  const [show, setShow] = useState(false);
+
   const [activationDate, setActivationDate] = useState("");
   const [accountName, setAccName] = useState("");
   const [acc_num, setAccNum] = useState("");
@@ -32,7 +32,7 @@ const CustomerTbl = () => {
   const [date_applied, setDateApplied] = useState("");
   const [civilStatus, setCivilStatus] = useState("");
   const [gender, setGender] = useState("");
-
+  const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const handleCloseSched = () => setShowSchedule(false);

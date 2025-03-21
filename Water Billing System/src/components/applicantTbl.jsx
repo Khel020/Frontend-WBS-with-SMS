@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Modal, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import { toast, ToastContainer } from "react-toastify";
+import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 const customStyles = {
@@ -33,6 +34,11 @@ const customStyles = {
     },
   },
 };
+const clientTypeOptions = [
+  { value: "Residential", label: "Residential" },
+  { value: "Government", label: "Government" },
+  { value: "Comm/Indu/Bulk", label: "Comm/Indu/Bulk" },
+];
 
 const Application = () => {
   const backend = import.meta.env.VITE_BACKEND;
@@ -41,6 +47,7 @@ const Application = () => {
   const [applicants, setApplicants] = useState([]);
   const [account, setAccounts] = useState("");
   const [inspectionFee, setInspectionFee] = useState("");
+  const [client_type, setType] = useState("");
   const [installationFee, setInstallationFee] = useState("");
   const [selectedInstallDate, setSelectedInstallDate] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -48,6 +55,7 @@ const Application = () => {
   const [change, setChange] = useState("");
   const [paymentType, setPaymentType] = useState("");
   const [showPayment, setShowPayment] = useState(false);
+  const [errors, setErrors] = useState({});
   const [p_date, setPdate] = useState(() => {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -78,14 +86,20 @@ const Application = () => {
   const handleCloseConfirm = () => setConfirmation(false);
   const handleShowConfirm = () => setConfirmation(true);
   const [formData, setFormData] = useState({
-    firstname: "",
-    lastname: "",
+    applicantName: "",
     address: "",
     contact: "",
     date_of_birth: "",
     inspec_fee: "",
     date_applied: "",
+    officer_agency: "",
+    position: "",
+    business_name: "",
+    business_position: "",
+    client_type: "",
+    email: "",
   });
+
   const [filteredApplicants, setFilteredApplicants] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -110,6 +124,36 @@ const Application = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [e.target.name]: validateInput(e.target.name, e.target.value),
+    }));
+  };
+  const validateInput = (name, value) => {
+    let validationError = "";
+
+    switch (name) {
+      case "email":
+        if (
+          !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+            value
+          )
+        ) {
+          validationError = "Please enter a valid email address.";
+        }
+        break;
+
+      case "contact":
+        if (!/^(\+?63|0)?9\d{9}$/.test(value)) {
+          validationError = "Please enter a valid CP Number.";
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    return validationError;
   };
   // TODO: NEW APPLICANTS
   const handleSubmit = async (e) => {
@@ -400,7 +444,7 @@ const Application = () => {
       width: "50px",
     },
     {
-      name: "Full Name",
+      name: "Applicant Name",
       selector: (row) => row.applicant_name,
       sortable: true,
       width: "200px",
@@ -410,13 +454,55 @@ const Application = () => {
       selector: (row) => new Date(row.date_applied).toLocaleDateString(),
       width: "150px",
     },
-    { name: "Contact", selector: (row) => row.contact },
-    { name: "Status", selector: (row) => row.status, sortable: true },
+    { name: "Contact", selector: (row) => row.contact, width: "150px" },
+    {
+      name: "Status",
+      selector: (row) => row.status,
+      sortable: true,
+      width: "180px",
+      cell: (row) => (
+        <span
+          className={`badge rounded-pill border ${
+            row.status === "Pending Approval"
+              ? "bg-warning-subtle border-warning-subtle text-warning-emphasis"
+              : row.status === "New"
+              ? "bg-primary-subtle border-primary-subtle text-primary-emphasis"
+              : row.status === "For Inspection"
+              ? "bg-info-subtle border-info-subtle text-info-emphasis"
+              : row.status === "For Installation"
+              ? "bg-secondary-subtle border-secondary-subtle text-secondary-emphasis"
+              : row.status === "Installing"
+              ? "bg-success-subtle border-success-subtle text-success-emphasis"
+              : row.status === "Inspected"
+              ? "bg-dark-subtle border-dark-subtle text-dark-emphasis"
+              : "bg-light-subtle border-light-subtle text-dark"
+          }`}
+        >
+          {row.status}
+        </span>
+      ),
+    },
+
     {
       name: "Balance",
       selector: (row) =>
-        row.inspection_fee ? row.inspection_fee : row.installation_fee,
+        row.status === "Pending Approval"
+          ? "Paid"
+          : row.inspection_fee || row.installation_fee,
+      cell: (row) => (
+        <span
+          style={{
+            color: row.status === "Pending Approval" ? "green" : "black",
+            fontWeight: "bold",
+          }}
+        >
+          {row.status === "Pending Approval"
+            ? "Paid"
+            : row.inspection_fee || row.installation_fee}
+        </span>
+      ),
     },
+
     {
       name: "Action",
       cell: (row) => {
@@ -446,7 +532,7 @@ const Application = () => {
                   </Button>
                 );
               } else {
-                return <h6>Scheduled</h6>;
+                return <h6 className="text-dark fw-bold">Scheduled</h6>;
               }
             } else {
               // Kapag walang inspection date, ipakita ang button para i-schedule ang inspection
@@ -461,12 +547,21 @@ const Application = () => {
             buttonVariant = "success";
             onClickHandler = () => handleScheduleInstallation(row);
             break;
+          case "For Installation":
+            if (!row.isApprove) {
+              if (!row.paid_installation && row.installation_date) {
+                return <h6 className="text-primary">Pending Payment</h6>;
+              } else if (row.paid_installation && row.installation_date) {
+                return <h6 className="text-success">Pending Approval</h6>;
+              }
+            }
+            return <h6 className="text-primary">{buttonLabel}</h6>;
           case "Pending Approval":
             buttonLabel = "Pending Approval";
-            return <h6 className="text-primary ">{buttonLabel}</h6>; // ✅ Text Only
-          case "For Installation":
-            buttonLabel = "Installing";
-            return <h6 className="text-primary ">{buttonLabel}</h6>; // ✅ Text Only
+            return <h6 className="text-primary">{buttonLabel}</h6>; // ✅ Text Only
+          case "Installing":
+            return <h6 className="text-success mt-2">On Going</h6>;
+
           case "Installed":
             buttonLabel = "Create Account";
             buttonVariant = "dark";
@@ -495,10 +590,10 @@ const Application = () => {
       width: "50px",
     },
     {
-      name: "Full Name",
-      selector: (row) => row.firstname + " " + row.lastname,
+      name: "Applicant Name",
+      selector: (row) => row.applicant_name,
       sortable: true,
-      width: "250px",
+      width: "200px",
     },
     {
       name: "Date Applied",
@@ -577,7 +672,8 @@ const Application = () => {
           responsive
           data={filteredApplicants.filter(
             (applicant) =>
-              applicant.status === "New" || applicant.status === "Inspected"
+              applicant.status === "New" ||
+              applicant.status === "For Installation"
           )}
           fixedHeader
           highlightOnHover
@@ -607,78 +703,155 @@ const Application = () => {
             <span aria-hidden="true">&times;</span>
           </Button>
         </Modal.Header>
-
         <Form onSubmit={handleSubmit}>
           <Modal.Body className="p-4">
-            <div className="mb-4">
-              <h6 className="text-secondary mb-3">Personal Information</h6>
+            <div className="mb-2">
               <Row className="g-3">
-                <Col md={6}>
+                <Col md={7}>
                   <Form.Group controlId="formFirstName">
-                    <Form.Label>First Name</Form.Label>
+                    <Form.Label>Name of Applicant / Representative</Form.Label>
                     <Form.Control
                       type="text"
-                      name="firstname"
-                      value={formData.firstname}
+                      name="applicantName"
+                      value={formData.applicantName}
                       onChange={handleChange}
-                      placeholder="Enter first name"
-                      className="shadow-sm"
+                      placeholder="Enter Name of Applicant"
                       required
                     />
                   </Form.Group>
                 </Col>
-                <Col md={6}>
+                <Col md={5}>
                   <Form.Group controlId="formLastName">
-                    <Form.Label>Last Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      name="lastname"
-                      value={formData.lastname}
-                      onChange={handleChange}
-                      placeholder="Enter last name"
-                      className="shadow-sm"
-                      required
+                    <Form.Label>Classification</Form.Label>
+                    <Select
+                      options={clientTypeOptions}
+                      value={clientTypeOptions.find(
+                        (option) => option.value === setType
+                      )} // Find selected value
+                      onChange={(selectedOption) => {
+                        setType(selectedOption.value);
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          client_type: selectedOption.value,
+                        }));
+                      }}
+                      placeholder="Select Type"
+                      isSearchable
+                      styles={{
+                        menu: (provided) => ({
+                          ...provided,
+                          maxHeight: "150px",
+                          overflowY: "auto",
+                        }),
+                      }}
                     />
                   </Form.Group>
                 </Col>
               </Row>
             </div>
-
-            <div className="mb-4">
-              <h6 className="text-secondary mb-3">Contact Details</h6>
-              <Form.Group className="mb-3" controlId="formAddress">
-                <Form.Label>Address</Form.Label>
-                <Form.Control
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  placeholder="Enter full address"
-                  className="shadow-sm"
-                  required
-                />
-              </Form.Group>
-
-              <Row className="g-3">
-                <Col md={6}>
-                  <Form.Group controlId="formContact">
-                    <Form.Label>Contact Number</Form.Label>
-                    <InputGroup className="shadow-sm">
-                      <InputGroup.Text id="basic-addon1">
-                        <i className="bi bi-telephone"></i>
-                      </InputGroup.Text>
+            {client_type === "Government" && (
+              <div className="mb-2">
+                <Row className="g-3">
+                  <Col md={6}>
+                    <Form.Group controlId="formOfficerAgency">
+                      <Form.Label>Name of Office/Agency</Form.Label>
                       <Form.Control
-                        type="tel"
-                        name="contact"
-                        value={formData.contact}
+                        type="text"
+                        name="officer_agency"
+                        value={formData.officer_agency}
                         onChange={handleChange}
-                        placeholder="(555) 123-4567"
-                        aria-describedby="basic-addon1"
+                        placeholder="Enter officer/agency name"
+                        className="shadow-sm"
                         required
                       />
-                    </InputGroup>
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group controlId="formPosition">
+                      <Form.Label>Position</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="position"
+                        value={formData.position}
+                        onChange={handleChange}
+                        placeholder="Enter your position"
+                        className="shadow-sm"
+                        required
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </div>
+            )}
+            {client_type === "Comm/Indu/Bulk" && (
+              <div className="mb-4">
+                <Row className="g-3">
+                  <Col md={6}>
+                    <Form.Group controlId="formBusinessName">
+                      <Form.Label>Name of Business</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="business_name"
+                        value={formData.business_name}
+                        onChange={handleChange}
+                        placeholder="Enter business name"
+                        className="shadow-sm"
+                        required
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col md={6}>
+                    <Form.Group controlId="formBusinessPosition">
+                      <Form.Label>Your Position</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="business_position"
+                        value={formData.business_position}
+                        onChange={handleChange}
+                        placeholder="Enter your position"
+                        className="shadow-sm"
+                        required
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+              </div>
+            )}
+            <div className="mb-4">
+              <div className="row">
+                <div className="col">
+                  <Form.Group className="mb-3" controlId="formAddress">
+                    <Form.Label>Address</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      placeholder="Enter full address"
+                      className="shadow-sm"
+                      required
+                    />
                   </Form.Group>
-                </Col>
+                </div>
+                <div className="col">
+                  <Form.Group className="mb-3" controlId="formAddress">
+                    <Form.Label>Email Address</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="Enter email address"
+                      className="shadow-sm"
+                      required
+                    />
+                  </Form.Group>
+                  {errors.email && (
+                    <div className="text-danger">{errors.email}</div>
+                  )}
+                </div>
+              </div>
+              <Row>
                 <Col md={6}>
                   <Form.Group controlId="formDateOfBirth">
                     <Form.Label>Date of Birth</Form.Label>
@@ -696,11 +869,6 @@ const Application = () => {
                     </InputGroup>
                   </Form.Group>
                 </Col>
-              </Row>
-            </div>
-            <div>
-              <h6 className="text-secondary mb-3">Application Details</h6>
-              <Row className="g-3">
                 <Col md={6}>
                   <Form.Group controlId="formDateApplied">
                     <Form.Label>Date Applied</Form.Label>
@@ -717,6 +885,32 @@ const Application = () => {
                       />
                     </InputGroup>
                   </Form.Group>
+                </Col>
+              </Row>
+            </div>
+            <div>
+              <Row>
+                <Col md={6}>
+                  <Form.Group controlId="formContact">
+                    <Form.Label>Contact Number</Form.Label>
+                    <InputGroup className="shadow-sm">
+                      <InputGroup.Text id="basic-addon1">
+                        <i className="bi bi-telephone"></i>
+                      </InputGroup.Text>
+                      <Form.Control
+                        type="tel"
+                        name="contact"
+                        value={formData.contact}
+                        onChange={handleChange}
+                        placeholder="09XX-XXX-XXXX"
+                        aria-describedby="basic-addon1"
+                        required
+                      />
+                    </InputGroup>
+                  </Form.Group>
+                  {errors.contact && (
+                    <div className="text-danger">{errors.contact}</div>
+                  )}
                 </Col>
                 <Col md={6}>
                   <Form.Group controlId="formInspectionFee">
