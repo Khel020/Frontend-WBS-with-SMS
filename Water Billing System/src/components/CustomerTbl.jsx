@@ -30,8 +30,7 @@ const CustomerTbl = () => {
   const [meterBrand, setMeterBrand] = useState("");
   const [search, setSearch] = useState("");
   const [date_applied, setDateApplied] = useState("");
-  const [civilStatus, setCivilStatus] = useState("");
-  const [gender, setGender] = useState("");
+
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -417,14 +416,6 @@ const CustomerTbl = () => {
             <option value="Pending">Pending</option>
           </select>
         </div>
-
-        {usertype === "CS_Officer" && (
-          <div className="col-7 d-flex justify-content-end">
-            <Button variant="success" size="sm" onClick={handleShow}>
-              <i className="bi bi-person-plus"></i> Add Consumer
-            </Button>
-          </div>
-        )}
       </div>
       <div>
         <DataTable
@@ -798,7 +789,6 @@ const CustomerTbl = () => {
           </Modal.Body>
         </form>
       </Modal>
-
       <ToastContainer />
     </>
   );

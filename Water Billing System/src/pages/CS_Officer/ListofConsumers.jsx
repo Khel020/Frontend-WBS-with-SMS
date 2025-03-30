@@ -9,6 +9,7 @@ const ListofConsumers = () => {
   const backend = import.meta.env.VITE_BACKEND;
   const token = localStorage.getItem("type");
   const usertype = token;
+
   const [clientStats, setClientStats] = useState({
     totalClients: 0,
     activeClients: 0,
@@ -73,6 +74,7 @@ const ListofConsumers = () => {
   const handleActivate = (acc) => {
     setSelectedAccount(acc);
     setShowConfirmModal(true);
+    setShowModal(false);
   };
 
   const handleConfirm = (acc) => {

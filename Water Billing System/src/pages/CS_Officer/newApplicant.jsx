@@ -473,8 +473,18 @@ const NewConnection = () => {
               <tbody>
                 {installingApplicants.length > 0 ? (
                   installingApplicants.map((applicant, index) => {
-                    const installDate = new Date(applicant.installation_date);
+                    const installDateStr = applicant.installation_date;
+                    if (!installDateStr) return null; // Skip if no date
+
+                    // Parse installation date properly
+                    const installDate = new Date(installDateStr);
                     const today = new Date();
+
+                    // Ensure time is reset to midnight for accurate date comparison
+                    installDate.setHours(0, 0, 0, 0);
+                    today.setHours(0, 0, 0, 0);
+
+                    // Calculate difference in days
                     const diffTime = today - installDate;
                     const diffDays = Math.floor(
                       diffTime / (1000 * 60 * 60 * 24)
@@ -487,7 +497,7 @@ const NewConnection = () => {
                         <td>{applicant.address}</td>
                         <td>{installDate.toLocaleDateString()}</td>
                         <td>
-                          {diffDays >= 5 ? (
+                          {diffDays >= 5 ? ( // Corrected condition
                             <Button
                               variant="success"
                               size="sm"
