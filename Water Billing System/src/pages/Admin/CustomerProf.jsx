@@ -26,10 +26,9 @@ const CustomerProf = () => {
     accountName: "",
     acc_num: "",
     meter_num: "",
-    contact: "",
     client_type: "",
     email: "",
-    install_date: "",
+    contact: "",
     c_address: "",
   });
 
@@ -167,7 +166,7 @@ const CustomerProf = () => {
                       {customer.accountName}
                     </h4>
                     <p className="card-text text-muted mb-1">
-                      {customer.email || "No email available"}
+                      {customer.contact || "No email available"}
                     </p>
                     <p className="card-text text-muted">{customer.c_address}</p>
                     {usertype === "CS_Officer" && (
@@ -419,18 +418,22 @@ const CustomerProf = () => {
                   </select>
                 </div>
                 <div className="col-md-6">
-                  <label htmlFor="install_date" className="form-label">
-                    Installation Date
+                  <label htmlFor="contact" className="form-label">
+                    Contact
                   </label>
                   <input
-                    type="date"
+                    type="number"
                     className="form-control"
-                    id="install_date"
-                    name="install_date"
-                    aria-describedby="install_dateFeedback"
+                    id="contact"
+                    name="contact"
                     required
-                    disabled
-                    value={editCustomer.install_date || ""}
+                    value={editCustomer.contact || ""}
+                    onChange={handleEditValues}
+                    onInput={(e) => {
+                      if (e.target.value.length > 11) {
+                        e.target.value = e.target.value.slice(0, 11);
+                      }
+                    }}
                   />
                 </div>
                 {/* New Address Input */}
