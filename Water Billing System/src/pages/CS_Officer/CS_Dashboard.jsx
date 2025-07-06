@@ -11,6 +11,7 @@ import {
   FaTools,
 } from "react-icons/fa";
 import { toast, ToastContainer } from "react-toastify";
+
 const Dashboard = () => {
   const backend = import.meta.env.VITE_BACKEND;
   const navigate = useNavigate();
@@ -19,39 +20,50 @@ const Dashboard = () => {
   const [clients, setClients] = useState([]);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
+  const [selectedClient, setSelectedClient] = useState([
+    {
+      acc_name: "",
+      balance: 0,
+    },
+  ]);
   const [messageType, setMessageType] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false); // State for loading
+  function dateFormat(dateString) {
+    if (!dateString) return "";
+
+    const dateObj = new Date(dateString);
+    const month = dateObj.toLocaleString("en-US", { month: "short" });
+    const day = dateObj.getDate();
+    const year = dateObj.getFullYear();
+    return `${month} ${day} ${year}`;
+  }
+
   const messageTemplates = {
-    welcome: `Dear ${selectedClient?.acc_name},  
+    welcome: `Dear ${selectedClient?.acc_name},
 
-    Welcome to [Casiguran Water District]! We are pleased to have you as our valued customer.  
-    If you have any questions or need assistance, feel free to contact us.  
+    Welcome to Casiguran Water District! We are pleased to have you as our valued customer.
 
-    Thank you for choosing us. We look forward to serving you!  
+    If you have any questions or need assistance, feel free to contact us:
+    09172095367
 
-    - [Casiguran Water District]`,
+    Thank you for choosing us. We look forward to serving you!
 
-    reminder: `Dear ${selectedClient?.acc_name},  
+    - Casiguran Water District`,
 
-    This is a reminder from [Casiguran Water District]. Your water bill is due soon. Please settle your balance promptly to avoid any inconvenience.  
+    reminder: `Dear ${selectedClient?.acc_name},\n\nThis is a reminder from Casiguran Water District. Your water bill for the month of ${selectedClient?.billMonth} is ₱${selectedClient?.billAmount}. Please settle your payment on or before ${selectedClient?.dueDate} to avoid any inconvenience.\n\nThank you.`,
 
-    Thank you.`,
-
-    overdue: `Dear ${selectedClient?.acc_name},  
-
-    This is an important notice from [Casiguran Water District]. Your account is overdue. Kindly make a payment as soon as possible to prevent service interruption.  
-
+    overdue: `Dear ${selectedClient?.acc_name},
+    
+    This is an important notice from Casiguran Water District. Your water bill for ${dateFormat(
+      selectedClient?.date
+    )}, is now overdue. Your balance is PHP${
+      selectedClient?.balance
+    }. Please settle your payment as soon as possible to avoid service interruption.
+    
     For assistance, please contact our office. Thank you.`,
 
-    maintenance: `Dear ${selectedClient?.acc_name},  
-
-    We would like to inform you that scheduled maintenance will take place in your area. Temporary service interruptions may occur.  
-
-    Thank you for your understanding.  
-
-    - [Casiguran Water District]`,
+    maintenance: `Dear ${selectedClient?.acc_name},\n\nWe would like to inform you that scheduled maintenance will take place in your area. Temporary service interruptions may occur.\n\nThank you for your understanding.\n\n- Casiguran Water District`,
   };
 
   const handleLogOut = () => {
@@ -74,6 +86,7 @@ const Dashboard = () => {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         setClients(data);
+        console.log(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -83,7 +96,9 @@ const Dashboard = () => {
   }, []);
 
   const handleShowModal = (client) => {
+    console.log("client", client);
     setSelectedClient(client);
+
     setMessageType("");
     setMessage("");
     setShowModal(true);
@@ -307,10 +322,10 @@ const Dashboard = () => {
             <Card className="mb-2">
               <Card.Body>
                 <Card.Title>
-                  <FaTools className="me-2 text-warning" /> Maintenance
+                  <FaTools className="me-2 text-warning" /> For Disconnection
                 </Card.Title>
                 <Card.Text className="text-secondary">
-                  Schedule announcements
+                  Inactive Accounts
                 </Card.Text>
               </Card.Body>
             </Card>
@@ -326,15 +341,6 @@ const Dashboard = () => {
               onChange={(e) => setSearch(e.target.value)}
               className="form-control"
             />
-          </div>
-
-          <div className="col text-end">
-            <Button variant="success">
-              {/* Bootstrap Icon */}
-              <i className="bi bi-bell me-2"></i>{" "}
-              {/* Bell icon for announcement */}
-              Send Announcement
-            </Button>
           </div>
         </div>
 

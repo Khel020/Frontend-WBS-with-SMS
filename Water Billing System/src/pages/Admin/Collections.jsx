@@ -60,18 +60,24 @@ function Rtable() {
   }, [selectedMonth, backend]);
   const columns = [
     {
-      name: "Payment Date",
+      name: "OR Number",
+      selector: (row) => row.OR_NUM || "—",
+      sortable: true,
+    },
+    {
+      name: "Date",
       selector: (row) => formatDate(row.lastPaymentDate || " "),
       sortable: true,
     },
     {
-      name: "Acct Name",
+      name: "Acc Name",
       selector: (row) => row.accountName,
       sortable: true,
+      wrapped: true,
     },
     {
-      name: "Acct No.",
-      selector: (row) => row.acc_num,
+      name: "Acc No. / App No.",
+      selector: (row) => row.acc_num || row.app_num,
       sortable: true,
     },
     {
@@ -99,23 +105,14 @@ function Rtable() {
       ),
     },
     {
-      name: "Outstanding",
-      selector: (row) => parseFloat(row.outstanding).toFixed(2),
-      sortable: true,
-      cell: (row) => (
-        <span style={{ color: row.outstanding > 0 ? "red" : "black" }}>
-          ₱{parseFloat(row.outstanding).toFixed(2)}
-        </span>
-      ),
-    },
-    {
-      name: "Penalties",
-      selector: (row) => row.totalPenalties,
-      sortable: true,
-      cell: (row) => {
-        const penalties = parseFloat(row.totalPenalties);
-        return <span>₱{isNaN(penalties) ? "0.00" : penalties.toFixed(2)}</span>;
+      name: "Description",
+      selector: (row) => {
+        if (row.paymentType === "inspection") return "Inspection Fee";
+        if (row.paymentType === "For Installation") return "Installation Fee";
+        if (row.paymentType === "bill") return "Bill Payment";
+        return "Total"; // fallback if none matches
       },
+      sortable: true,
     },
   ];
 
@@ -146,20 +143,21 @@ function Rtable() {
     },
     headCells: {
       style: {
-        backgroundColor: "#EEF1F8", // Lightest blue
-        color: "#333333", // Dark text for contrast
+        backgroundColor: "#EEF1F8",
+        color: "#333333",
       },
     },
+
     rows: {
       style: {
-        minHeight: "40px",
+        minHeight: "35px", // optional, to match smaller font
         "&:hover": { backgroundColor: "#f1f1f1" },
       },
     },
     pagination: {
       style: {
         border: "none",
-        fontSize: "13px",
+        fontSize: "12px",
         color: "#000",
         backgroundColor: "#f7f7f7",
         minHeight: "50px",
@@ -227,7 +225,7 @@ function Rtable() {
       <Sidebar role={usertype} />
       <main className="flex-grow-1 ms-sm-auto px-md-4">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom mt-2 rounded">
-          <h1 className="h2">Summary of Collection</h1>
+          <h1 className="h2">Daily Collection</h1>
           <button
             onClick={exportToExcel}
             className="btn btn-success d-flex align-items-center"

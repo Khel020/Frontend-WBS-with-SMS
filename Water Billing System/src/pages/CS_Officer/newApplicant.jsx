@@ -497,7 +497,7 @@ const NewConnection = () => {
                         <td>{applicant.address}</td>
                         <td>{installDate.toLocaleDateString()}</td>
                         <td>
-                          {diffDays >= 5 ? ( // Corrected condition
+                          {diffDays >= 1 ? ( // Condition updated to 1 day
                             <Button
                               variant="success"
                               size="sm"

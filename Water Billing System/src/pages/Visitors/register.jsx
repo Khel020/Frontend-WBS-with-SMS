@@ -84,8 +84,11 @@ function ListExample() {
       case "acc_num":
         if (!value.trim()) {
           validationError = "Account Number is required.";
-        } else if (!/^\d{3}-\d{3}-\d{3}$/.test(value)) {
-          validationError = "Account Number must be in the format 000-000-000.";
+        } else if (
+          !/^[A-Za-z0-9]{3}-[A-Za-z0-9]{3}-[A-Za-z0-9]{3}$/.test(value)
+        ) {
+          validationError =
+            "Account Number must be in the format XXX-XXX-XXX (letters & numbers allowed).";
         }
         break;
 

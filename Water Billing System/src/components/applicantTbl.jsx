@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Modal, Button, Form, Row, Col, InputGroup } from "react-bootstrap";
 import DataTable from "react-data-table-component";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { useReactToPrint } from "react-to-print";
 import Select from "react-select";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import ReceiptComponent from "../components/receipt"; // Import the receipt component
 const customStyles = {
   table: {
     style: {
@@ -79,6 +80,7 @@ const consumerTypeOption = [
   { value: "Bulk2", label: "Bulk2" },
 ];
 const Application = () => {
+  const componentRef = useRef();
   const backend = import.meta.env.VITE_BACKEND;
   const usertype = localStorage.getItem("type");
   const [client, setClients] = useState([]);
@@ -118,8 +120,9 @@ const Application = () => {
   const [address, setAddress] = useState("");
   const [meterBrand, setMeterBrand] = useState("");
   const [date_applied, setDateApplied] = useState("");
-  const [selectedClass, setSelectedClass] = useState(null);
+  const [selectedClass, setSelectedClass] = useState("null");
   const [installer, setInstaller] = useState("");
+  const [details, setDetails] = useState({});
   // TODO: MODAL STATES
   const handleClosePay = () => setShowPayment(false);
   const handleShowPay = () => setShowPayment(true);
@@ -144,7 +147,9 @@ const Application = () => {
 
   const handleCloseConfirm = () => setConfirmation(false);
   const handleShowConfirm = () => setConfirmation(true);
-
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
   const [formData, setFormData] = useState({
     applicantName: "",
     address: "",
@@ -156,7 +161,7 @@ const Application = () => {
     position: "",
     business_name: "",
     business_position: "",
-    client_type: "",
+    selectedClass: "",
     email: "",
   });
 
@@ -211,7 +216,7 @@ const Application = () => {
     };
 
     fetchData();
-  }, [barangay, client_type, house_no]);
+  }, [barangay, selectedClass, house_no]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -434,6 +439,7 @@ const Application = () => {
           authorization: `Bearer ${localStorage.getItem("tkn")}`,
         },
         body: JSON.stringify({
+          application_num: app_no,
           applicant: account,
           amount_paid: amountToPay,
           amountDue: computedAmountDue,
@@ -447,8 +453,29 @@ const Application = () => {
       console.log("asd", data);
       if (data.success) {
         toast.success("Payment processed successfully!", { autoClose: 3000 });
+
+        const paymentData = data; // Assuming the first object is what you need
+
+        // Set the payment details to state
+        setDetails({
+          app_num: paymentData.payment.app_num || "N/A",
+          name: paymentData.payment.accountName || "N/A",
+          balance: paymentData.payment.balance || "0",
+          address: paymentData.payment.address || "0",
+          amountpaid: amountToPay, // Use totalTendered here for display
+          paymentDate: p_date,
+          change: change || "0",
+          OR_NUM: paymentData.OR_NUM,
+        });
+
+        setAccNum(paymentData.acc_num || "0");
+        setAppName(paymentData.accountName || " ");
+
+        // Trigger print after 1 second delay
+
         setTimeout(() => {
           handleClosePay(); // Close modal after toast disappears
+          handlePrint();
         }, 3000);
       } else {
         toast.error(data.message || "Failed Payment Process", {
@@ -726,11 +753,16 @@ const Application = () => {
             if (row.inspection_date) {
               const inspectionDate = new Date(row.inspection_date);
               const currentDate = new Date();
-              const diffTime = Math.abs(currentDate - inspectionDate);
-              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-              if (diffDays >= 5) {
-                // Kapag 5 araw na o higit pa, ipakita ang button para sa Done Inspection
+              // Set both dates to midnight for accurate day difference calculation
+              inspectionDate.setHours(0, 0, 0, 0);
+              currentDate.setHours(0, 0, 0, 0);
+
+              const diffTime = currentDate - inspectionDate;
+              const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+              if (diffDays >= 1) {
+                // Show "Done Inspection" button if it's been 1 day or more
                 return (
                   <Button
                     variant="success"
@@ -744,7 +776,7 @@ const Application = () => {
                 return <h6 className="text-dark fw-bold">Scheduled</h6>;
               }
             } else {
-              // Kapag walang inspection date, ipakita ang button para i-schedule ang inspection
+              // No inspection date yet, show "Sched Inspection" button
               buttonLabel = "Sched Inspection";
               buttonVariant = "info";
               onClickHandler = () => handleScheduleInspection(row);
@@ -941,7 +973,7 @@ const Application = () => {
                         setType(selectedOption.value);
                         setFormData((prevData) => ({
                           ...prevData,
-                          client_type: selectedOption.value,
+                          selectedClass: selectedOption.value,
                         }));
                       }}
                       placeholder="Select Type"
@@ -1205,20 +1237,31 @@ const Application = () => {
                   }}
                 >
                   {applicants
-                    .filter(
-                      (name) =>
-                        typeof name.applicant_name === "string" &&
+                    .filter((item) => {
+                      // Check if search term matches applicant_name
+                      const nameMatch =
+                        typeof item.applicant_name === "string" &&
                         typeof account === "string" &&
-                        name.applicant_name
+                        item.applicant_name
                           .toLowerCase()
                           .includes(account.toLowerCase()) &&
-                        name.applicant_name !== account
-                    )
+                        item.applicant_name !== account;
+
+                      // Check if search term matches account_number
+                      const accountNumberMatch =
+                        typeof item.application_number === "string" &&
+                        typeof account === "string" &&
+                        item.application_number.includes(account) &&
+                        item.application_number !== account;
+
+                      // Return true if either condition is met
+                      return nameMatch || accountNumberMatch;
+                    })
                     .slice(0, 5)
-                    .map((name) => (
+                    .map((item) => (
                       <div
-                        key={name._id}
-                        onClick={() => setAccounts(name.applicant_name)}
+                        key={item._id}
+                        onClick={() => setAccounts(item.applicant_name)}
                         style={{
                           padding: "10px",
                           cursor: "pointer",
@@ -1231,7 +1274,8 @@ const Application = () => {
                           (e.currentTarget.style.backgroundColor = "white")
                         }
                       >
-                        {name.applicant_name}
+                        {item.applicant_name}{" "}
+                        {item.account_number && `(${item.account_number})`}
                       </div>
                     ))}
                 </div>
@@ -1250,11 +1294,26 @@ const Application = () => {
                   <div className="input-group">
                     <span className="input-group-text">₱</span>
                     <Form.Control
-                      type="number"
+                      type="text"
                       value={app_no}
                       readOnly
                       disabled
-                      className="form-control-sm bg-light text-end"
+                    />
+                  </div>
+                </Form.Group>
+              </div>
+              <div className="col-md-6">
+                <Form.Group>
+                  <Form.Label className="fw-semibold">
+                    Applicant Name
+                  </Form.Label>
+                  <div className="input-group">
+                    <span className="input-group-text">₱</span>
+                    <Form.Control
+                      type="text"
+                      value={Applicant}
+                      readOnly
+                      disabled
                     />
                   </div>
                 </Form.Group>
@@ -1300,16 +1359,17 @@ const Application = () => {
             {/* Second Row */}
             <div className="row mb-3">
               <div className="col-md-6">
-                <Form.Label className="fw-bold">Amount to Pay:</Form.Label>
-                <div className="input-group">
-                  <span className="input-group-text">₱</span>
-                  <Form.Control
-                    type="number"
-                    value={amountToPay}
-                    onChange={handleAmountChange}
-                    className="form-control-sm"
-                  />
-                </div>
+                <Form.Group>
+                  <Form.Label className="fw-semibold">Payment Date</Form.Label>
+                  <div className="input-group">
+                    <Form.Control
+                      type="datetime-local"
+                      value={p_date}
+                      onChange={(e) => setPdate(e.target.value)}
+                      className="form-control"
+                    />
+                  </div>
+                </Form.Group>
               </div>
               <div className="col-md-6">
                 <Form.Group>
@@ -1331,18 +1391,18 @@ const Application = () => {
             {/* Third Row - Payment Date */}
             <div className="row mb-3">
               <div className="col-md-6">
-                <Form.Group>
-                  <Form.Label className="fw-semibold">Payment Date</Form.Label>
-                  <div className="input-group">
-                    <Form.Control
-                      type="datetime-local"
-                      value={p_date}
-                      onChange={(e) => setPdate(e.target.value)}
-                      className="form-control"
-                    />
-                  </div>
-                </Form.Group>
+                <Form.Label className="fw-bold">Amount to Pay:</Form.Label>
+                <div className="input-group">
+                  <span className="input-group-text">₱</span>
+                  <Form.Control
+                    type="number"
+                    value={amountToPay}
+                    onChange={handleAmountChange}
+                    className="form-control-sm"
+                  />
+                </div>
               </div>
+
               <div className="col-md-6">
                 <Form.Group>
                   <Form.Label className="fw-semibold">Change</Form.Label>
@@ -1397,11 +1457,41 @@ const Application = () => {
               showMonthDropdown
               showYearDropdown
               dropdownMode="select"
-              dayClassName={(date) =>
-                date.getDay() === 0 || date.getDay() === 6
-                  ? "text-muted"
-                  : undefined
-              }
+              minDate={new Date()}
+              filterDate={(date) => {
+                if (date.getDay() === 0 || date.getDay() === 6) return false;
+
+                const holidays = [
+                  { month: 0, day: 1 }, // New Year's Day
+                  { month: 3, day: 9 }, // Araw ng Kagitingan
+                  { month: 5, day: 12 }, // Independence Day
+                  { month: 11, day: 25 }, // Christmas Day
+                  { month: 11, day: 30 }, // Rizal Day
+                ];
+
+                return !holidays.some(
+                  (h) => date.getDate() === h.day && date.getMonth() === h.month
+                );
+              }}
+              dayClassName={(date) => {
+                const holidays = [
+                  { month: 0, day: 1 },
+                  { month: 3, day: 9 },
+                  { month: 5, day: 12 },
+                  { month: 11, day: 25 },
+                  { month: 11, day: 30 },
+                ];
+
+                const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+                const isHoliday = holidays.some(
+                  (h) => date.getDate() === h.day && date.getMonth() === h.month
+                );
+
+                if (isWeekend) return "text-muted";
+                if (isHoliday)
+                  return "text-danger text-decoration-line-through"; // Red + strikethrough
+                return undefined;
+              }}
               renderCustomHeader={({
                 date,
                 changeYear,
@@ -1547,7 +1637,7 @@ const Application = () => {
         </Modal.Header>
         <Modal.Body className="px-4 pt-3 pb-4">
           <Form.Group controlId="applicantAndCost" className="mb-4">
-            <div className="d-flex gap-2">
+            <div className="d-flex gap-3">
               <div className="flex-grow-1">
                 <Form.Label className="fw-semibold">Applicant Name</Form.Label>
                 <Form.Control
@@ -1574,153 +1664,139 @@ const Application = () => {
             </div>
           </Form.Group>
 
-          <Form.Group controlId="installationDate">
-            <div className="calendar-container shadow-sm rounded border mb-3">
-              <style>
-                {`
-          /* Custom calendar styles */
-          .calendar-container .react-datepicker {
-            width:  100%;
-            border: none;
-            font-family: inherit;
-          }
-          .calendar-container .react-datepicker__month-container {
-            width: 100%;
-          }
-          .calendar-container .react-datepicker__day {
-            width: 3.5rem;
-            height: 2.4rem;
-            line-height: 2.4rem;
-            margin: 0.2rem;
-            border-radius: 50%;
-          }
-          .calendar-container .react-datepicker__day:hover {
-            background-color: #e6f7ff;
-          }
-          .calendar-container .react-datepicker__day--selected {
-            background-color: #1F316F;
-            color: white;
-            font-weight: bold;
-          }
-          .calendar-container .react-datepicker__header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
-          }
-          .calendar-container .react-datepicker__day-name {
-            width: 2.4rem;
-            font-weight: bold;
-          }
-          .calendar-container .form-select {
-            font-size: 0.95rem;
-          }
-          .weekend-day {
-            color: #6c757d;
-          }
-          .month-nav-button {
-            background: #f0f0f0;
-            border: 1px solid #dee2e6;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-          `}
-              </style>
-              <DatePicker
-                selected={selectedInstallDate}
-                onChange={(date) => setSelectedInstallDate(date)}
-                dateFormat="MM/dd/yyyy"
-                inline
-                monthsShown={1}
-                showMonthDropdown
-                showYearDropdown
-                dropdownMode="select"
-                dayClassName={(date) =>
-                  date.getDay() === 0 || date.getDay() === 6
-                    ? "weekend-day"
-                    : undefined
-                }
-                renderCustomHeader={({
-                  date,
-                  changeYear,
-                  changeMonth,
-                  decreaseMonth,
-                  increaseMonth,
-                  prevMonthButtonDisabled,
-                  nextMonthButtonDisabled,
-                }) => (
-                  <div className="d-flex justify-content-between align-items-center px-3 py-2">
-                    <button
-                      className="month-nav-button border-0"
-                      onClick={decreaseMonth}
-                      disabled={prevMonthButtonDisabled}
+          <div className="datepicker-container card shadow-sm border-0 mb-3">
+            <DatePicker
+              selected={selectedInstallDate}
+              onChange={(date) => setSelectedInstallDate(date)}
+              dateFormat="MM/dd/yyyy"
+              inline
+              calendarStartDay={1}
+              monthsShown={1}
+              showMonthDropdown
+              showYearDropdown
+              dropdownMode="select"
+              minDate={new Date()}
+              filterDate={(date) => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                const holidays = [
+                  { month: 0, day: 1 }, // Jan 1
+                  { month: 3, day: 9 }, // Apr 9
+                  { month: 5, day: 12 }, // Jun 12
+                  { month: 11, day: 25 }, // Dec 25
+                  { month: 11, day: 30 }, // Dec 30
+                ];
+
+                return (
+                  date >= today &&
+                  date.getDay() !== 0 &&
+                  date.getDay() !== 6 &&
+                  !holidays.some(
+                    (h) =>
+                      date.getDate() === h.day && date.getMonth() === h.month
+                  )
+                );
+              }}
+              dayClassName={(date) => {
+                const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+                const isHoliday = [
+                  { month: 0, day: 1 },
+                  { month: 3, day: 9 },
+                  { month: 5, day: 12 },
+                  { month: 11, day: 25 },
+                  { month: 11, day: 30 },
+                ].some(
+                  (h) => date.getDate() === h.day && date.getMonth() === h.month
+                );
+
+                const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
+
+                if (isPast || isWeekend || isHoliday)
+                  return (
+                    "calendar-disabled-day " +
+                    (isHoliday ? "holiday" : "weekend-day")
+                  );
+                return "";
+              }}
+              renderCustomHeader={({
+                date,
+                changeYear,
+                changeMonth,
+                decreaseMonth,
+                increaseMonth,
+                prevMonthButtonDisabled,
+                nextMonthButtonDisabled,
+              }) => (
+                <div className="d-flex justify-content-between align-items-center px-3 py-2 text-white rounded-top calendar-header">
+                  <button
+                    className="month-nav-button border-0 bg-transparent text-white"
+                    onClick={decreaseMonth}
+                    disabled={prevMonthButtonDisabled}
+                  >
+                    <i className="bi bi-chevron-left"></i>
+                  </button>
+                  <div className="d-flex gap-2 align-items-center">
+                    <select
+                      className="form-select form-select-sm custom-select"
+                      value={date.getMonth()}
+                      onChange={({ target: { value } }) => changeMonth(value)}
                     >
-                      <i className="bi bi-chevron-left"></i>
-                    </button>
-                    <div className="d-flex gap-2">
-                      <select
-                        className="form-select form-select-sm"
-                        value={date.getMonth()}
-                        onChange={({ target: { value } }) => changeMonth(value)}
-                      >
-                        {[
-                          "January",
-                          "February",
-                          "March",
-                          "April",
-                          "May",
-                          "June",
-                          "July",
-                          "August",
-                          "September",
-                          "October",
-                          "November",
-                          "December",
-                        ].map((month, i) => (
-                          <option key={month} value={i}>
-                            {month}
-                          </option>
-                        ))}
-                      </select>
-                      <select
-                        className="form-select form-select-sm"
-                        value={date.getFullYear()}
-                        onChange={({ target: { value } }) => changeYear(value)}
-                      >
-                        {Array.from(
-                          { length: 10 },
-                          (_, i) => date.getFullYear() - 5 + i
-                        ).map((year) => (
-                          <option key={year} value={year}>
-                            {year}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <button
-                      className="month-nav-button border-0"
-                      onClick={increaseMonth}
-                      disabled={nextMonthButtonDisabled}
+                      {[
+                        "January",
+                        "February",
+                        "March",
+                        "April",
+                        "May",
+                        "June",
+                        "July",
+                        "August",
+                        "September",
+                        "October",
+                        "November",
+                        "December",
+                      ].map((month, i) => (
+                        <option key={month} value={i}>
+                          {month}
+                        </option>
+                      ))}
+                    </select>
+                    <select
+                      className="form-select form-select-sm custom-select"
+                      value={date.getFullYear()}
+                      onChange={({ target: { value } }) => changeYear(value)}
                     >
-                      <i className="bi bi-chevron-right"></i>
-                    </button>
+                      {Array.from(
+                        { length: 10 },
+                        (_, i) => date.getFullYear() - 5 + i
+                      ).map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                )}
-              />
-            </div>
-          </Form.Group>
+                  <button
+                    className="month-nav-button border-0 bg-transparent text-white"
+                    onClick={increaseMonth}
+                    disabled={nextMonthButtonDisabled}
+                  >
+                    <i className="bi bi-chevron-right"></i>
+                  </button>
+                </div>
+              )}
+            />
+          </div>
 
           {selectedInstallDate && (
-            <div className="p-3 bg-light rounded border">
+            <div className="p-3 bg-light rounded border shadow-sm mb-2">
               <div className="d-flex align-items-center">
-                <i className="bi bi-calendar-check text-primary fs-4 me-2"></i>
+                <i className="bi bi-calendar-check text-primary fs-4 me-3"></i>
                 <div>
-                  <p className="mb-1 fw-semibold">
+                  <p className="mb-1 fw-semibold text-secondary">
                     Selected installation date:
                   </p>
-                  <p className="mb-0 text-primary fw-bold">
+                  <p className="mb-0 text-primary fw-bold fs-5">
                     {selectedInstallDate.toLocaleDateString("en-US", {
                       weekday: "long",
                       year: "numeric",
@@ -1732,21 +1808,153 @@ const Application = () => {
               </div>
             </div>
           )}
+
+          {/* Calendar styles */}
+          <style>
+            {`
+      .datepicker-container {
+        overflow: hidden;
+        border-radius: 8px;
+      }
+      
+      .calendar-header {
+        background-color: #1F316F;
+        padding: 10px;
+      }
+      
+      .custom-select {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: white;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        font-weight: 500;
+      }
+      
+      .custom-select option {
+        color: #212529;
+        background-color: white;
+      }
+      
+      .calendar-disabled-day {
+        color: #ccc !important;
+        pointer-events: none;
+        opacity: 0.6;
+      }
+
+      .react-datepicker {
+        font-family: 'Segoe UI', sans-serif;
+        
+        border: none;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+      }
+
+      .react-datepicker__month-container {
+        width: 100%;
+        background-color: white;
+      }
+
+      .react-datepicker__header {
+        background-color: #1F316F;
+        color: white;
+        border-bottom: none;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+      
+      .react-datepicker__day-name {
+        color: white;
+        font-weight: 600;
+        width: 3.5rem;
+        margin: 0.2rem;
+      }
+
+      .react-datepicker__day {
+        width: 3.5rem;
+        height: 2.5rem;
+        line-height: 2.5rem;
+        margin: 0.2rem;
+        border-radius: 50%;
+        font-weight: 500;
+      }
+
+      .react-datepicker__day--selected {
+        background-color: #1F316F !important;
+        color: white !important;
+      }
+
+      .react-datepicker__day--keyboard-selected {
+        background-color: rgba(31, 49, 111, 0.2) !important;
+        color: #1F316F !important;
+      }
+
+      .react-datepicker__day:hover {
+        background-color: rgba(31, 49, 111, 0.1) !important;
+      }
+
+      .react-datepicker__day--today {
+        font-weight: bold;
+        color: #1F316F;
+        border: 1px solid rgba(31, 49, 111, 0.5);
+      }
+
+      .holiday {
+        background-color: #fff3cd !important;
+        color: #856404 !important;
+        font-weight: 600;
+        position: relative;
+      }
+      
+      .holiday::after {
+        content: "";
+        position: absolute;
+        bottom: 3px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        background-color: #ffc107;
+        border-radius: 50%;
+      }
+
+      .weekend-day {
+        color: #adb5bd !important;
+      }
+
+      .month-nav-button {
+        background: none;
+        font-size: 1.25rem;
+        transition: all 0.2s;
+      }
+      
+      .month-nav-button:hover:not(:disabled) {
+        opacity: 0.8;
+        transform: scale(1.1);
+      }
+      
+      .month-nav-button:disabled {
+        opacity: 0.3;
+      }
+    `}
+          </style>
         </Modal.Body>
-        <Modal.Footer className="border-top justify-content-end pt-2 pb-3">
-          <Button variant="outline-secondary" onClick={handleCloseInstall}>
+        <Modal.Footer className="border-top justify-content-end pt-3 pb-3">
+          <Button
+            variant="outline-secondary"
+            onClick={handleCloseInstall}
+            className="px-3"
+          >
             Cancel
           </Button>
           <Button
             variant="primary"
             onClick={ScheduleInstallation}
             disabled={!selectedInstallDate}
-            className="px-4"
+            className="px-4 ms-2"
           >
-            <i className="bi bi-calendar-plus me-1"></i> Schedule
+            <i className="bi bi-calendar-plus me-2"></i> Schedule
           </Button>
         </Modal.Footer>
       </Modal>
+
       {/* TODO: New Consumer */}
       <Modal show={showCreate} onHide={handleCloseCreate} size="lg">
         <Modal.Header closeButton>
@@ -2091,6 +2299,9 @@ const Application = () => {
           </Modal.Body>
         </form>
       </Modal>
+      <div style={{ display: "none" }}>
+        <ReceiptComponent ref={componentRef} details={details} />
+      </div>
     </>
   );
 };

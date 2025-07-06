@@ -280,6 +280,7 @@ const Table = () => {
 
       const data = await response.json();
       setClients(data);
+      console.log("CLIENTS", data);
     };
     fetchClients();
   }, []);
@@ -511,7 +512,7 @@ const Table = () => {
     },
     {
       name: "Penalty",
-      selector: (row) => `₱${parseFloat(row.p_charge || 0).toFixed(2)}`,
+      selector: (row) => `₱${row.p_charge}`,
       sortable: true,
       width: "150px", // Adjust widt
     },
@@ -536,6 +537,16 @@ const Table = () => {
           >
             <AiFillDollarCircle style={{ fontSize: "20px" }} />
           </button>
+
+          <Button
+            className=" btn-sm ms-2"
+            variant="success"
+            size="sm"
+            as={Link}
+            to={`/customer/${row.acc_num}/${row.accountName}`}
+          >
+            <i className="bi bi-person me-1 "></i>
+          </Button>
         </div>
       ),
     },

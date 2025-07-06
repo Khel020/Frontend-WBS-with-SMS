@@ -5,7 +5,11 @@ import Swal from "sweetalert2";
 const AdminCSLayout = () => {
   const token = localStorage.getItem("type");
   const usertype = token;
-  if (usertype === "admin" || usertype === "CS_Officer") {
+  if (
+    usertype === "admin" ||
+    usertype === "CS_Officer" ||
+    usertype === "cashier"
+  ) {
     return (
       <div>
         <main>

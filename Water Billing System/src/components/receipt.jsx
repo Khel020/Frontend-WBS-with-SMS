@@ -2,8 +2,11 @@ import React from "react";
 
 const ReceiptComponent = React.forwardRef((props, ref) => {
   const {
+    app_num,
+    paymentType,
     acc_number,
     name,
+
     address,
     currentBillAmount,
     arrears,
@@ -52,7 +55,7 @@ const ReceiptComponent = React.forwardRef((props, ref) => {
         <span>Name:</span> <span>{name}</span>
       </p>
       <p className="dynamic">
-        <span>Account Number:</span> <span>{acc_number}</span>
+        <span>Account Number:</span> <span>{acc_number || app_num}</span>
       </p>
       <p className="dynamic">
         <span>Address:</span> <span>{address}</span>

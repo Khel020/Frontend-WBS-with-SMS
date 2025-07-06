@@ -30,7 +30,7 @@ function ClientLogin() {
         localStorage.setItem("exp", expTKN);
 
         if (type === "users") {
-          navigate("/clientdash/");
+          navigate(`/clientdash/${data.returnBody.acc_name}`);
         } else {
           navigate("/login");
         }

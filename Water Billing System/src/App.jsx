@@ -110,7 +110,7 @@ const router = createBrowserRouter(
         <Route path="contents" element={<IT_Content />} />
       </Route>
       //TODO: Client ROUTES
-      <Route path="clientdash" element={<ClientLayout />}>
+      <Route path="clientdash/:accountName" element={<ClientLayout />}>
         <Route index element={<DashClient />} />
       </Route>
       <Route path="yourbills" element={<ClientLayout />}>
