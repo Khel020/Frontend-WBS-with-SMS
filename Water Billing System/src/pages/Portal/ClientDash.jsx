@@ -253,7 +253,7 @@ const ClientDash = () => {
             <Card className="h-100 shadow-sm">
               <Card.Header className="bg-white d-flex justify-content-between align-items-center py-3">
                 <Card.Title className={isMobile ? "fs-5 mb-0" : "mb-0"}>
-                  Transactions
+                  Transactions History
                 </Card.Title>
                 <i className="bi bi-receipt text-muted"></i>
               </Card.Header>
@@ -327,54 +327,11 @@ const ClientDash = () => {
             <Card className="h-100 shadow-sm">
               <Card.Header className="bg-white d-flex justify-content-between align-items-center py-3">
                 <Card.Title className={isMobile ? "fs-5 mb-0" : "mb-0"}>
-                  Your Bills
+                  List of Bills
                 </Card.Title>
                 <i className="bi bi-file-earmark-text text-muted"></i>
               </Card.Header>
-              <Card.Body className={isMobile ? "p-2" : ""}>
-                <div className="table-responsive">
-                  <table className="table table-hover">
-                    <thead>
-                      <tr>
-                        <th className={isMobile ? "fs-6" : ""}>
-                          Billing Period
-                        </th>
-                        <th className={`text-end ${isMobile ? "fs-6" : ""}`}>
-                          Amount
-                        </th>
-                        <th className={`text-end ${isMobile ? "fs-6" : ""}`}>
-                          Consumption
-                        </th>
-                        <th className={`text-end ${isMobile ? "fs-6" : ""}`}>
-                          Status
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {data.map((item, index) => (
-                        <tr key={index}>
-                          <td className={isMobile ? "fs-6" : ""}>
-                            {item.month} 2024
-                          </td>
-                          <td className={`text-end ${isMobile ? "fs-6" : ""}`}>
-                            ₱{item.amount.toLocaleString()}
-                          </td>
-                          <td className={`text-end ${isMobile ? "fs-6" : ""}`}>
-                            {item.consumption} m³
-                          </td>
-                          <td
-                            className={`text-end ${
-                              index === 0 ? "text-warning" : "text-success"
-                            } ${isMobile ? "fs-6" : ""}`}
-                          >
-                            {index === 0 ? "Due Soon" : "Paid"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </Card.Body>
+              <Card.Body className={isMobile ? "p-2" : ""}></Card.Body>
             </Card>
           </Col>
         </Row>

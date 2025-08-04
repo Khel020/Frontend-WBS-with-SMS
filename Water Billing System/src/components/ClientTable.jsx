@@ -512,7 +512,7 @@ const Table = () => {
     },
     {
       name: "Penalty",
-      selector: (row) => `₱${row.p_charge}`,
+      selector: (row) => "₱ " + row.p_charge.toFixed(2),
       sortable: true,
       width: "150px", // Adjust widt
     },
