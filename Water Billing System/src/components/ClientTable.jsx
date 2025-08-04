@@ -531,13 +531,6 @@ const Table = () => {
             </button>
           </Link>
 
-          <button
-            className="btn btn-outline-warning btn-sm ms-2"
-            onClick={() => handleDeposit(row)}
-          >
-            <AiFillDollarCircle style={{ fontSize: "20px" }} />
-          </button>
-
           <Button
             className=" btn-sm ms-2"
             variant="success"
